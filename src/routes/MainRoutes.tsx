@@ -5,12 +5,8 @@ import ErrorBoundary from './ErrorBoundary';
 import Loadable from 'components/Loadable';
 import DashboardLayout from 'layout/Dashboard';
 import PagesLayout from 'layout/Pages';
-import SimpleLayout from 'layout/Simple';
 
 import { loader as productsLoader, productLoader } from 'api/products';
-
-// types
-import { SimpleLayoutType } from 'types/config';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
@@ -116,8 +112,6 @@ const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/500')));
 const MaintenanceUnderConstruction = Loadable(lazy(() => import('pages/maintenance/under-construction')));
 const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/coming-soon')));
-
-const AppContactUS = Loadable(lazy(() => import('pages/contact-us')));
 
 // render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
@@ -557,16 +551,6 @@ const MainRoutes = {
         {
           path: 'code-verification',
           element: <AuthCodeVerification />
-        }
-      ]
-    },
-    {
-      path: '/',
-      element: <SimpleLayout layout={SimpleLayoutType.SIMPLE} />,
-      children: [
-        {
-          path: 'contact-us',
-          element: <AppContactUS />
         }
       ]
     }
