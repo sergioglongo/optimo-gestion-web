@@ -75,20 +75,6 @@ export const MenuFromAPI = () => {
               "breadcrumbs": false
             }
           ]
-        },
-        {
-          "id": "components",
-          "title": "components",
-          "type": "item",
-          "url": "/components-overview/buttons",
-          "icon": "components",
-          "target": true,
-          "chip": {
-            "label": "new",
-            "color": "primary",
-            "size": "small",
-            "variant": "combined"
-          }
         }
       ]
     }
