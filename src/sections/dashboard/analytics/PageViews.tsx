@@ -18,9 +18,7 @@ function PageViews() {
       <MainCard sx={{ mt: 2 }} content={false}>
         <List sx={{ p: 0, '& .MuiListItemButton-root': { py: 2 } }}>
           <ListItemButton divider>
-            <ListItemText
-              primary={<Typography variant="subtitle1">Client A</Typography>}
-            />
+            <ListItemText primary={<Typography variant="subtitle1">Client A</Typography>} />
             <Stack alignItems="flex-end">
               <Typography variant="h5" color="primary">
                 5 out of 10
@@ -31,9 +29,7 @@ function PageViews() {
             </Stack>
           </ListItemButton>
           <ListItemButton divider>
-            <ListItemText
-              primary={<Typography variant="subtitle1">Client B</Typography>}
-            />
+            <ListItemText primary={<Typography variant="subtitle1">Client B</Typography>} />
             <Stack alignItems="flex-end">
               <Typography variant="h5" color="primary">
                 3 out of 10
@@ -44,9 +40,7 @@ function PageViews() {
             </Stack>
           </ListItemButton>
           <ListItemButton divider>
-            <ListItemText
-              primary={<Typography variant="subtitle1">Client C</Typography>}
-            />
+            <ListItemText primary={<Typography variant="subtitle1">Client C</Typography>} />
             <Stack alignItems="flex-end">
               <Typography variant="h5" color="primary">
                 1 out of 10
@@ -57,9 +51,7 @@ function PageViews() {
             </Stack>
           </ListItemButton>
           <ListItemButton divider>
-            <ListItemText
-              primary={<Typography variant="subtitle1">Client D</Typography>}
-            />
+            <ListItemText primary={<Typography variant="subtitle1">Client D</Typography>} />
             <Stack alignItems="flex-end">
               <Typography variant="h5" color="primary">
                 2 out of 10
@@ -70,9 +62,7 @@ function PageViews() {
             </Stack>
           </ListItemButton>
           <ListItemButton divider>
-            <ListItemText
-              primary={<Typography variant="subtitle1">Client E</Typography>}
-            />
+            <ListItemText primary={<Typography variant="subtitle1">Client E</Typography>} />
             <Stack alignItems="flex-end">
               <Typography variant="h5" color="primary">
                 8 out of 10

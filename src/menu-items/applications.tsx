@@ -94,7 +94,7 @@ const applications: NavItemType = {
               icon: icons.PlusOutlined
             }
           ]
-        },
+        }
         // {
         //   id: 'customer-card',
         //   title: <FormattedMessage id="cards" />,
@@ -102,7 +102,7 @@ const applications: NavItemType = {
         //   url: '/apps/customer/customer-card'
         // }
       ]
-    },
+    }
     // {
     //   id: 'invoice',
     //   title: <FormattedMessage id="invoice" />,

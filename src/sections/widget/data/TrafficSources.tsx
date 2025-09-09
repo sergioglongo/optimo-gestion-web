@@ -7,9 +7,7 @@ import MainCard from 'components/MainCard';
 // ===========================|| DATA WIDGET - TRAFFIC SOURCES ||=========================== //
 
 const TrafficSources = () => (
-  <MainCard
-    title="Document checklists"
-  >
+  <MainCard title="Document checklists">
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <Grid container alignItems="center" spacing={1}>

@@ -35,7 +35,7 @@ const widget: NavItemType = {
       type: 'item',
       url: '/widget/data',
       icon: icons.DatabaseOutlined
-    },
+    }
     // {
     //   id: 'chart',
     //   title: <FormattedMessage id="chart" />,

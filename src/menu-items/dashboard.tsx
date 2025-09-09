@@ -56,28 +56,28 @@ export const MenuFromAPI = () => {
   // if (menuLoading) return loadingMenu;
 
   const menu = {
-      "id": "group-dashboard",
-      "title": "dashboard",
-      "type": "group",
-      "icon": "dashboard",
-      "children": [
-        {
-          "id": "dashboard",
-          "title": "dashboard",
-          "type": "collapse",
-          "icon": "dashboard",
-          "children": [
-            {
-              "id": "analytics",
-              "title": "analytics",
-              "type": "item",
-              "url": "/dashboard/analytics",
-              "breadcrumbs": false
-            }
-          ]
-        }
-      ]
-    }
+    id: 'group-dashboard',
+    title: 'dashboard',
+    type: 'group',
+    icon: 'dashboard',
+    children: [
+      {
+        id: 'dashboard',
+        title: 'dashboard',
+        type: 'collapse',
+        icon: 'dashboard',
+        children: [
+          {
+            id: 'analytics',
+            title: 'analytics',
+            type: 'item',
+            url: '/dashboard/analytics',
+            breadcrumbs: false
+          }
+        ]
+      }
+    ]
+  };
 
   const subChildrenList = (children: any[]) => {
     return children?.map((subList: any) => {

@@ -27,7 +27,6 @@ export function useGetMenu() {
     revalidateOnFocus: false,
     revalidateOnReconnect: false
   });
-  
   const memoizedValue = useMemo(
     () => ({
       menu: data?.dashboard as NavItemType,
