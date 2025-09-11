@@ -19,19 +19,16 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { useSignIn } from 'services/api/authApi';
 
 // project import
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
-
 import useAuth from 'hooks/useAuth';
 import useScriptRef from 'hooks/useScriptRef';
 
-import { fetcher } from 'utils/axios';
-
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
-import { preload } from 'swr';
 
 // ============================|| JWT - LOGIN ||============================ //
 
@@ -40,6 +37,8 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
 
   const { login } = useAuth();
   const scriptedRef = useScriptRef();
+
+  const { mutate, isLoading } = useSignIn();
 
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => {
@@ -54,8 +53,8 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
     <>
       <Formik
         initialValues={{
-          email: 'info@codedthemes.com',
-          password: '123456',
+          email: 'sergiolongodev@gmail.com',
+          password: '1234',
           submit: null
         }}
         validationSchema={Yup.object().shape({
@@ -63,21 +62,30 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          try {
-            await login(values.email, values.password);
-            if (scriptedRef.current) {
-              setStatus({ success: true });
-              setSubmitting(false);
-              preload('api/menu/dashboard', fetcher); // load menu on login success
+          mutate(
+            { email: values.email, password: values.password },
+            {
+              onSuccess: (data) => {
+                const { token, rol, usuario, ...rest } = data;
+                // Creamos el objeto user que espera el contexto
+                const user: any = { ...rest, email: values.email, role: rol, usuario };
+                // Llamamos a la función login del contexto con los datos correctos
+                login(user, token);
+
+                if (scriptedRef.current) {
+                  setStatus({ success: true });
+                  setSubmitting(false);
+                }
+              },
+              onError: (err: any) => {
+                if (scriptedRef.current) {
+                  setStatus({ success: false });
+                  setErrors({ submit: err.message });
+                  setSubmitting(false);
+                }
+              }
             }
-          } catch (err: any) {
-            console.error(err);
-            if (scriptedRef.current) {
-              setStatus({ success: false });
-              setErrors({ submit: err.message });
-              setSubmitting(false);
-            }
-          }
+          );
         }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
@@ -165,7 +173,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
               )}
               <Grid item xs={12}>
                 <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
+                  <Button disableElevation disabled={isLoading} fullWidth size="large" type="submit" variant="contained" color="primary">
                     Login
                   </Button>
                 </AnimateButton>

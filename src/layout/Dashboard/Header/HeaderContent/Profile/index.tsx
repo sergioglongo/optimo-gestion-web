@@ -110,7 +110,7 @@ const Profile = () => {
         <Stack direction="row" spacing={1.25} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar alt="profile user" src={avatar1} size="sm" />
           <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
-            {user?.name}
+            {user?.usuario}
           </Typography>
         </Stack>
       </ButtonBase>
@@ -153,9 +153,9 @@ const Profile = () => {
                         <Stack direction="row" spacing={1.25} alignItems="center">
                           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
                           <Stack>
-                            <Typography variant="h6">{user?.name}</Typography>
+                            <Typography variant="h6">{user?.usuario}</Typography>
                             <Typography variant="body2" color="textSecondary">
-                              UI/UX Designer
+                              {user?.rol}
                             </Typography>
                           </Stack>
                         </Stack>

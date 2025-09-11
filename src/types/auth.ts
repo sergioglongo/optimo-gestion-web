@@ -1,8 +1,5 @@
 import { ReactElement } from 'react';
 
-// third-party
-import firebase from 'firebase/compat/app';
-
 // ==============================|| AUTH TYPES ||============================== //
 
 export type GuardProps = {
@@ -14,9 +11,9 @@ export type UserProfile = {
   email?: string;
   avatar?: string;
   image?: string;
-  name?: string;
-  role?: string;
+  rol?: string;
   tier?: string;
+  usuario?: string;
 };
 
 export interface AuthProps {
@@ -30,35 +27,6 @@ export interface AuthActionProps {
   type: string;
   payload?: AuthProps;
 }
-
-export type FirebaseContextType = {
-  isLoggedIn: boolean;
-  isInitialized?: boolean;
-  user?: UserProfile | null | undefined;
-  logout: () => Promise<void>;
-  login: () => void;
-  firebaseRegister: (email: string, password: string) => Promise<firebase.auth.UserCredential>;
-  firebaseEmailPasswordSignIn: (email: string, password: string) => Promise<firebase.auth.UserCredential>;
-  firebaseGoogleSignIn: () => Promise<firebase.auth.UserCredential>;
-  firebaseTwitterSignIn: () => Promise<firebase.auth.UserCredential>;
-  firebaseFacebookSignIn: () => Promise<firebase.auth.UserCredential>;
-  resetPassword: (email: string) => Promise<void>;
-  updateProfile: VoidFunction;
-};
-
-export type AWSCognitoContextType = {
-  isLoggedIn: boolean;
-  isInitialized?: boolean;
-  user?: UserProfile | null | undefined;
-  logout: () => void;
-  login: (email: string, password: string) => Promise<unknown>;
-  register: (email: string, password: string, firstName: string, lastName: string) => Promise<unknown>;
-  resetPassword: (verificationCode: string, newPassword: string) => Promise<any>;
-  forgotPassword: (email: string) => Promise<void>;
-  updateProfile: VoidFunction;
-  codeVerification: (verificationCode: string) => Promise<any>;
-  resendConfirmationCode: () => Promise<any>;
-};
 
 export interface InitialLoginContextProps {
   isLoggedIn: boolean;
@@ -75,18 +43,8 @@ export type JWTContextType = {
   isInitialized?: boolean;
   user?: UserProfile | null | undefined;
   logout: () => void;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
-  updateProfile: VoidFunction;
-};
-
-export type Auth0ContextType = {
-  isLoggedIn: boolean;
-  isInitialized?: boolean;
-  user?: UserProfile | null | undefined;
-  logout: () => void;
-  login: () => void;
+  login: (user: UserProfile, token: string) => void;
+  register: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updateProfile: VoidFunction;
 };

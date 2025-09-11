@@ -20,8 +20,6 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "types": ["node", "jest", "webpack-env"],
-    "typeRoots": ["./types"],
     "baseUrl": "src",
     "downlevelIteration": true
   },

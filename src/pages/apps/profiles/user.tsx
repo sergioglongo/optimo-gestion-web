@@ -7,21 +7,22 @@ import { Grid } from '@mui/material';
 // project import
 import ProfileCard from 'sections/apps/profiles/user/ProfileCard';
 import ProfileTabs from 'sections/apps/profiles/user/ProfileTabs';
-import { handlerActiveItem, useGetMenuMaster } from 'api/menu';
+import { handlerActiveItem } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // ==============================|| PROFILE - USER ||============================== //
 
 const UserProfile = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { pathname } = useLocation();
-  const { menuMaster } = useGetMenuMaster();
+  const menu = useAppSelector((state) => state.menu);
 
   const focusInput = () => {
     inputRef.current?.focus();
   };
 
   useEffect(() => {
-    if (menuMaster.openedItem !== 'user-profile') handlerActiveItem('user-profile');
+    if (menu.openedItem !== 'user-profile') handlerActiveItem('user-profile');
     // eslint-disable-next-line
   }, [pathname]);
 

@@ -55,8 +55,8 @@ import {
 
 // types
 import { SnackbarProps } from 'types/snackbar';
-import { UserProfile } from 'types/user-profile';
 import { ThemeMode } from 'types/config';
+import { UserProfile } from 'types/auth';
 
 const drawerWidth = 320;
 
@@ -146,11 +146,11 @@ const Chat = () => {
       const newMessage = {
         id: Number(incrementer(users.length)),
         from: 'User1',
-        to: user.name,
+        to: user.usuario,
         text: message,
         time: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
-      insertChat(user.name!, newMessage);
+      insertChat(user.usuario!, newMessage);
     }
     setMessage('');
   };

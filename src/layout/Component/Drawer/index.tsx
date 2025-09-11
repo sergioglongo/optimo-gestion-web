@@ -9,7 +9,8 @@ import DrawerContent from './DrawerContent';
 import MainCard from 'components/MainCard';
 
 import { DRAWER_WIDTH } from 'config';
-import { handlerComponentDrawer, useGetMenuMaster } from 'api/menu';
+import { handlerComponentDrawer } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // assets
 import { SearchOutlined } from '@ant-design/icons';
@@ -18,9 +19,7 @@ import { SearchOutlined } from '@ant-design/icons';
 
 const Drawer = () => {
   const theme = useTheme();
-  const { menuMaster } = useGetMenuMaster();
-  const open = menuMaster.isComponentDrawerOpened;
-
+  const { isComponentDrawerOpened: open } = useAppSelector((state) => state.menu);
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
   const [searchValue, setSearchValue] = useState();
 

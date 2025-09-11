@@ -52,7 +52,8 @@ import {
   useGetInvoiceMaster
 } from 'api/invoice';
 import { openSnackbar } from 'api/snackbar';
-import { handlerActiveItem, useGetMenuMaster } from 'api/menu';
+import { handlerActiveItem } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // types
 import { SnackbarProps } from 'types/snackbar';
@@ -594,13 +595,13 @@ const EditForm = ({ list, invoiceMaster }: FormProps) => {
 const Create = () => {
   const { id } = useParams();
 
-  const { menuMaster } = useGetMenuMaster();
+  const menu = useAppSelector((state) => state.menu);
   const { invoiceLoading, invoice } = useGetInvoice();
   const { invoiceMaster, invoiceMasterLoading } = useGetInvoiceMaster();
   const [list, seList] = useState<InvoiceList | null>(null);
 
   useEffect(() => {
-    if (menuMaster.openedItem !== 'invoice-edit') handlerActiveItem('invoice-edit');
+    if (menu.openedItem !== 'invoice-edit') handlerActiveItem('invoice-edit');
     if (id && !invoiceLoading) {
       seList(invoice.filter((item: InvoiceList) => item.id.toString() === id)[0]);
     }

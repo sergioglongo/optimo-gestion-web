@@ -26,7 +26,8 @@ import SimpleBar from 'components/third-party/SimpleBar';
 import Transitions from 'components/@extended/Transitions';
 
 import useConfig from 'hooks/useConfig';
-import { handlerActiveItem, useGetMenuMaster } from 'api/menu';
+import { handlerActiveItem } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // assets
 import { BorderOutlined, DownOutlined, UpOutlined, RightOutlined } from '@ant-design/icons';
@@ -90,8 +91,7 @@ interface Props {
 
 const NavCollapse = ({ menu, level, parentId, setSelectedItems, selectedItems, setSelectedLevel, selectedLevel }: Props) => {
   const theme = useTheme();
-  const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
 
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 

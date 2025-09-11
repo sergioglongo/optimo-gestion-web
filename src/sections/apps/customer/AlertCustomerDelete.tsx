@@ -5,7 +5,7 @@ import { Button, Dialog, DialogContent, Stack, Typography } from '@mui/material'
 import Avatar from 'components/@extended/Avatar';
 import { PopupTransition } from 'components/@extended/Transitions';
 
-import { deleteCustomer } from 'api/customer';
+import { useDeleteCustomer } from 'api/customer';
 import { openSnackbar } from 'api/snackbar';
 
 // assets
@@ -24,18 +24,22 @@ interface Props {
 // ==============================|| CUSTOMER - DELETE ||============================== //
 
 export default function AlertCustomerDelete({ id, title, open, handleClose }: Props) {
+  const { mutate: deleteCustomer, isLoading } = useDeleteCustomer();
+
   const deletehandler = async () => {
-    await deleteCustomer(id).then(() => {
-      openSnackbar({
-        open: true,
-        message: 'Customer deleted successfully',
-        anchorOrigin: { vertical: 'top', horizontal: 'right' },
-        variant: 'alert',
-        alert: {
-          color: 'success'
-        }
-      } as SnackbarProps);
-      handleClose();
+    deleteCustomer(id, {
+      onSuccess: () => {
+        openSnackbar({
+          open: true,
+          message: 'Customer deleted successfully',
+          anchorOrigin: { vertical: 'top', horizontal: 'right' },
+          variant: 'alert',
+          alert: {
+            color: 'success'
+          }
+        } as SnackbarProps);
+        handleClose();
+      }
     });
   };
 
@@ -72,7 +76,7 @@ export default function AlertCustomerDelete({ id, title, open, handleClose }: Pr
             <Button fullWidth onClick={handleClose} color="secondary" variant="outlined">
               Cancel
             </Button>
-            <Button fullWidth color="error" variant="contained" onClick={deletehandler} autoFocus>
+            <Button fullWidth color="error" variant="contained" onClick={deletehandler} disabled={isLoading} autoFocus>
               Delete
             </Button>
           </Stack>

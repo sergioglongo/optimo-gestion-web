@@ -44,8 +44,8 @@ import Avatar from 'components/@extended/Avatar';
 import IconButton from 'components/@extended/IconButton';
 import CircularWithPath from 'components/@extended/progress/CircularWithPath';
 
+import { useAddCustomer, useUpdateCustomer } from 'api/customer';
 import { openSnackbar } from 'api/snackbar';
-import { insertCustomer, updateCustomer } from 'api/customer';
 
 // assets
 import { CameraOutlined, CloseOutlined, DeleteFilled } from '@ant-design/icons';
@@ -147,6 +147,9 @@ const allStatus: StatusProps[] = [
 const FormCustomerAdd = ({ customer, closeModal }: { customer: CustomerList | null; closeModal: () => void }) => {
   const theme = useTheme();
 
+  const { mutate: addCustomer, isLoading: isAdding } = useAddCustomer();
+  const { mutate: updateCustomer, isLoading: isUpdating } = useUpdateCustomer();
+
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
   const [avatar, setAvatar] = useState<string | undefined>(
@@ -183,40 +186,57 @@ const FormCustomerAdd = ({ customer, closeModal }: { customer: CustomerList | nu
     initialValues: getInitialValues(customer!),
     validationSchema: CustomerSchema,
     enableReinitialize: true,
-    onSubmit: async (values, { setSubmitting }) => {
-      try {
-        let newCustomer: CustomerList = values;
-        newCustomer.name = newCustomer.firstName + ' ' + newCustomer.lastName;
+    onSubmit: (values, { setSubmitting }) => {
+      const newCustomer: CustomerList = { ...values, name: `${values.firstName} ${values.lastName}` };
 
-        if (customer) {
-          updateCustomer(newCustomer.id!, newCustomer).then(() => {
+      if (customer) {
+        // We are updating an existing customer
+        updateCustomer(newCustomer, {
+          onSuccess: () => {
             openSnackbar({
               open: true,
-              message: 'Customer update successfully.',
+              message: 'Customer updated successfully.',
               variant: 'alert',
-              alert: {
-                color: 'success'
-              }
+              alert: { color: 'success' }
             } as SnackbarProps);
             setSubmitting(false);
             closeModal();
-          });
-        } else {
-          await insertCustomer(newCustomer).then(() => {
+          },
+          onError: (error: any) => {
+            openSnackbar({
+              open: true,
+              message: error.message || 'An error occurred',
+              variant: 'alert',
+              alert: { color: 'error' }
+            } as SnackbarProps);
+            setSubmitting(false);
+          }
+        });
+      } else {
+        // We are adding a new customer
+        // The API hook for adding expects Omit<CustomerList, 'id'>, so we ensure no id is passed.
+        const { ...customerToAdd } = newCustomer;
+        addCustomer(customerToAdd, {
+          onSuccess: () => {
             openSnackbar({
               open: true,
               message: 'Customer added successfully.',
               variant: 'alert',
-              alert: {
-                color: 'success'
-              }
+              alert: { color: 'success' }
             } as SnackbarProps);
             setSubmitting(false);
             closeModal();
-          });
-        }
-      } catch (error) {
-        console.error(error);
+          },
+          onError: (error: any) => {
+            openSnackbar({
+              open: true,
+              message: error.message || 'An error occurred',
+              variant: 'alert',
+              alert: { color: 'error' }
+            } as SnackbarProps);
+            setSubmitting(false);
+          }
+        });
       }
     }
   });
@@ -537,7 +557,7 @@ const FormCustomerAdd = ({ customer, closeModal }: { customer: CustomerList | nu
                     <Button color="error" onClick={closeModal}>
                       Cancel
                     </Button>
-                    <Button type="submit" variant="contained" disabled={isSubmitting}>
+                    <Button type="submit" variant="contained" disabled={isSubmitting || isAdding || isUpdating}>
                       {customer ? 'Edit' : 'Add'}
                     </Button>
                   </Stack>

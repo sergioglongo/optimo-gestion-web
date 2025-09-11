@@ -1,138 +1,73 @@
-import useSWR, { mutate } from 'swr';
-import { useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // utils
-import { fetcher } from 'utils/axios';
+import { apiClient } from 'services/api/apiClient';
 
 // types
-import { CustomerList, CustomerProps } from 'types/customer';
+import { CustomerList } from 'types/customer';
 
-const initialState: CustomerProps = {
-  modal: false
+// Define los query keys para una gestión centralizada
+const customerQueryKeys = {
+  all: ['customers'] as const,
+  lists: () => [...customerQueryKeys.all, 'list'] as const,
+  list: (filters: string) => [...customerQueryKeys.lists(), { filters }] as const,
+  details: () => [...customerQueryKeys.all, 'detail'] as const,
+  detail: (id: number) => [...customerQueryKeys.details(), id] as const
 };
 
-export const endpoints = {
-  key: 'api/customer',
-  list: '/list', // server URL
-  modal: '/modal', // server URL
-  insert: '/insert', // server URL
-  update: '/update', // server URL
-  delete: '/delete' // server URL
-};
-
-export function useGetCustomer() {
-  const { data, isLoading, error, isValidating } = useSWR(endpoints.key + endpoints.list, fetcher, {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
+/**
+ * Hook para obtener la lista de clientes.
+ * Usa useQuery para el fetching, cacheo y estados automáticos.
+ */
+export function useGetCustomers(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: customerQueryKeys.lists(),
+    queryFn: async () => {
+      // La ruta es relativa a la baseURL del apiClient, por ejemplo: /customer/list
+      const { data } = await apiClient.get<{ customers: CustomerList[] }>('/customer/list');
+      return data.customers;
+    },
+    enabled: options?.enabled ?? true // Habilitado por defecto, pero se puede deshabilitar
   });
-
-  const memoizedValue = useMemo(
-    () => ({
-      customers: data?.customers as CustomerList[],
-      customersLoading: isLoading,
-      customersError: error,
-      customersValidating: isValidating,
-      customersEmpty: !isLoading && !data?.customers?.length
-    }),
-    [data, error, isLoading, isValidating]
-  );
-
-  return memoizedValue;
 }
 
-export async function insertCustomer(newCustomer: CustomerList) {
-  // to update local state based on key
-  mutate(
-    endpoints.key + endpoints.list,
-    (currentCustomer: any) => {
-      newCustomer.id = currentCustomer.customers.length + 1;
-      const addedCustomer: CustomerList[] = [...currentCustomer.customers, newCustomer];
-
-      return {
-        ...currentCustomer,
-        customers: addedCustomer
-      };
-    },
-    false
-  );
-
-  // to hit server
-  // you may need to refetch latest data after server hit and based on your logic
-  //   const data = { newCustomer };
-  //   await axios.post(endpoints.key + endpoints.insert, data);
-}
-
-export async function updateCustomer(customerId: number, updatedCustomer: CustomerList) {
-  // to update local state based on key
-  mutate(
-    endpoints.key + endpoints.list,
-    (currentCustomer: any) => {
-      const newCustomer: CustomerList[] = currentCustomer.customers.map((customer: CustomerList) =>
-        customer.id === customerId ? { ...customer, ...updatedCustomer } : customer
-      );
-
-      return {
-        ...currentCustomer,
-        customers: newCustomer
-      };
-    },
-    false
-  );
-
-  // to hit server
-  // you may need to refetch latest data after server hit and based on your logic
-  //   const data = { list: updatedCustomer };
-  //   await axios.post(endpoints.key + endpoints.update, data);
-}
-
-export async function deleteCustomer(customerId: number) {
-  // to update local state based on key
-  mutate(
-    endpoints.key + endpoints.list,
-    (currentCustomer: any) => {
-      const nonDeletedCustomer = currentCustomer.customers.filter((customer: CustomerList) => customer.id !== customerId);
-
-      return {
-        ...currentCustomer,
-        customers: nonDeletedCustomer
-      };
-    },
-    false
-  );
-
-  // to hit server
-  // you may need to refetch latest data after server hit and based on your logic
-  //   const data = { customerId };
-  //   await axios.post(endpoints.key + endpoints.delete, data);
-}
-
-export function useGetCustomerMaster() {
-  const { data, isLoading } = useSWR(endpoints.key + endpoints.modal, () => initialState, {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
+/**
+ * Hook para crear un nuevo cliente.
+ * Usa useMutation y invalida la caché de la lista para refrescar los datos.
+ */
+export function useAddCustomer() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newCustomer: Omit<CustomerList, 'id'>) => apiClient.post('/customer/insert', newCustomer), // Asumiendo endpoint POST /customer/insert
+    onSuccess: () => {
+      // Invalida la query de la lista de clientes para que se vuelva a solicitar
+      queryClient.invalidateQueries({ queryKey: customerQueryKeys.lists() });
+    }
   });
-
-  const memoizedValue = useMemo(
-    () => ({
-      customerMaster: data,
-      customerMasterLoading: isLoading
-    }),
-    [data, isLoading]
-  );
-
-  return memoizedValue;
 }
 
-export function handlerCustomerDialog(modal: boolean) {
-  // to update local state based on key
+/**
+ * Hook para actualizar un cliente existente.
+ */
+export function useUpdateCustomer() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (updatedCustomer: CustomerList) => apiClient.put(`/customer/update/${updatedCustomer.id}`, updatedCustomer), // Asumiendo endpoint PUT /customer/update/:id
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: customerQueryKeys.lists() });
+    }
+  });
+}
 
-  mutate(
-    endpoints.key + endpoints.modal,
-    (currentCustomermaster: any) => {
-      return { ...currentCustomermaster, modal };
-    },
-    false
-  );
+/**
+ * Hook para eliminar un cliente.
+ */
+export function useDeleteCustomer() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (customerId: number) => apiClient.delete(`/customer/delete/${customerId}`), // Asumiendo endpoint DELETE /customer/delete/:id
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: customerQueryKeys.lists() });
+    }
+  });
 }

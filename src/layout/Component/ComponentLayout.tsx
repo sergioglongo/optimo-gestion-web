@@ -8,7 +8,8 @@ import { useMediaQuery, Box } from '@mui/material';
 // project import
 import Drawer from './Drawer';
 import { DRAWER_WIDTH } from 'config';
-import { handlerComponentDrawer, useGetMenuMaster } from 'api/menu';
+import { handlerComponentDrawer } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // components content
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }: { theme: Theme; open: boolean }) => ({
@@ -36,7 +37,7 @@ const ComponentsLayout = () => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
 
-  const { menuMaster } = useGetMenuMaster();
+  const { isComponentDrawerOpened } = useAppSelector((state) => state.menu);
 
   useEffect(() => {
     handlerComponentDrawer(!matchDownMd);
@@ -44,9 +45,9 @@ const ComponentsLayout = () => {
   }, [matchDownMd]);
 
   return (
-    <Box sx={{ display: 'flex', pt: menuMaster.isComponentDrawerOpened ? { xs: 0, md: 3, xl: 5.5 } : 0 }}>
+    <Box sx={{ display: 'flex', pt: isComponentDrawerOpened ? { xs: 0, md: 3, xl: 5.5 } : 0 }}>
       <Drawer />
-      <Main theme={theme} open={menuMaster.isComponentDrawerOpened}>
+      <Main theme={theme} open={isComponentDrawerOpened}>
         <Outlet />
       </Main>
     </Box>

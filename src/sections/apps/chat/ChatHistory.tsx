@@ -14,7 +14,7 @@ import { useGetUserChat } from 'api/chat';
 import { EditOutlined } from '@ant-design/icons';
 
 // types
-import { UserProfile } from 'types/user-profile';
+import { UserProfile } from 'types/auth';
 import { ThemeMode } from 'types/config';
 
 // ==============================|| CHAT MESSAGE HISTORY ||============================== //
@@ -26,7 +26,7 @@ interface ChatHistoryProps {
 
 const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
   const bottomRef = useRef(null);
-  const { chat, chatLoading } = useGetUserChat(user.name!);
+  const { chat, chatLoading } = useGetUserChat(user.usuario!);
 
   useEffect(() => {
     // @ts-ignore
@@ -46,7 +46,7 @@ const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
     <Grid container spacing={2.5}>
       {chat.map((history, index) => (
         <Grid item xs={12} key={index}>
-          {history.from !== user.name ? (
+          {history.from !== user.usuario ? (
             <Stack spacing={1.25} direction="row" alignItems="flex-start">
               <Grid container justifyContent="flex-end">
                 <Grid item xs={2} md={3} xl={4} />
@@ -84,11 +84,11 @@ const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
                   </Typography>
                 </Grid>
               </Grid>
-              <UserAvatar user={{ online_status: 'available', avatar: 'avatar-1.png', name: 'User 1' }} />
+              {/* <UserAvatar user={{ online_status: 'available', avatar: 'avatar-1.png', name: 'User 1' }} /> */}
             </Stack>
           ) : (
             <Stack direction="row" spacing={1.25} alignItems="flex-start">
-              <UserAvatar user={{ online_status: user.online_status, avatar: user.avatar, name: user.name }} />
+              <UserAvatar user={{ avatar: user.avatar, usuario: user.usuario }} />
 
               <Grid container>
                 <Grid item xs={12} sm={7}>
