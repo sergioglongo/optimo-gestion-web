@@ -27,7 +27,8 @@ import SimpleBar from 'components/third-party/SimpleBar';
 import Transitions from 'components/@extended/Transitions';
 
 import useConfig from 'hooks/useConfig';
-import { handlerHorizontalActiveItem, useGetMenuMaster } from 'api/menu';
+import { handlerHorizontalActiveItem } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // assets
 import { DownOutlined, GroupOutlined, RightOutlined } from '@ant-design/icons';
@@ -79,9 +80,7 @@ const NavGroup = ({ item, lastItem, remItems, lastItemId, setSelectedItems, sele
   const { pathname } = useLocation();
 
   const { menuOrientation } = useConfig();
-  const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
-  const selectedID = menuMaster.openedHorizontalItem;
+  const { isDashboardDrawerOpened: drawerOpen, openedHorizontalItem: selectedID } = useAppSelector((state) => state.menu);
 
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 

@@ -8,7 +8,7 @@ import { Box, IconButton, IconButtonProps, List, ListItem, ListItemAvatar, ListI
 // project import
 import Avatar from 'components/@extended/Avatar';
 import useAuth from 'hooks/useAuth';
-import { useGetMenuMaster } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // assets
 import { RightOutlined } from '@ant-design/icons';
@@ -43,8 +43,7 @@ const NavUser = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
 
   const { logout, user } = useAuth();
   const handleLogout = async () => {
@@ -95,7 +94,7 @@ const NavUser = () => {
           <ListItemAvatar>
             <Avatar alt="Avatar" src={avatarImage(`./avatar-1.png`)} sx={{ ...(drawerOpen && { width: 46, height: 46 }) }} />
           </ListItemAvatar>
-          <ListItemText primary={user?.name} secondary="UI/UX Designer" />
+          <ListItemText primary={user?.usuario} secondary="UI/UX Designer" />
         </ListItem>
       </List>
       <Menu

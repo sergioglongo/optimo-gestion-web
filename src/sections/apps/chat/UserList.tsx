@@ -1,25 +1,17 @@
 import { Fragment, useEffect, useState } from 'react';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
+// import { useTheme } from '@mui/material/styles';
 import { List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Skeleton, Stack, Typography } from '@mui/material';
-
-// third-party
-import { Chance } from 'chance';
 
 // project imports
 import UserAvatar from './UserAvatar';
 import Dot from 'components/@extended/Dot';
 import { useGetUsers } from 'api/chat';
 
-// assets
-import { CheckOutlined } from '@ant-design/icons';
-
 // types
 import { KeyedObject } from 'types/root';
-import { UserProfile } from 'types/user-profile';
-
-const chance = new Chance();
+import { UserProfile } from 'types/auth';
 
 interface UserListProps {
   setUser: (u: UserProfile) => void;
@@ -28,7 +20,7 @@ interface UserListProps {
 }
 
 function UserList({ setUser, search, selectedUser }: UserListProps) {
-  const theme = useTheme();
+  // const theme = useTheme();
   const [data, setData] = useState<UserProfile[]>([]);
   const { usersLoading, users } = useGetUsers();
 
@@ -103,10 +95,10 @@ function UserList({ setUser, search, selectedUser }: UserListProps) {
                       whiteSpace: 'nowrap'
                     }}
                   >
-                    {user.name}
+                    {user.usuario}
                   </Typography>
                   <Typography component="span" color="textSecondary" variant="caption">
-                    {user.lastMessage}
+                    {user.usuario}
                   </Typography>
                 </Stack>
               }
@@ -123,14 +115,9 @@ function UserList({ setUser, search, selectedUser }: UserListProps) {
                     alignItems: 'center'
                   }}
                 >
-                  <>{user.status}</>
+                  <>Online</>
                   <>
-                    {user.unReadChatCount ? (
-                      <Dot color="primary" />
-                    ) : (
-                      // chance.bool() - use for last send msg was read or unread
-                      <CheckOutlined style={{ color: chance.bool() ? theme.palette.grey[400] : theme.palette.primary.main }} />
-                    )}
+                    <Dot color="primary" />
                   </>
                 </Typography>
               }

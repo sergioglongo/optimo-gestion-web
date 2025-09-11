@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import { useMediaQuery, Box, Chip, Collapse, Divider, Grid, Stack, Switch, Typography } from '@mui/material';
 
 // types
-import { UserProfile } from 'types/user-profile';
+import { UserProfile } from 'types/auth';
 
 // project imports
 import AvatarStatus from './AvatarStatus';
@@ -52,17 +52,8 @@ const UserDetails = ({ user, onClose }: Props) => {
 
   let statusBGColor;
   let statusColor;
-  if (user.online_status === 'available') {
-    statusBGColor = theme.palette.success.lighter;
-    statusColor = theme.palette.success.main;
-  } else if (user.online_status === 'do_not_disturb') {
-    statusBGColor = theme.palette.grey.A100;
-    statusColor = theme.palette.grey.A200;
-  } else {
-    statusBGColor = theme.palette.warning.lighter;
-    statusColor = theme.palette.warning.main;
-  }
-
+  statusBGColor = theme.palette.success.lighter;
+  statusColor = theme.palette.success.main;
   return (
     <MainCard
       sx={{
@@ -82,7 +73,7 @@ const UserDetails = ({ user, onClose }: Props) => {
           <Grid item xs={12}>
             <Stack>
               <Avatar
-                alt={user.name}
+                alt={user.usuario}
                 src={user.avatar && avatarImage(`./${user.avatar}`)}
                 size="xl"
                 sx={{
@@ -101,10 +92,10 @@ const UserDetails = ({ user, onClose }: Props) => {
                 }}
               />
               <Typography variant="h5" align="center" component="div">
-                {user.name}
+                {user.usuario}
               </Typography>
               <Typography variant="body2" align="center" color="textSecondary">
-                {user.role}
+                {user.rol}
               </Typography>
             </Stack>
           </Grid>
@@ -116,9 +107,9 @@ const UserDetails = ({ user, onClose }: Props) => {
               justifyContent="center"
               sx={{ mt: 0.75, '& .MuiChip-root': { height: '24px' } }}
             >
-              <AvatarStatus status={user.online_status!} />
+              <AvatarStatus status={'Online'} />
               <Chip
-                label={user?.online_status!.replaceAll('_', ' ')}
+                label={'Online'}
                 sx={{
                   bgcolor: statusBGColor,
                   textTransform: 'capitalize',
@@ -192,19 +183,19 @@ const UserDetails = ({ user, onClose }: Props) => {
                   <Collapse in={checked}>
                     <Stack direction="row" justifyContent="space-between" sx={{ mt: 1, mb: 2 }}>
                       <Typography>Address</Typography>
-                      <Typography color="textSecondary">{user.location}</Typography>
+                      <Typography color="textSecondary">{user.usuario}</Typography>
                     </Stack>
                     <Stack direction="row" justifyContent="space-between" sx={{ mt: 2 }}>
                       <Typography>Email</Typography>
-                      <Typography color="textSecondary">{user.personal_email}</Typography>
+                      <Typography color="textSecondary">{user.usuario}</Typography>
                     </Stack>
                     <Stack direction="row" justifyContent="space-between" sx={{ mt: 2 }}>
                       <Typography>Phone</Typography>
-                      <Typography color="textSecondary">{user.personal_phone}</Typography>
+                      <Typography color="textSecondary">{user.usuario}</Typography>
                     </Stack>
                     <Stack direction="row" justifyContent="space-between" sx={{ mt: 2, mb: 2 }}>
                       <Typography>Last visited</Typography>
-                      <Typography color="textSecondary">{user.lastMessage}</Typography>
+                      <Typography color="textSecondary">{user.usuario}</Typography>
                     </Stack>
                   </Collapse>
                 </Grid>

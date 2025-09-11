@@ -5,7 +5,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import {
   Button,
   Checkbox,
-  Divider,
   FormControlLabel,
   FormHelperText,
   Grid,
@@ -20,25 +19,26 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { useSignIn } from 'services/api/authApi';
 
 // project import
-import useAuth from 'hooks/useAuth';
-import useScriptRef from 'hooks/useScriptRef';
-import FirebaseSocial from './FirebaseSocial';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
+import useAuth from 'hooks/useAuth';
+import useScriptRef from 'hooks/useScriptRef';
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
-// ============================|| FIREBASE - LOGIN ||============================ //
+// ============================|| LOGIN ||============================ //
 
-const AuthLogin = () => {
+const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
   const [checked, setChecked] = React.useState(false);
-  const [capsWarning, setCapsWarning] = React.useState(false);
 
-  const { isLoggedIn, firebaseEmailPasswordSignIn } = useAuth();
+  const { login } = useAuth();
   const scriptedRef = useScriptRef();
+
+  const { mutate, isLoading } = useSignIn();
 
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => {
@@ -49,20 +49,12 @@ const AuthLogin = () => {
     event.preventDefault();
   };
 
-  const onKeyDown = (keyEvent: any) => {
-    if (keyEvent.getModifierState('CapsLock')) {
-      setCapsWarning(true);
-    } else {
-      setCapsWarning(false);
-    }
-  };
-
   return (
     <>
       <Formik
         initialValues={{
-          email: 'info@codedthemes.com',
-          password: '123456',
+          email: 'sergiolongodev@gmail.com',
+          password: '1234',
           submit: null
         }}
         validationSchema={Yup.object().shape({
@@ -70,31 +62,31 @@ const AuthLogin = () => {
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          try {
-            await firebaseEmailPasswordSignIn(values.email, values.password).then(
-              () => {
-                // WARNING: do not set any formik state here as formik might be already destroyed here. You may get following error by doing so.
-                // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application.
-                // To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function.
-                // github issue: https://github.com/formium/formik/issues/2430
+          mutate(
+            { email: values.email, password: values.password },
+            {
+              onSuccess: (data) => {
+                const { token, rol, usuario, ...rest } = data;
+                const user: any = { ...rest, email: values.email, role: rol, usuario };
+                login(user, token);
+
+                if (scriptedRef.current) {
+                  setStatus({ success: true });
+                  setSubmitting(false);
+                }
               },
-              (err: any) => {
-                setStatus({ success: false });
-                setErrors({ submit: err.message });
-                setSubmitting(false);
+              onError: (err: any) => {
+                if (scriptedRef.current) {
+                  setStatus({ success: false });
+                  setErrors({ submit: err.message });
+                  setSubmitting(false);
+                }
               }
-            );
-          } catch (err: any) {
-            console.error(err);
-            if (scriptedRef.current) {
-              setStatus({ success: false });
-              setErrors({ submit: err.message });
-              setSubmitting(false);
             }
-          }
+          );
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
@@ -123,17 +115,12 @@ const AuthLogin = () => {
                   <InputLabel htmlFor="password-login">Password</InputLabel>
                   <OutlinedInput
                     fullWidth
-                    color={capsWarning ? 'warning' : 'primary'}
                     error={Boolean(touched.password && errors.password)}
                     id="-password-login"
                     type={showPassword ? 'text' : 'password'}
                     value={values.password}
                     name="password"
-                    onBlur={(event: React.FocusEvent<any, Element>) => {
-                      setCapsWarning(false);
-                      handleBlur(event);
-                    }}
-                    onKeyDown={onKeyDown}
+                    onBlur={handleBlur}
                     onChange={handleChange}
                     endAdornment={
                       <InputAdornment position="end">
@@ -150,11 +137,6 @@ const AuthLogin = () => {
                     }
                     placeholder="Enter password"
                   />
-                  {capsWarning && (
-                    <Typography variant="caption" sx={{ color: 'warning.main' }} id="warning-helper-text-password-login">
-                      Caps lock on!
-                    </Typography>
-                  )}
                 </Stack>
                 {touched.password && errors.password && (
                   <FormHelperText error id="standard-weight-helper-text-password-login">
@@ -177,12 +159,7 @@ const AuthLogin = () => {
                     }
                     label={<Typography variant="h6">Keep me sign in</Typography>}
                   />
-                  <Link
-                    variant="h6"
-                    component={RouterLink}
-                    to={isLoggedIn ? '/auth/forgot-password' : '/forgot-password'}
-                    color="text.primary"
-                  >
+                  <Link variant="h6" component={RouterLink} to={isDemo ? '/auth/forgot-password' : '/forgot-password'} color="text.primary">
                     Forgot Password?
                   </Link>
                 </Stack>
@@ -194,18 +171,10 @@ const AuthLogin = () => {
               )}
               <Grid item xs={12}>
                 <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
+                  <Button disableElevation disabled={isLoading} fullWidth size="large" type="submit" variant="contained" color="primary">
                     Login
                   </Button>
                 </AnimateButton>
-              </Grid>
-              <Grid item xs={12}>
-                <Divider>
-                  <Typography variant="caption"> Login with</Typography>
-                </Divider>
-              </Grid>
-              <Grid item xs={12}>
-                <FirebaseSocial />
               </Grid>
             </Grid>
           </form>

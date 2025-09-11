@@ -57,7 +57,7 @@ import AlertCustomerDelete from 'sections/apps/customer/AlertCustomerDelete';
 import ExpandingUserDetail from 'sections/apps/customer/ExpandingUserDetail';
 import EmptyReactTable from 'pages/tables/react-table/empty';
 
-import { useGetCustomer } from 'api/customer';
+import { useGetCustomers } from 'api/customer';
 
 // types
 import { CustomerList } from 'types/customer';
@@ -252,7 +252,7 @@ function ReactTable({ data, columns, modalToggler }: Props) {
 const CustomerListPage = () => {
   const theme = useTheme();
 
-  const { customersLoading, customers: lists } = useGetCustomer();
+  const { isLoading: customersLoading, data: lists = [] } = useGetCustomers();
 
   const [open, setOpen] = useState<boolean>(false);
 

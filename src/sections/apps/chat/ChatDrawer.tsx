@@ -71,9 +71,9 @@ function ChatDrawer({ handleDrawerOpen, openChatDrawer, setUser, selectedUser }:
   };
 
   // set user status on status menu click
-  const [status, setStatus] = useState('available');
+  // const [status, setStatus] = useState('available');
   const handleRightMenuItemClick = (userStatus: string) => () => {
-    setStatus(userStatus);
+    // setStatus(userStatus);
     handleCloseRightMenu();
   };
 
@@ -188,15 +188,15 @@ function ChatDrawer({ handleDrawerOpen, openChatDrawer, setUser, selectedUser }:
             <Grid item xs={12}>
               <Grid container spacing={1} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
                 <Grid item>
-                  <UserAvatar user={{ online_status: status, avatar: 'avatar-1.png', name: 'User 1' }} />
+                  <UserAvatar user={{ avatar: 'avatar-1.png', usuario: 'User 1' }} />
                 </Grid>
                 <Grid item xs zeroMinWidth>
                   <Stack sx={{ cursor: 'pointer', textDecoration: 'none' }} component={Link} to="/apps/profiles/user/personal">
                     <Typography align="left" variant="h5" color="textPrimary">
-                      {user?.name}
+                      {user?.usuario}
                     </Typography>
                     <Typography align="left" variant="caption" color="textSecondary">
-                      {user?.role}
+                      {user?.rol}
                     </Typography>
                   </Stack>
                 </Grid>

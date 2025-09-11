@@ -24,7 +24,7 @@ import { Formik } from 'formik';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 
-import useAuth from 'hooks/useAuth';
+// import useAuth from 'hooks/useAuth';
 import useScriptRef from 'hooks/useScriptRef';
 import { openSnackbar } from 'api/snackbar';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
@@ -39,7 +39,7 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 // ============================|| JWT - REGISTER ||============================ //
 
 const AuthRegister = () => {
-  const { register } = useAuth();
+  // const { register } = useAuth();
   const scriptedRef = useScriptRef();
   const navigate = useNavigate();
 
@@ -81,7 +81,7 @@ const AuthRegister = () => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            await register(values.email, values.password, values.firstname, values.lastname);
+            // await register(values.email, values.password, values.firstname, values.lastname);
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);

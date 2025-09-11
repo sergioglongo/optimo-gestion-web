@@ -9,7 +9,7 @@ import IconButton from 'components/@extended/IconButton';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 
 // types
-import { UserProfile } from 'types/user-profile';
+import { UserProfile } from 'types/auth';
 
 interface Props {
   loading: boolean;
@@ -43,15 +43,15 @@ const ChatHeader = ({ loading, user, openChatDrawer, handleDrawerOpen }: Props) 
         <>
           <UserAvatar
             user={{
-              online_status: user.online_status,
+              // online_status: 'Online',
               avatar: user.avatar,
-              name: user.name
+              usuario: user.usuario
             }}
           />
           <Stack>
-            <Typography variant="subtitle1">{user.name}</Typography>
+            <Typography variant="subtitle1">{user.usuario}</Typography>
             <Typography variant="caption" color="textSecondary">
-              Active {user.lastMessage} ago
+              Active ago
             </Typography>
           </Stack>
         </>

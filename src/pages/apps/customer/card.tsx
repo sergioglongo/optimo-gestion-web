@@ -24,7 +24,7 @@ import CustomerCard from 'sections/apps/customer/CustomerCard';
 import CustomerModal from 'sections/apps/customer/CustomerModal';
 
 import usePagination from 'hooks/usePagination';
-import { useGetCustomer } from 'api/customer';
+import { useGetCustomers } from 'api/customer';
 
 // types
 import { CustomerList } from 'types/customer';
@@ -80,13 +80,12 @@ function dataSort(data: CustomerList[], sortBy: string) {
 const CustomerCardPage = () => {
   const matchDownSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
-  const { customers: lists } = useGetCustomer();
+  const { data: lists, isLoading } = useGetCustomers();
 
   const [sortBy, setSortBy] = useState('Default');
   const [globalFilter, setGlobalFilter] = useState('');
   const [userCard, setUserCard] = useState<CustomerList[]>([]);
   const [page, setPage] = useState(1);
-  const [customerLoading, setCustomerLoading] = useState<boolean>(true);
   const [customerModal, setCustomerModal] = useState<boolean>(false);
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -95,7 +94,7 @@ const CustomerCardPage = () => {
 
   // search
   useEffect(() => {
-    setCustomerLoading(true);
+    //setCustomerLoading(true);
     if (lists && lists.length > 0) {
       const newData = lists.filter((value: any) => {
         if (globalFilter) {
@@ -105,7 +104,7 @@ const CustomerCardPage = () => {
         }
       });
       setUserCard(dataSort(newData, sortBy).reverse());
-      setCustomerLoading(false);
+      //setCustomerLoading(false);
     }
     // eslint-disable-next-line
   }, [globalFilter, lists, sortBy]);
@@ -168,7 +167,7 @@ const CustomerCardPage = () => {
         </Stack>
       </Box>
       <Grid container spacing={3}>
-        {!customerLoading && userCard.length > 0 ? (
+        {!isLoading && userCard.length > 0 ? (
           _DATA.currentData().map((user: CustomerList, index: number) => (
             <Slide key={index} direction="up" in={true} timeout={50}>
               <Grid item xs={12} sm={6} lg={4}>
@@ -177,7 +176,7 @@ const CustomerCardPage = () => {
             </Slide>
           ))
         ) : (
-          <EmptyUserCard title={customerLoading ? 'Loading...' : 'You have not created any customer yet.'} />
+          <EmptyUserCard title={isLoading ? 'Loading...' : 'You have not created any customer yet.'} />
         )}
       </Grid>
       <Stack spacing={2} sx={{ p: 2.5 }} alignItems="flex-end">
@@ -197,5 +196,5 @@ const CustomerCardPage = () => {
     </>
   );
 };
-
+  
 export default CustomerCardPage;

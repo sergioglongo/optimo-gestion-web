@@ -10,7 +10,8 @@ import DrawerContent from './DrawerContent';
 import MiniDrawerStyled from './MiniDrawerStyled';
 
 import { DRAWER_WIDTH } from 'config';
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // ==============================|| MAIN LAYOUT - DRAWER ||============================== //
 
@@ -20,8 +21,7 @@ interface Props {
 
 const MainDrawer = ({ window }: Props) => {
   const theme = useTheme();
-  const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
   const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
 
   // responsive drawer container

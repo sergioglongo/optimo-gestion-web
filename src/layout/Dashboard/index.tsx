@@ -10,13 +10,12 @@ import Drawer from './Drawer';
 import Header from './Header';
 import Footer from './Footer';
 import HorizontalBar from './Drawer/HorizontalBar';
-import Loader from 'components/Loader';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import AddCustomer from 'sections/apps/customer/AddCustomer';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 
 import useConfig from 'hooks/useConfig';
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen } from 'api/menu';
 
 // types
 import { MenuOrientation } from 'types/config';
@@ -25,7 +24,6 @@ import { MenuOrientation } from 'types/config';
 
 const DashboardLayout = () => {
   const theme = useTheme();
-  const { menuMasterLoading } = useGetMenuMaster();
   const matchDownXL = useMediaQuery(theme.breakpoints.down('xl'));
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -40,8 +38,6 @@ const DashboardLayout = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matchDownXL]);
-
-  if (menuMasterLoading) return <Loader />;
 
   return (
     <AuthGuard>

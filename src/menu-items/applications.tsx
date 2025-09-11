@@ -2,7 +2,8 @@
 import { FormattedMessage } from 'react-intl';
 
 // project-imports
-import { handlerCustomerDialog } from 'api/customer';
+import { dispatch } from 'store';
+import { openCustomerModal } from 'store/slices/customer';
 
 // assets
 import {
@@ -90,7 +91,7 @@ const applications: NavItemType = {
             {
               type: NavActionType.FUNCTION,
               label: 'Add Customer',
-              function: () => handlerCustomerDialog(true),
+              function: () => dispatch(openCustomerModal()),
               icon: icons.PlusOutlined
             }
           ]

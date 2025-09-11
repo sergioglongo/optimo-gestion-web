@@ -12,7 +12,7 @@ import { MenuFromAPI } from 'menu-items/dashboard';
 
 import useConfig from 'hooks/useConfig';
 import { HORIZONTAL_MAX_ITEM } from 'config';
-import { useGetMenu, useGetMenuMaster } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // types
 import { NavItemType } from 'types/menu';
@@ -23,9 +23,7 @@ import { MenuOrientation } from 'types/config';
 const Navigation = () => {
   const theme = useTheme();
   const { menuOrientation } = useConfig();
-  const { menuLoading } = useGetMenu();
-  const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
   const [selectedItems, setSelectedItems] = useState<string | undefined>('');
@@ -42,17 +40,11 @@ const Navigation = () => {
       return false;
     });
 
-    if (menuLoading) {
-      menuItem.items.splice(0, 0, dashboardMenu);
-      setMenuItems({ items: [...menuItem.items] });
-    } else if (!menuLoading && dashboardMenu?.id !== undefined && !isFound) {
+    if (dashboardMenu?.id !== undefined && !isFound) {
       menuItem.items.splice(0, 1, dashboardMenu);
-      setMenuItems({ items: [...menuItem.items] });
-    } else {
-      setMenuItems({ items: [...menuItem.items] });
     }
-    // eslint-disable-next-line
-  }, [menuLoading]);
+    setMenuItems({ items: [...menuItem.items] });
+  }, []);
 
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
 

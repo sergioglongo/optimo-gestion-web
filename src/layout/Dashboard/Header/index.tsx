@@ -11,7 +11,8 @@ import IconButton from 'components/@extended/IconButton';
 
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from 'config';
 import useConfig from 'hooks/useConfig';
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // assets
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
@@ -26,8 +27,7 @@ const Header = () => {
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
   const { menuOrientation } = useConfig();
 
-  const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
 
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
 

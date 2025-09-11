@@ -7,7 +7,8 @@ import { CardMedia, FormControlLabel, Grid, Radio, RadioGroup, Stack, Typography
 // project import
 import MainCard from 'components/MainCard';
 import useConfig from 'hooks/useConfig';
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // assets
 import defaultLayout from 'assets/images/customization/default.svg';
@@ -23,8 +24,7 @@ const ThemeLayout = () => {
   const theme = useTheme();
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
-  const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
   const { miniDrawer, themeDirection, onChangeDirection, onChangeMiniDrawer, menuOrientation } = useConfig();
 
   let initialTheme = 'default';

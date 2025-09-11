@@ -8,7 +8,8 @@ import { Box, Tab, Tabs } from '@mui/material';
 import MainCard from 'components/MainCard';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import { APP_DEFAULT_PATH } from 'config';
-import { handlerActiveItem, useGetMenuMaster } from 'api/menu';
+import { handlerActiveItem } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // assets
 import { ContainerOutlined, FileTextOutlined, LockOutlined, SettingOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
@@ -17,7 +18,7 @@ import { ContainerOutlined, FileTextOutlined, LockOutlined, SettingOutlined, Tea
 
 const AccountProfile = () => {
   const { pathname } = useLocation();
-  const { menuMaster } = useGetMenuMaster();
+  const menu = useAppSelector((state) => state.menu);
 
   let selectedTab = 0;
   let breadcrumbTitle = '';
@@ -71,7 +72,7 @@ const AccountProfile = () => {
   }
 
   useEffect(() => {
-    if (menuMaster.openedItem !== 'account-profile') handlerActiveItem('account-profile');
+    if (menu.openedItem !== 'account-profile') handlerActiveItem('account-profile');
     if (pathname === '/apps/profiles/account/basic') {
       setValue(0);
     }

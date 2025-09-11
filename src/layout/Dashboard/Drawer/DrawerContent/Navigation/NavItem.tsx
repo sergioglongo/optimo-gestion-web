@@ -10,7 +10,8 @@ import Dot from 'components/@extended/Dot';
 import IconButton from 'components/@extended/IconButton';
 
 import useConfig from 'hooks/useConfig';
-import { handlerHorizontalActiveItem, handlerActiveItem, handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerHorizontalActiveItem, handlerActiveItem, handlerDrawerOpen } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // types
 import { MenuOrientation, ThemeMode } from 'types/config';
@@ -27,9 +28,7 @@ interface Props {
 const NavItem = ({ item, level, isParents = false }: Props) => {
   const theme = useTheme();
 
-  const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
-  const openItem = menuMaster.openedItem;
+  const { isDashboardDrawerOpened: drawerOpen, openedItem: openItem } = useAppSelector((state) => state.menu);
 
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 

@@ -8,7 +8,9 @@ import FormCustomerAdd from './FormCustomerAdd';
 import MainCard from 'components/MainCard';
 import SimpleBar from 'components/third-party/SimpleBar';
 import CircularWithPath from 'components/@extended/progress/CircularWithPath';
-import { handlerCustomerDialog, useGetCustomer, useGetCustomerMaster } from 'api/customer';
+import { useGetCustomers } from 'api/customer';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { closeCustomerModal } from 'store/slices/customer';
 
 // types
 import { CustomerList } from 'types/customer';
@@ -16,36 +18,35 @@ import { CustomerList } from 'types/customer';
 // ==============================|| CUSTOMER ADD / EDIT ||============================== //
 
 const AddCustomer = () => {
-  const { customerMasterLoading, customerMaster } = useGetCustomerMaster();
-  const { customersLoading: loading, customers } = useGetCustomer();
+  const dispatch = useAppDispatch();
+  const { open, customerId } = useAppSelector((state) => state.customer);
+  // Solo ejecuta la consulta si el modal está abierto y es para editar un cliente
+  const { data: customers, isLoading } = useGetCustomers({ enabled: open && !!customerId });
 
   const [list, setList] = useState<CustomerList | null>(null);
 
-  const isModal = customerMaster?.modal;
-
   useEffect(() => {
-    if (customerMaster?.modal && typeof customerMaster.modal === 'number') {
-      const newList = customers.filter((info) => info.id === isModal && info)[0];
-      setList(newList);
+    if (customerId && customers) {
+      const selectedCustomer = customers.find((customer) => customer.id === customerId);
+      setList(selectedCustomer || null);
     } else {
       setList(null);
     }
-    // eslint-disable-next-line
-  }, [customerMaster]);
+  }, [customerId, customers]);
 
-  const closeModal = () => handlerCustomerDialog(false);
+  const closeModal = () => dispatch(closeCustomerModal());
 
   // eslint-disable-next-line
   const customerForm = useMemo(
-    () => !loading && !customerMasterLoading && <FormCustomerAdd customer={list} closeModal={closeModal} />,
-    [list, loading, customerMasterLoading]
+    () => !isLoading && <FormCustomerAdd customer={list} closeModal={closeModal} />,
+    [list, isLoading, closeModal]
   );
 
   return (
     <>
-      {isModal && (
+      {open && (
         <Modal
-          open={true}
+          open={open}
           onClose={closeModal}
           aria-labelledby="modal-customer-add-label"
           aria-describedby="modal-customer-add-description"
@@ -69,7 +70,7 @@ const AddCustomer = () => {
                 }
               }}
             >
-              {loading && customerMasterLoading ? (
+              {isLoading ? (
                 <Box sx={{ p: 5 }}>
                   <Stack direction="row" justifyContent="center">
                     <CircularWithPath />

@@ -6,7 +6,8 @@ import { useTheme } from '@mui/material/styles';
 import { useMediaQuery, Avatar, Chip, ListItemButton, ListItemText, Typography } from '@mui/material';
 
 // project import
-import { handlerActiveComponent, handlerComponentDrawer, useGetMenuMaster } from 'api/menu';
+import { handlerActiveComponent, handlerComponentDrawer } from 'api/menu';
+import { useAppSelector } from 'store/hooks';
 
 // types
 import { LinkTarget, NavItemType } from 'types/menu';
@@ -20,8 +21,7 @@ interface Props {
 
 const NavItem = ({ item }: Props) => {
   const theme = useTheme();
-  const { menuMaster } = useGetMenuMaster();
-  const openComponent = menuMaster.openedComponent;
+  const { openedComponent: openComponent } = useAppSelector((state) => state.menu);
 
   const matchesMD = useMediaQuery(theme.breakpoints.down('md'));
 

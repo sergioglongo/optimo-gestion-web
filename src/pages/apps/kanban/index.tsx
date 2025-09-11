@@ -5,9 +5,10 @@ import { useLocation, Link, Outlet } from 'react-router-dom';
 import { Box, Grid, Tab, Tabs } from '@mui/material';
 
 // project-import
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import { APP_DEFAULT_PATH } from 'config';
-import { handlerActiveItem, useGetMenuMaster } from 'api/menu';
+import { activeItem } from 'store/slices/menu';
 
 function a11yProps(index: number) {
   return {
@@ -20,7 +21,8 @@ function a11yProps(index: number) {
 
 export default function KanbanPage() {
   const { pathname } = useLocation();
-  const { menuMaster } = useGetMenuMaster();
+  const menu = useAppSelector((state) => state.menu);
+  const dispatch = useAppDispatch();
 
   let selectedTab = 0;
   let breadcrumbTitle = '';
@@ -54,7 +56,7 @@ export default function KanbanPage() {
   }
 
   useEffect(() => {
-    if (menuMaster.openedItem !== 'kanban') handlerActiveItem('kanban');
+    if (menu.openedItem !== 'kanban') dispatch(activeItem({ openedItem: 'kanban' }));
     if (pathname === '/apps/kanban/board') {
       setValue(0);
     }
