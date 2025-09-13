@@ -21,20 +21,30 @@ const auth = createSlice({
     login(state, action) {
       const { user, token } = action.payload;
       state.isLoggedIn = true;
-      state.isInitialized = true;
       state.user = user;
       state.token = token;
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', token);
     },
 
     logout(state) {
       state.isLoggedIn = false;
-      state.isInitialized = true;
       state.user = null;
       state.token = null;
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+    },
+
+    initialize(state, action) {
+      const { isLoggedIn, user, token } = action.payload;
+      state.isLoggedIn = isLoggedIn;
+      state.isInitialized = true;
+      state.user = user;
+      state.token = token;
     }
   }
 });
 
 export default auth.reducer;
 
-export const { login, logout } = auth.actions;
+export const { login, logout, initialize } = auth.actions;

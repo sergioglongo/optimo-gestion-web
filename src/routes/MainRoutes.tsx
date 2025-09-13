@@ -119,7 +119,7 @@ const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')))
 const PricingPage = Loadable(lazy(() => import('pages/extra-pages/pricing')));
 
 // render - consorcios
-const ConsorciosPage = Loadable(lazy(() => import('pages/consorcios/consorcios')));
+const ConsorciosPage = Loadable(lazy(() => import('pages/consorcios/consorciosAdmin')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -509,19 +509,14 @@ const MainRoutes = {
           element: <PricingPage />
         },
         {
-          path: 'consorcios',
-          children: [
-            {
-              path: 'consorcios-list',
-              element: <ConsorciosPage />
-            }
-          ]
-        },
-        {
           path: 'parameters',
           children: [
             {
               path: 'cuentas',
+              element: <ConsorciosPage />
+            },
+            {
+              path: 'consorcios',
               element: <ConsorciosPage />
             }
           ]

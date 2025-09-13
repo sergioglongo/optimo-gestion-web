@@ -54,7 +54,7 @@ const parameters: NavItemType = {
     // },
     {
       id: 'cuentas',
-      title: <FormattedMessage id="cuentas" />,
+      title: <FormattedMessage id="Cuentas" />,
       type: 'item',
       icon: DollarOutlined,
       url: '/parameters/cuentas',
@@ -62,23 +62,16 @@ const parameters: NavItemType = {
     },
     {
       id: 'consorcios',
-      title: <FormattedMessage id="consorcios" />,
-      type: 'collapse',
+      title: <FormattedMessage id="Consorcios" />,
+      type: 'item',
       icon: HddOutlined,
-      children: [
-        {
-          id: 'consorcios-list',
-          title: <FormattedMessage id="Consorcios" />,
-          type: 'item',
-          url: '/consorcios/consorcios-list'
-        }
-        // {
-        //   id: 'customer-card',
-        //   title: <FormattedMessage id="cards" />,
-        //   type: 'item',
-        //   url: '/apps/customer/customer-card'
-        // }
-      ]
+      url: 'parameters/consorcios'
+      // {
+      //   id: 'customer-card',
+      //   title: <FormattedMessage id="cards" />,
+      //   type: 'item',
+      //   url: '/apps/customer/customer-card'
+      // }
     }
     // {
     //   id: 'invoice',

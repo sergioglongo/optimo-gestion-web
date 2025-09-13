@@ -2,11 +2,10 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import jwtDecode from 'jwt-decode';
 
-import { login, logout } from 'store/slices/auth';
+import { initialize } from 'store/slices/auth';
 import { RootState } from 'store';
 import Loader from 'components/Loader';
 import { KeyedObject } from 'types/root';
-import { UserProfile } from 'types/auth';
 
 const verifyToken = (serviceToken: string) => {
   if (!serviceToken) {
@@ -16,14 +15,6 @@ const verifyToken = (serviceToken: string) => {
   return decoded.exp > Date.now() / 1000;
 };
 
-const setSession = (serviceToken?: string | null) => {
-  if (serviceToken) {
-    localStorage.setItem('serviceToken', serviceToken);
-  } else {
-    localStorage.removeItem('serviceToken');
-  }
-};
-
 const AuthInitializer = ({ children }: { children: React.ReactElement }) => {
   const dispatch = useDispatch();
   const { isInitialized } = useSelector((state: RootState) => state.auth);
@@ -31,17 +22,22 @@ const AuthInitializer = ({ children }: { children: React.ReactElement }) => {
   useEffect(() => {
     const init = async () => {
       try {
-        const serviceToken = window.localStorage.getItem('serviceToken');
-        if (serviceToken && verifyToken(serviceToken)) {
-          setSession(serviceToken);
-          const decodedUser: UserProfile = jwtDecode(serviceToken);
-          dispatch(login({ user: decodedUser, token: serviceToken }));
+        const serviceToken = window.localStorage.getItem('token');
+        const storedUser = window.localStorage.getItem('user');
+        let user = null;
+
+        if (storedUser) {
+          user = JSON.parse(storedUser);
+        }
+
+        if (serviceToken && verifyToken(serviceToken) && user) {
+          dispatch(initialize({ isLoggedIn: true, user: user, token: serviceToken }));
         } else {
-          dispatch(logout());
+          dispatch(initialize({ isLoggedIn: false, user: null, token: null }));
         }
       } catch (err) {
         console.error(err);
-        dispatch(logout());
+        dispatch(initialize({ isLoggedIn: false, user: null, token: null }));
       }
     };
 

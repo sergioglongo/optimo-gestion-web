@@ -43,4 +43,5 @@ export interface Consorcio {
   identificador1?: string | null;
   identificador2?: string | null;
   identificador3?: string | null;
+  imagen: string | null;
 }
