@@ -25,8 +25,8 @@ const consorcioSlice = createSlice({
       }
     },
     selectConsorcio(state, action: PayloadAction<string | number>) {
-      const consorcioId = Number(action.payload); // Convert to number
-      state.selectedConsorcio = state.consorciosList.find((consorcio) => consorcio.id === consorcioId) || null;
+      const consorcioId = String(action.payload);
+      state.selectedConsorcio = state.consorciosList.find((consorcio) => String(consorcio.id) === consorcioId) || null;
     },
     clearConsorcios(state) {
       state.consorciosList = [];

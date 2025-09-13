@@ -15,7 +15,8 @@ import AddCustomer from 'sections/apps/customer/AddCustomer';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 
 import useConfig from 'hooks/useConfig';
-import { handlerDrawerOpen } from 'api/menu';
+import { useAppDispatch } from 'store/hooks';
+import { openDashboardDrawer } from 'store/slices/menu';
 
 // types
 import { MenuOrientation } from 'types/config';
@@ -24,6 +25,7 @@ import { MenuOrientation } from 'types/config';
 
 const DashboardLayout = () => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const matchDownXL = useMediaQuery(theme.breakpoints.down('xl'));
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -34,10 +36,10 @@ const DashboardLayout = () => {
   // set media wise responsive drawer
   useEffect(() => {
     if (!miniDrawer) {
-      handlerDrawerOpen(!matchDownXL);
+      dispatch(openDashboardDrawer({ isDashboardDrawerOpened: !matchDownXL }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchDownXL]);
+  }, [matchDownXL, dispatch]);
 
   return (
     <AuthGuard>

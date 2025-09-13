@@ -5,7 +5,7 @@ import { Theme } from '@mui/material/styles';
 import { Box, useMediaQuery } from '@mui/material';
 
 // project import
-import Search from './Search';
+// import Search from './Search';
 // import Message from './Message';
 import Profile from './Profile';
 // import Localization from './Localization';
@@ -20,6 +20,7 @@ import DrawerHeader from 'layout/Dashboard/Drawer/DrawerHeader';
 
 // types
 import { MenuOrientation } from 'types/config';
+import ConsorciosSelect from './ConsorciosSelect';
 
 // ==============================|| HEADER - CONTENT ||============================== //
 
@@ -36,7 +37,7 @@ const HeaderContent = () => {
   return (
     <>
       {menuOrientation === MenuOrientation.HORIZONTAL && !downLG && <DrawerHeader open={true} />}
-      {!downLG && <Search />}
+      {!downLG && <ConsorciosSelect />}
       {/* {!downLG && megaMenu} */}
       {/* {!downLG && localization} */}
       {downLG && <Box sx={{ width: '100%', ml: 1 }} />}

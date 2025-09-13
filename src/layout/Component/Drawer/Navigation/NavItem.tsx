@@ -6,8 +6,8 @@ import { useTheme } from '@mui/material/styles';
 import { useMediaQuery, Avatar, Chip, ListItemButton, ListItemText, Typography } from '@mui/material';
 
 // project import
-import { handlerActiveComponent, handlerComponentDrawer } from 'api/menu';
-import { useAppSelector } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { activeComponent, openComponentDrawer } from 'store/slices/menu';
 
 // types
 import { LinkTarget, NavItemType } from 'types/menu';
@@ -21,6 +21,7 @@ interface Props {
 
 const NavItem = ({ item }: Props) => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const { openedComponent: openComponent } = useAppSelector((state) => state.menu);
 
   const matchesMD = useMediaQuery(theme.breakpoints.down('md'));
@@ -31,8 +32,8 @@ const NavItem = ({ item }: Props) => {
   }
 
   const itemHandler = (id: string) => {
-    handlerActiveComponent(id);
-    matchesMD && handlerComponentDrawer(false);
+    dispatch(activeComponent({ openedComponent: id }));
+    matchesMD && dispatch(openComponentDrawer({ isComponentDrawerOpened: false }));
   };
 
   // active menu item on page load
@@ -42,10 +43,10 @@ const NavItem = ({ item }: Props) => {
       .split('/')
       .findIndex((id) => id === item.id);
     if (currentIndex > -1) {
-      handlerActiveComponent(item.id!);
+      dispatch(activeComponent({ openedComponent: item.id! }));
     }
     // eslint-disable-next-line
-  }, []);
+  }, [dispatch, item.id]);
 
   const textColor = theme.palette.mode === ThemeMode.DARK ? 'grey.400' : 'text.primary';
   const iconSelectedColor = theme.palette.mode === ThemeMode.DARK ? 'text.primary' : 'primary.main';

@@ -32,10 +32,10 @@ import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import LoadingButton from 'components/@extended/LoadingButton';
 
 import { APP_DEFAULT_PATH } from 'config';
-import { handlerActiveItem } from 'api/menu';
 import { useGetInvoice, useGetInvoiceMaster } from 'api/invoice';
 import ExportPDFView from 'sections/apps/invoice/export-pdf';
-import { useAppSelector } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { activeItem } from 'store/slices/menu';
 
 // types
 import { InvoiceList } from 'types/invoice';
@@ -60,6 +60,7 @@ const Details = () => {
   const theme = useTheme();
   const { id } = useParams();
   const navigation = useNavigate();
+  const dispatch = useAppDispatch();
 
   const menu = useAppSelector((state) => state.menu);
   const { invoiceLoading, invoice } = useGetInvoice();
@@ -67,7 +68,9 @@ const Details = () => {
   const [list, seList] = useState<InvoiceList | null>(null);
 
   useEffect(() => {
-    if (menu.openedItem !== 'invoice-details') handlerActiveItem('invoice-details');
+    if (menu.openedItem !== 'invoice-details') {
+      dispatch(activeItem({ openedItem: 'invoice-details' }));
+    }
     if (id && !invoiceLoading) {
       seList(invoice.filter((item: InvoiceList) => item.id.toString() === id)[0] || invoice[0]);
     }

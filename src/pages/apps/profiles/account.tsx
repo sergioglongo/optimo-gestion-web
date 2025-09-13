@@ -8,7 +8,8 @@ import { Box, Tab, Tabs } from '@mui/material';
 import MainCard from 'components/MainCard';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import { APP_DEFAULT_PATH } from 'config';
-import { handlerActiveItem } from 'api/menu';
+import { useDispatch } from 'react-redux';
+import { activeItem } from 'store/slices/menu';
 import { useAppSelector } from 'store/hooks';
 
 // assets
@@ -19,6 +20,7 @@ import { ContainerOutlined, FileTextOutlined, LockOutlined, SettingOutlined, Tea
 const AccountProfile = () => {
   const { pathname } = useLocation();
   const menu = useAppSelector((state) => state.menu);
+  const dispatch = useDispatch();
 
   let selectedTab = 0;
   let breadcrumbTitle = '';
@@ -72,7 +74,7 @@ const AccountProfile = () => {
   }
 
   useEffect(() => {
-    if (menu.openedItem !== 'account-profile') handlerActiveItem('account-profile');
+    if (menu.openedItem !== 'account-profile') dispatch(activeItem({ openedItem: 'account-profile' }));
     if (pathname === '/apps/profiles/account/basic') {
       setValue(0);
     }

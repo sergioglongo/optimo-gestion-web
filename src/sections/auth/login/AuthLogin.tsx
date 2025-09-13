@@ -166,7 +166,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
                     }
                     label={<Typography variant="h6">Mantenerme conectado</Typography>}
                   />
-                  <Link variant="h6" component={RouterLink} to={isDemo ? '/auth/forgot-password' : '/forgot-password'} >
+                  <Link variant="h6" component={RouterLink} to={isDemo ? '/auth/forgot-password' : '/forgot-password'}>
                     restaurar contraseña?
                   </Link>
                 </Stack>
