@@ -12,10 +12,7 @@ import Snackbar from 'components/@extended/Snackbar';
 import Notistack from 'components/third-party/Notistack';
 
 // auth-provider
-import { AuthProvider } from 'contexts/AuthContext';
-// import { FirebaseProvider as AuthProvider } from 'contexts/FirebaseContext';
-// import { AWSCognitoProvider as AuthProvider } from 'contexts/AWSCognitoContext';
-// import { Auth0Provider as AuthProvider } from 'contexts/Auth0Context';
+import AuthInitializer from 'utils/route-guard/AuthInitializer';
 
 // Crea una instancia del cliente de React Query
 const queryClient = new QueryClient();
@@ -29,14 +26,14 @@ const App = () => {
         <RTLLayout>
           <Locales>
             <ScrollTop>
-              <AuthProvider>
+              <AuthInitializer>
                 <>
                   <Notistack>
                     <RouterProvider router={router} />
                     <Snackbar />
                   </Notistack>
                 </>
-              </AuthProvider>
+              </AuthInitializer>
             </ScrollTop>
           </Locales>
         </RTLLayout>

@@ -7,6 +7,7 @@ import DashboardLayout from 'layout/Dashboard';
 import PagesLayout from 'layout/Pages';
 
 import { loader as productsLoader, productLoader } from 'api/products';
+import HomePage from 'pages/home/home';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
@@ -117,6 +118,9 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 const PricingPage = Loadable(lazy(() => import('pages/extra-pages/pricing')));
 
+// render - consorcios
+const ConsorciosPage = Loadable(lazy(() => import('pages/consorcios/consorcios')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -138,6 +142,10 @@ const MainRoutes = {
               element: <DashboardAnalytics />
             }
           ]
+        },
+        {
+          path: 'home',
+          element: <HomePage />
         },
         {
           path: 'widget',
@@ -499,6 +507,24 @@ const MainRoutes = {
         {
           path: 'pricing',
           element: <PricingPage />
+        },
+        {
+          path: 'consorcios',
+          children: [
+            {
+              path: 'consorcios-list',
+              element: <ConsorciosPage />
+            }
+          ]
+        },
+        {
+          path: 'parameters',
+          children: [
+            {
+              path: 'cuentas',
+              element: <ConsorciosPage />
+            }
+          ]
         }
       ]
     },

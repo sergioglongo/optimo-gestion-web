@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 
 // material-ui
 import { Box, Modal, Stack } from '@mui/material';
@@ -34,9 +34,8 @@ const AddCustomer = () => {
     }
   }, [customerId, customers]);
 
-  const closeModal = () => dispatch(closeCustomerModal());
+  const closeModal = useCallback(() => dispatch(closeCustomerModal()), [dispatch]);
 
-  // eslint-disable-next-line
   const customerForm = useMemo(
     () => !isLoading && <FormCustomerAdd customer={list} closeModal={closeModal} />,
     [list, isLoading, closeModal]

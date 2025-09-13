@@ -1,51 +1,51 @@
-import { useRef, useState, ReactNode, SyntheticEvent } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Box, ButtonBase, CardContent, ClickAwayListener, Grid, Paper, Popper, Stack, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import { Box, ButtonBase, CardContent, ClickAwayListener, Grid, Paper, Popper, Stack, Typography } from '@mui/material';
 
 // project import
 import ProfileTab from './ProfileTab';
-import SettingTab from './SettingTab';
+// import SettingTab from './SettingTab';
 import Avatar from 'components/@extended/Avatar';
 import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
-import IconButton from 'components/@extended/IconButton';
+// import IconButton from 'components/@extended/IconButton';
 import useAuth from 'hooks/useAuth';
 
 // assets
 import avatar1 from 'assets/images/users/avatar-1.png';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+// import { LogoutOutlined } from '@ant-design/icons';
 
 // types
 import { ThemeMode } from 'types/config';
 
 // types
-interface TabPanelProps {
-  children?: ReactNode;
-  dir?: string;
-  index: number;
-  value: number;
-}
+// interface TabPanelProps {
+//   children?: ReactNode;
+//   dir?: string;
+//   index: number;
+//   value: number;
+// }
 
 // tab panel wrapper
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+// function TabPanel(props: TabPanelProps) {
+//   const { children, value, index, ...other } = props;
 
-  return (
-    <div role="tabpanel" hidden={value !== index} id={`profile-tabpanel-${index}`} aria-labelledby={`profile-tab-${index}`} {...other}>
-      {value === index && children}
-    </div>
-  );
-}
+//   return (
+//     <div role="tabpanel" hidden={value !== index} id={`profile-tabpanel-${index}`} aria-labelledby={`profile-tab-${index}`} {...other}>
+//       {value === index && children}
+//     </div>
+//   );
+// }
 
-function a11yProps(index: number) {
-  return {
-    id: `profile-tab-${index}`,
-    'aria-controls': `profile-tabpanel-${index}`
-  };
-}
+// function a11yProps(index: number) {
+//   return {
+//     id: `profile-tab-${index}`,
+//     'aria-controls': `profile-tabpanel-${index}`
+//   };
+// }
 
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
@@ -80,11 +80,11 @@ const Profile = () => {
     setOpen(false);
   };
 
-  const [value, setValue] = useState(0);
+  // const [value, setValue] = useState(0);
 
-  const handleChange = (event: SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
+  // const handleChange = (event: SyntheticEvent, newValue: number) => {
+  //   setValue(newValue);
+  // };
 
   const iconBackColorOpen = theme.palette.mode === ThemeMode.DARK ? 'background.default' : 'grey.100';
 
@@ -108,10 +108,10 @@ const Profile = () => {
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={1.25} alignItems="center" sx={{ p: 0.5 }}>
-          <Avatar alt="profile user" src={avatar1} size="sm" />
           <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
             {user?.usuario}
           </Typography>
+          <Avatar alt="profile user" src={avatar1} size="sm" />
         </Stack>
       </ButtonBase>
       <Popper
@@ -137,11 +137,11 @@ const Profile = () => {
             <Paper
               sx={{
                 boxShadow: theme.customShadows.z1,
-                width: 290,
-                minWidth: 240,
-                maxWidth: 290,
+                width: 190,
+                minWidth: 140,
+                maxWidth: 190,
                 [theme.breakpoints.down('md')]: {
-                  maxWidth: 250
+                  maxWidth: 150
                 }
               }}
             >
@@ -160,17 +160,18 @@ const Profile = () => {
                           </Stack>
                         </Stack>
                       </Grid>
-                      <Grid item>
+                      {/* <Grid item>
                         <Tooltip title="Logout">
                           <IconButton size="large" sx={{ color: 'text.primary' }} onClick={handleLogout}>
                             <LogoutOutlined />
                           </IconButton>
                         </Tooltip>
-                      </Grid>
+                      </Grid> */}
                     </Grid>
                   </CardContent>
+                  <ProfileTab handleLogout={handleLogout} />
 
-                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs variant="fullWidth" value={value} onChange={handleChange} aria-label="profile tabs">
                       <Tab
                         sx={{
@@ -203,7 +204,7 @@ const Profile = () => {
                   </TabPanel>
                   <TabPanel value={value} index={1} dir={theme.direction}>
                     <SettingTab />
-                  </TabPanel>
+                  </TabPanel> */}
                 </MainCard>
               </ClickAwayListener>
             </Paper>

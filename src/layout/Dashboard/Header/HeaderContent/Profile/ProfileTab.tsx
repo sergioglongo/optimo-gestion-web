@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
 // material-ui
-import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Divider, List, ListItemButton, ListItemIcon, ListItemText, useTheme } from '@mui/material';
 
 // assets
-import { EditOutlined, ProfileOutlined, LogoutOutlined, UserOutlined, WalletOutlined } from '@ant-design/icons';
+import { EditOutlined, LogoutOutlined, UserOutlined, WalletOutlined } from '@ant-design/icons';
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
@@ -13,6 +13,7 @@ interface Props {
 }
 
 const ProfileTab = ({ handleLogout }: Props) => {
+  const theme = useTheme();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const handleListItemClick = (event: React.MouseEvent<HTMLDivElement>, index: number) => {
     setSelectedIndex(index);
@@ -33,19 +34,28 @@ const ProfileTab = ({ handleLogout }: Props) => {
         <ListItemText primary="View Profile" />
       </ListItemButton>
 
-      <ListItemButton selected={selectedIndex === 3} onClick={(event: React.MouseEvent<HTMLDivElement>) => handleListItemClick(event, 3)}>
+      {/* <ListItemButton selected={selectedIndex === 3} onClick={(event: React.MouseEvent<HTMLDivElement>) => handleListItemClick(event, 3)}>
         <ListItemIcon>
           <ProfileOutlined />
         </ListItemIcon>
         <ListItemText primary="Social Profile" />
-      </ListItemButton>
+      </ListItemButton> */}
       <ListItemButton selected={selectedIndex === 4} onClick={(event: React.MouseEvent<HTMLDivElement>) => handleListItemClick(event, 4)}>
         <ListItemIcon>
           <WalletOutlined />
         </ListItemIcon>
         <ListItemText primary="Billing" />
       </ListItemButton>
-      <ListItemButton selected={selectedIndex === 2} onClick={handleLogout}>
+      <Divider sx={{ my: 0.25 }} />
+      <ListItemButton
+        sx={{
+          backgroundColor: theme.palette.grey[200],
+          color: 'text.primary',
+          '&:hover': { backgroundColor: theme.palette.grey[300] }
+        }}
+        selected={selectedIndex === 2}
+        onClick={handleLogout}
+      >
         <ListItemIcon>
           <LogoutOutlined />
         </ListItemIcon>

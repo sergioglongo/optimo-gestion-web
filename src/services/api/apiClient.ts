@@ -1,4 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from 'axios';
+import { store } from 'store';
 
 const baseURL = process.env.REACT_APP_API_URL;
 
@@ -15,7 +16,7 @@ export const apiClient = axios.create({
   }
 });
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem('serviceToken');
+  const token = store.getState().auth.token;
   if (token) {
     // Asegúrate de que config.headers exista
     if (config.headers) {

@@ -5,16 +5,16 @@ import { Link, Stack, Typography } from '@mui/material';
 
 const Footer = () => (
   <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: '24px 16px 0px', mt: 'auto' }}>
-    <Typography variant="caption">&copy; All rights reserved</Typography>
+    <Typography variant="caption">&copy; Todos los derechos reservados 2025, Optimo Gestión.</Typography>
     <Stack spacing={1.5} direction="row" justifyContent="space-between" alignItems="center">
       <Link component={RouterLink} to="#" target="_blank" variant="caption" color="textPrimary">
-        About us
+        Sobre Optimo Gestion
       </Link>
       <Link component={RouterLink} to="#" target="_blank" variant="caption" color="textPrimary">
-        Privacy
+        Politicas
       </Link>
       <Link component={RouterLink} to="#" target="_blank" variant="caption" color="textPrimary">
-        Terms
+        Términos
       </Link>
     </Stack>
   </Stack>
