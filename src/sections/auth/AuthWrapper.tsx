@@ -5,11 +5,12 @@ import { Box, Grid } from '@mui/material';
 
 // project import
 import AuthFooter from 'components/cards/AuthFooter';
-import Logo from 'components/logo';
+// import Logo from 'components/logo';
 import AuthCard from './AuthCard';
+import LogoOptimoGestionTextoTrans from 'assets/images/logos/Logo Optimo Gestion texto trans.png';
 
 // assets
-import AuthBackground from 'assets/images/auth/AuthBackground';
+// import AuthBackground from 'assets/images/auth/AuthBackground';
 
 interface Props {
   children: ReactNode;
@@ -19,7 +20,7 @@ interface Props {
 
 const AuthWrapper = ({ children }: Props) => (
   <Box sx={{ minHeight: '100vh' }}>
-    <AuthBackground />
+    {/* <AuthBackground /> */}
     <Grid
       container
       direction="column"
@@ -28,19 +29,12 @@ const AuthWrapper = ({ children }: Props) => (
         minHeight: '100vh'
       }}
     >
-      <Grid item xs={12} sx={{ ml: 3, mt: 3 }}>
-        <Logo />
+      <Grid item xs={12} sx={{ width: '100%', textAlign: 'center' }}>
+        <img src={LogoOptimoGestionTextoTrans} alt="Logo" style={{ maxWidth: '350px', paddingTop: 20 }} />
       </Grid>
       <Grid item xs={12}>
-        <Grid
-          item
-          xs={12}
-          container
-          justifyContent="center"
-          alignItems="center"
-          sx={{ minHeight: { xs: 'calc(100vh - 210px)', sm: 'calc(100vh - 134px)', md: 'calc(100vh - 112px)' } }}
-        >
-          <Grid item>
+        <Grid item xs={12} container justifyContent="center" alignItems="center" sx={{ minHeight: { xs: 'calc(100vh - 210px)' } }}>
+          <Grid item sx={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)', marginX: 2 }}>
             <AuthCard>{children}</AuthCard>
           </Grid>
         </Grid>

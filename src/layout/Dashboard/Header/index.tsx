@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { openDashboardDrawer } from 'store/slices/menu';
 
 // assets
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { VerticalLeftOutlined, VerticalRightOutlined } from '@ant-design/icons';
 
 // types
 import { MenuOrientation, ThemeMode } from 'types/config';
@@ -47,9 +47,9 @@ const Header = () => {
           edge="start"
           color="secondary"
           variant="light"
-          sx={{ color: 'text.primary', bgcolor: drawerOpen ? 'transparent' : iconBackColor, ml: { xs: 0, lg: -2 } }}
+          sx={{ color: 'text.primary', bgcolor: drawerOpen ? 'transparent' : iconBackColor, ml: { xs: 0, lg: -3 } }}
         >
-          {!drawerOpen ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          {!drawerOpen ? <VerticalLeftOutlined style={{ fontSize: '28px' }} /> : <VerticalRightOutlined style={{ fontSize: '28px' }} />}
         </IconButton>
       ) : null}
       {headerContent}

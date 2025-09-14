@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles';
 
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
+import { useIntl } from 'react-intl'; // Import useIntl
 
 // project import
 import ConsorcioList from 'sections/parameters/consorcios/ConsorciosList';
@@ -31,6 +32,7 @@ import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined, HomeOutlined }
 const ConsorciosAdmin = () => {
   const theme = useTheme();
   const { user, token } = useAuth();
+  const intl = useIntl(); // Initialize useIntl
 
   const { data: consorciosData, isLoading } = useGetConsorcios(user?.id || 0, { enabled: !!user?.id && !!token });
 
@@ -66,6 +68,15 @@ const ConsorciosAdmin = () => {
             }}
           />
         )
+      },
+      {
+        header: 'ID',
+        accessorKey: 'id',
+        enableColumnFilter: false,
+        enableSorting: true,
+        meta: {
+          className: 'd-none' // Hide the column visually
+        }
       },
       {
         header: 'Nombre',
@@ -104,7 +115,7 @@ const ConsorciosAdmin = () => {
         )
       },
       {
-        header: 'Actions', // <--- Cambia esta línea
+        header: intl.formatMessage({ id: 'table.actions' }), // Translated 'Actions'
         meta: {
           className: 'cell-center'
         },
@@ -153,7 +164,7 @@ const ConsorciosAdmin = () => {
       }
     ],
     // eslint-disable-next-line
-    [theme]
+    [theme, intl] // Add intl to dependency array
   );
 
   if (isLoading) return <EmptyReactTable />;

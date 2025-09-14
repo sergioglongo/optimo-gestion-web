@@ -10,13 +10,13 @@ export type CondicionFiscal = 'consumidor final' | 'responsable inscripto' | 'mo
  * Tipos de enumeración para el tipo de consorcio.
  * Basado en `public.enum_consorcios_tipo`.
  */
-export type TipoConsorcio = 'edificio' | 'barrio privado' | 'centro comercial';
+export type TipoConsorcio = 'edificio' | 'barrio' | 'country' | 'complejo';
 
 /**
  * Tipos de enumeración para el tipo de interés.
  * Basado en `public.enum_consorcios_tipo_interes`.
  */
-export type TipoInteres = 'compuesto' | 'simple';
+export type TipoInteres = 'compuesto' | 'acumulado';
 
 /**
  * Tipos de enumeración para la modalidad de pago.

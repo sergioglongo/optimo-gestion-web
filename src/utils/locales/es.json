@@ -144,5 +144,8 @@
   "user-profile": "User Profile",
   "utils": "Utils",
   "widgets": "Widgets",
-  "more-items": "Mas elementos"
+  "more-items": "Mas elementos",
+  "table.sortBy": "Ordenar por",
+  "table.selectColumn": "Seleccionar columna",
+  "table.actions": "Acciones"
 }

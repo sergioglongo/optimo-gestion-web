@@ -41,6 +41,7 @@
   "create": "Create",
   "custom": "Custom",
   "cuentas": "accounts",
+  "Cuentas": "Accounts",
   "customer": "Customer",
   "dashboard": "Dashboard",
   "data": "Project A",
@@ -143,5 +144,8 @@
   "user-profile": "User Profile",
   "utils": "Utils",
   "widgets": "Widgets",
-  "more-items": "More Items"
+  "more-items": "More Items",
+  "table.sortBy": "Sort By",
+  "table.selectColumn": "Select Column",
+  "table.actions": "Actions"
 }

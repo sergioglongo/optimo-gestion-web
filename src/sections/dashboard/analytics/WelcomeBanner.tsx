@@ -6,8 +6,8 @@ import { useTheme } from '@mui/material/styles';
 import MainCard from 'components/MainCard';
 
 //asset
-import CondoImage from 'assets/images/consorcio/Consorcio.png';
-import AIImage from 'assets/images/consorcio/AI.png';
+import CondoImage from 'assets/images/logos/Logo Optimo Gestion edif trans.png';
+// import AIImage from 'assets/images/consorcio/AI.png';
 
 // types
 import { ThemeDirection, ThemeMode } from 'types/config';
@@ -58,14 +58,14 @@ const WelcomeBanner = () => {
         </Grid>
         <Grid item sm={6} xs={12} sx={{ display: { xs: 'none', sm: 'initial' } }}>
           <Stack
-            sx={{ position: 'relative', pr: { sm: 3, md: 8 }, filter: 'drop-shadow(0px 8px 8px rgba(0,0,0,0.25))' }}
+            sx={{ position: 'relative', pr: 3, pt: 3, filter: 'drop-shadow(0px 8px 8px rgba(0,0,0,0.25))' }}
             justifyContent="center"
             alignItems="flex-end"
           >
-            <img src={CondoImage} alt="Welcome" />
-            <Box sx={{ position: 'absolute', bottom: -15, right: '5%', filter: 'drop-shadow(0px 8px 8px rgba(0,0,0,0.25))' }}>
+            <img src={CondoImage} alt="Welcome" height={'200px'} />
+            {/* <Box sx={{ position: 'absolute', bottom: -15, right: '5%', filter: 'drop-shadow(0px 8px 8px rgba(0,0,0,0.25))' }}>
               <img src={AIImage} alt="Welcome Arrow" width="100px" height="100px" />
-            </Box>
+            </Box> */}
           </Stack>
         </Grid>
       </Grid>
