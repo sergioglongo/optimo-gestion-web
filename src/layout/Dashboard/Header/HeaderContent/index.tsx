@@ -37,7 +37,7 @@ const HeaderContent = () => {
   return (
     <>
       {menuOrientation === MenuOrientation.HORIZONTAL && !downLG && <DrawerHeader open={true} />}
-      {!downLG && <ConsorciosSelect />}
+      <ConsorciosSelect />
       {/* {!downLG && megaMenu} */}
       {/* {!downLG && localization} */}
       {downLG && <Box sx={{ width: '100%', ml: 1 }} />}

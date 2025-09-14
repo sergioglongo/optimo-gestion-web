@@ -12,8 +12,11 @@ import {
   AppstoreAddOutlined,
   PlusOutlined,
   LinkOutlined,
-  HddOutlined,
-  DollarOutlined
+  DollarOutlined,
+  TeamOutlined,
+  ShopOutlined,
+  HomeOutlined,
+  DashboardOutlined // Added DashboardOutlined
 } from '@ant-design/icons';
 
 // type
@@ -30,16 +33,17 @@ const icons = {
   AppstoreAddOutlined,
   FileTextOutlined,
   PlusOutlined,
-  LinkOutlined
+  LinkOutlined,
+  DashboardOutlined // Added DashboardOutlined
 };
 
 // ==============================|| MENU ITEMS - APPLICATIONS ||============================== //
 
-const consorcio: NavItemType = {
-  id: 'group-consorcio',
-  title: <FormattedMessage id="parameters" />,
-  icon: icons.AppstoreAddOutlined,
-  type: 'group',
+const consorcioColapsable: NavItemType = {
+  id: 'consorcio-collapse',
+  title: <FormattedMessage id="Consorcios" />,
+  type: 'collapse',
+  icon: icons.AppstoreAddOutlined, // Using AppstoreAddOutlined as the main icon
   children: [
     {
       id: 'cuentas',
@@ -53,9 +57,30 @@ const consorcio: NavItemType = {
       title: <FormattedMessage id="Provider" />,
       type: 'item',
       url: '/consorcio/proveedores',
-      icon: HddOutlined
+      icon: ShopOutlined
+    },
+    {
+      id: 'personas',
+      title: <FormattedMessage id="Personas" />,
+      type: 'item',
+      url: '/consorcio/personas',
+      icon: TeamOutlined
+    },
+    {
+      id: 'unidades',
+      title: <FormattedMessage id="unidad-operativa" />,
+      type: 'item',
+      url: '/consorcio/unidades-operativas', // Corrected URL to match MainRoutes
+      icon: HomeOutlined
     }
   ]
+};
+
+const consorcio: NavItemType = {
+  id: 'group-consorcio',
+  // title: <FormattedMessage id="Consorcios" />,
+  type: 'group',
+  children: [consorcioColapsable] // Now contains the collapsible menu
 };
 
 export default consorcio;

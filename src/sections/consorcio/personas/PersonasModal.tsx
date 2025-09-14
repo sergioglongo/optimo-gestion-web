@@ -3,44 +3,42 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 
 // project import
-import { Proveedor } from 'types/proveedor';
+import { Persona } from 'types/persona';
 import Modal from 'components/Modal/ModalBasico';
-import ProveedorForm from './ProveedorForm';
-import { useCreateProveedor, useUpdateProveedor } from 'services/api/proveedoresapi';
+import PersonaForm from './PersonaForm';
+import { useCreatePersona, useUpdatePersona } from 'services/api/personasapi'; // Assuming new API hooks
 import { RootState } from 'store';
 
-// ==============================|| PROVEEDOR MODAL ||============================== //
+// ==============================|| PERSONA MODAL ||============================== //
 
-interface ProveedorModalProps {
+interface PersonasModalProps {
   open: boolean;
   modalToggler: (open: boolean) => void;
-  proveedor: Proveedor | null;
+  persona: Persona | null;
 }
 
-const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) => {
-  const isCreating = !proveedor;
+const PersonasModal = ({ open, modalToggler, persona }: PersonasModalProps) => {
+  const isCreating = !persona;
   const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
 
-  const createProveedorMutation = useCreateProveedor();
-  const updateProveedorMutation = useUpdateProveedor();
+  const createPersonaMutation = useCreatePersona();
+  const updatePersonaMutation = useUpdatePersona();
 
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().max(255).required('El nombre es requerido'),
-    servicio: Yup.string().max(255).required('El servicio es requerido'),
-    tipo_identificacion: Yup.string().oneOf(['documento', 'cuit', 'cuil', 'otro']),
-    identificacion: Yup.string().nullable(),
-    CBU: Yup.string().nullable()
+    apellido: Yup.string().max(255).required('El apellido es requerido'),
+    dni: Yup.string().max(20).required('El DNI es requerido'),
+    tipo: Yup.string().oneOf(['propietario', 'inquilino', 'administrador', 'otro']).required('El tipo es requerido')
   });
 
-  const formik = useFormik<Omit<Proveedor, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
+  const formik = useFormik<Omit<Persona, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
     initialValues: {
-      id: proveedor?.id,
-      nombre: proveedor?.nombre || '',
-      servicio: proveedor?.servicio || '',
-      consorcio_id: selectedConsorcio?.id || null,
-      tipo_identificacion: proveedor?.tipo_identificacion || 'cuit',
-      identificacion: proveedor?.identificacion || null,
-      CBU: proveedor?.CBU || null
+      id: persona?.id,
+      nombre: persona?.nombre || '',
+      apellido: persona?.apellido || '',
+      dni: persona?.dni || '',
+      tipo: persona?.tipo || 'propietario',
+      consorcio_id: selectedConsorcio?.id || null
     },
     enableReinitialize: true,
     validationSchema,
@@ -54,9 +52,9 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
         if (isCreating) {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { id, ...dataToCreate } = finalValues;
-          await createProveedorMutation.mutateAsync({ proveedorData: dataToCreate, consorcio_id: selectedConsorcio?.id });
+          await createPersonaMutation.mutateAsync({ personaData: dataToCreate, consorcio_id: selectedConsorcio?.id });
         } else {
-          await updateProveedorMutation.mutateAsync({ proveedorId: proveedor!.id, proveedorData: finalValues });
+          await updatePersonaMutation.mutateAsync({ personaId: persona!.id, personaData: finalValues });
         }
         modalToggler(false);
       } catch (error) {
@@ -76,7 +74,7 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
         modalToggler(false);
         formik.resetForm(); // Reset Formik state on close
       }}
-      title={isCreating ? 'Nuevo Proveedor' : 'Editar Proveedor'}
+      title={isCreating ? 'Nueva Persona' : 'Editar Persona'}
       cancelButtonLabel="Cancelar"
       confirmButtonLabel={isCreating ? 'Agregar' : 'Guardar'}
       onConfirm={handleSubmit}
@@ -84,11 +82,11 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
     >
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate>
-          <ProveedorForm />
+          <PersonaForm />
         </Form>
       </FormikProvider>
     </Modal>
   );
 };
 
-export default ProveedorModal;
+export default PersonasModal;

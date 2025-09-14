@@ -89,7 +89,10 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
   return (
     <Modal
       open={open}
-      onClose={() => modalToggler(false)}
+      onClose={() => {
+        modalToggler(false);
+        formik.resetForm(); // Reset Formik state on close
+      }}
       title={isCreating ? 'Nuevo Consorcio' : 'Editar Consorcio'}
       cancelButtonLabel="Cancelar"
       confirmButtonLabel={isCreating ? 'Agregar' : 'Guardar'}

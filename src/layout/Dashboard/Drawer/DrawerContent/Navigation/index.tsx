@@ -8,7 +8,7 @@ import { Box, Divider, List, Typography, useMediaQuery } from '@mui/material';
 import NavItem from './NavItem';
 import NavGroup from './NavGroup';
 import menuItem from 'menu-items';
-// import { MenuFromAPI } from 'menu-items/dashboard';
+import { MenuFromAPI } from 'menu-items/dashboard';
 
 import useConfig from 'hooks/useConfig';
 import { HORIZONTAL_MAX_ITEM } from 'config';
@@ -30,18 +30,18 @@ const Navigation = () => {
   const [selectedLevel, setSelectedLevel] = useState<number>(0);
   const [menuItems, setMenuItems] = useState<{ items: NavItemType[] }>({ items: [] });
 
-  // let dashboardMenu = MenuFromAPI();
+  let dashboardMenu = MenuFromAPI();
 
   useLayoutEffect(() => {
-    // const isFound = menuItem.items.some((element) => {
-    //   if (element.id === 'group-dashboard') {
-    //     return true;
-    //   }
-    //   return false;
-    // });
-    // if (dashboardMenu?.id !== undefined && !isFound) {
-    //   menuItem.items.splice(0, 1, dashboardMenu);
-    // }
+    const isFound = menuItem.items.some((element) => {
+      if (element.id === 'group-dashboard') {
+        return true;
+      }
+      return false;
+    });
+    if (dashboardMenu?.id !== undefined && !isFound) {
+      menuItem.items.splice(0, 1, dashboardMenu);
+    }
     setMenuItems({ items: [...menuItem.items] });
   }, []);
 

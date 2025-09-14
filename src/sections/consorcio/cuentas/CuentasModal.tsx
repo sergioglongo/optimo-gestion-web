@@ -66,7 +66,10 @@ const CuentasModal = ({ open, modalToggler, cuenta }: CuentasModalProps) => {
   return (
     <Modal
       open={open}
-      onClose={() => modalToggler(false)}
+      onClose={() => {
+        modalToggler(false);
+        formik.resetForm(); // Reset Formik state on close
+      }}
       title={isCreating ? 'Nueva Cuenta' : 'Editar Cuenta'}
       cancelButtonLabel="Cancelar"
       confirmButtonLabel={isCreating ? 'Agregar' : 'Guardar'}

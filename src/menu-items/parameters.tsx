@@ -32,25 +32,34 @@ const icons = {
   AppstoreAddOutlined,
   FileTextOutlined,
   PlusOutlined,
-  LinkOutlined
+  LinkOutlined,
+  HddOutlined
 };
 
-// ==============================|| MENU ITEMS - APPLICATIONS ||============================== //
+// ==============================|| MENU ITEMS - PARAMETERS ||============================== //
 
-const parameters: NavItemType = {
-  id: 'group-parameters',
+const parametersColapsable: NavItemType = {
+  id: 'parameters-collapse',
   title: <FormattedMessage id="parameters" />,
-  icon: icons.AppstoreAddOutlined,
-  type: 'group',
+  type: 'collapse',
+  icon: icons.AppstoreAddOutlined, // Using AppstoreAddOutlined as the main icon
   children: [
     {
       id: 'consorcios',
       title: <FormattedMessage id="Consorcios" />,
       type: 'item',
       url: '/parameters/consorcios',
-      icon: HddOutlined
+      icon: icons.HddOutlined
     }
   ]
+};
+
+const parameters: NavItemType = {
+  id: 'group-parameters',
+  // title: <FormattedMessage id="parameters" />,
+  icon: icons.AppstoreAddOutlined,
+  type: 'group',
+  children: [parametersColapsable] // Now contains the collapsible menu
 };
 
 export default parameters;
