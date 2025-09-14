@@ -4,31 +4,31 @@ import { ColumnDef } from '@tanstack/react-table';
 import TablaAdmin from 'components/TablaAdmin';
 
 // types
-import { Consorcio } from 'types/consorcio';
+import { Cuenta } from 'types/cuenta';
 
 interface Props {
-  data: Consorcio[];
-  columns: ColumnDef<Consorcio>[];
+  data: Cuenta[];
+  columns: ColumnDef<Cuenta>[];
   modalToggler: () => void;
   initialColumnVisibility?: Record<string, boolean>;
 }
 
 // ==============================|| CONCORCIOS - LIST ||============================== //
 
-function ConsorciosList({ data, columns, modalToggler, initialColumnVisibility }: Props) {
+function CuentasList({ data, columns, modalToggler, initialColumnVisibility }: Props) {
   return (
     <TablaAdmin
       data={data}
       columns={columns}
       onAdd={modalToggler}
-      addLabel="Nuevo Consorcio"
-      csvFilename="consorcio-lista.csv"
+      addLabel="Nuevo Cuenta"
+      csvFilename="cuentas-lista.csv"
+      searchPlaceholder={`Buscar en ${data.length} cuentas...`}
+      title="Gestiona las cuentas del consorcio"
       initialColumnVisibility={initialColumnVisibility}
-      searchPlaceholder={`Buscar en ${data.length} consorcios...`}
-      title="Gestiona tus Consorcios"
       // renderExpandedRow={(row) => <ExpandingUserDetail data={row.original} />} // Uncomment and implement if needed
     />
   );
 }
 
-export default ConsorciosList;
+export default CuentasList;

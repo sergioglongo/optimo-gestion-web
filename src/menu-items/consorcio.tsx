@@ -1,7 +1,4 @@
-// third-party
 import { FormattedMessage } from 'react-intl';
-
-// project-imports
 
 // assets
 import {
@@ -15,7 +12,8 @@ import {
   AppstoreAddOutlined,
   PlusOutlined,
   LinkOutlined,
-  HddOutlined
+  HddOutlined,
+  DollarOutlined
 } from '@ant-design/icons';
 
 // type
@@ -37,20 +35,27 @@ const icons = {
 
 // ==============================|| MENU ITEMS - APPLICATIONS ||============================== //
 
-const parameters: NavItemType = {
-  id: 'group-parameters',
+const consorcio: NavItemType = {
+  id: 'group-consorcio',
   title: <FormattedMessage id="parameters" />,
   icon: icons.AppstoreAddOutlined,
   type: 'group',
   children: [
     {
-      id: 'consorcios',
-      title: <FormattedMessage id="Consorcios" />,
+      id: 'cuentas',
+      title: <FormattedMessage id="Cuentas" />,
       type: 'item',
-      url: '/parameters/consorcios',
+      url: '/consorcio/cuentas',
+      icon: DollarOutlined
+    },
+    {
+      id: 'proveedores',
+      title: <FormattedMessage id="Provider" />,
+      type: 'item',
+      url: '/consorcio/proveedores',
       icon: HddOutlined
     }
   ]
 };
 
-export default parameters;
+export default consorcio;

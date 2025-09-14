@@ -1,6 +1,6 @@
 {
   "name": "optimo-gestion-web",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "dependencies": {
     "@ant-design/colors": "^7.0.0",

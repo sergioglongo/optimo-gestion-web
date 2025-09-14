@@ -1,15 +1,15 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import ConfirmationDialog from 'components/Modal/ConfirmationDialog';
 
 // ==============================|| ALERT - CONSORCIO DELETE ||============================== //
 
-interface AlertConsorcioDeleteProps {
+interface AlertDeleteProps {
   id: string | number;
   title: string;
   open: boolean;
   handleClose: (status: boolean) => void;
 }
 
-const AlertConsorcioDelete = ({ id, title, open, handleClose }: AlertConsorcioDeleteProps) => {
+const AlertConsorcioDelete = ({ id, title, open, handleClose }: AlertDeleteProps) => {
   const handleDelete = () => {
     // Aquí iría la lógica para eliminar el consorcio
     console.log(`Eliminando consorcio con id: ${id}`);
@@ -17,22 +17,16 @@ const AlertConsorcioDelete = ({ id, title, open, handleClose }: AlertConsorcioDe
   };
 
   return (
-    <Dialog open={open} onClose={() => handleClose(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-      <DialogTitle id="alert-dialog-title">"¿Estás seguro de eliminar?"</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Estás a punto de eliminar el consorcio "{title}". Esta acción es irreversible.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => handleClose(false)} color="primary">
-          Cancelar
-        </Button>
-        <Button onClick={handleDelete} color="error" autoFocus>
-          Eliminar
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <ConfirmationDialog
+      open={open}
+      onClose={() => handleClose(false)}
+      onConfirm={handleDelete}
+      title="¿Estás seguro de eliminar?"
+      content={`Estás a punto de eliminar el consorcio "${title}". Esta acción es irreversible.`}
+      confirmText="Delete"
+      cancelText="Cancel"
+      confirmColor="error"
+    />
   );
 };
 

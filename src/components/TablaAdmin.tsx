@@ -72,6 +72,7 @@ interface TablaAdminProps<T extends object> {
   searchPlaceholder?: string;
   renderExpandedRow?: (row: Row<T>) => React.ReactNode;
   title?: string;
+  initialColumnVisibility?: Record<string, boolean>;
 }
 
 // ==============================|| REACT TABLE - GENERIC ADMIN TABLE ||============================== //
@@ -84,7 +85,8 @@ function TablaAdmin<T extends object>({
   csvFilename = 'data.csv',
   searchPlaceholder = 'Search records...',
   renderExpandedRow,
-  title
+  title,
+  initialColumnVisibility
 }: TablaAdminProps<T>) {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
@@ -97,6 +99,7 @@ function TablaAdmin<T extends object>({
   ]);
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState('');
+  const [columnVisibility, setColumnVisibility] = useState(initialColumnVisibility || {});
 
   const table = useReactTable({
     data,
@@ -104,12 +107,14 @@ function TablaAdmin<T extends object>({
     state: {
       sorting,
       rowSelection,
-      globalFilter
+      globalFilter,
+      columnVisibility
     },
     enableRowSelection: true,
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnVisibilityChange: setColumnVisibility,
     getRowCanExpand: () => !!renderExpandedRow, // Only allow expansion if renderExpandedRow is provided
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

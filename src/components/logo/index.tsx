@@ -28,7 +28,7 @@ const LogoSection = ({ reverse, isIcon, sx, to }: Props) => {
       {isIcon ? (
         <img src={LogoOptimoGestionTrans} alt="Logo Icon" style={{ height: '40px' }} />
       ) : (
-        <img src={LogoOptimoGestionTextoTrans} alt="Logo" style={{ height: '90px', paddingTop:20}} />
+        <img src={LogoOptimoGestionTextoTrans} alt="Logo" style={{ height: '90px', paddingTop: 20 }} />
       )}
     </ButtonBase>
   );

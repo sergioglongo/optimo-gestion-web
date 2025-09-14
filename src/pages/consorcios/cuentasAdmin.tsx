@@ -9,43 +9,42 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useIntl } from 'react-intl'; // Import useIntl
 
 // project import
-import ConsorcioList from 'sections/parameters/consorcios/ConsorciosList';
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
 import { IndeterminateCheckbox } from 'components/third-party/react-table';
-import ConsorcioModal from 'sections/parameters/consorcios/ConsorcioModal';
-import AlertConsorcioDelete from 'sections/parameters/consorcios/AlertConsorcioDelete';
-import Avatar from 'components/@extended/Avatar';
+import CuentasModal from 'sections/consorcio/cuentas/CuentasModal';
+import AlertCuentaDelete from 'sections/consorcio/cuentas/AlertCuentaDelete';
 
 // API hooks
-import { useGetConsorcios } from 'services/api/consorciosapi';
 import useAuth from 'hooks/useAuth';
-
-// types
-import { Consorcio, TipoConsorcio } from 'types/consorcio';
+import useConsorcio from 'hooks/useConsorcio';
 
 // assets
-import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined, HomeOutlined } from '@ant-design/icons';
+import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { useGetCuentas } from 'services/api/cuentasapi';
+import CuentasList from 'sections/consorcio/cuentas/CuentasList';
+import { Cuenta, TipoCuenta } from 'types/cuenta';
 
-// ==============================|| CONSORCIOS - ADMIN ||============================== //
+// ==============================|| CUENTAS - ADMIN ||============================== //
 
-const ConsorciosAdmin = () => {
+const CuentasAdmin = () => {
   const theme = useTheme();
   const { user, token } = useAuth();
+  const { selectedConsorcio } = useConsorcio();
   const intl = useIntl(); // Initialize useIntl
 
-  const { data: consorciosData, isLoading } = useGetConsorcios(user?.id || 0, { enabled: !!user?.id && !!token });
+  const { data: cuentasData, isLoading } = useGetCuentas(selectedConsorcio?.id || 0, { enabled: !!user?.id && !!token });
 
   const [open, setOpen] = useState<boolean>(false);
-  const [consorcioModal, setConsorcioModal] = useState<boolean>(false);
-  const [selectedConsorcio, setSelectedConsorcio] = useState<Consorcio | null>(null);
-  const [consorcioDeleteId, setConsorcioDeleteId] = useState<any>('');
+  const [cuentaModal, setCuentaModal] = useState<boolean>(false);
+  const [selectedCuenta, setSelectedCuenta] = useState<Cuenta | null>(null);
+  const [cuentaDeleteId, setCuentaDeleteId] = useState<any>('');
 
   const handleClose = () => {
     setOpen(!open);
   };
 
-  const columns = useMemo<ColumnDef<Consorcio>[]>(
+  const columns = useMemo<ColumnDef<Cuenta>[]>(
     () => [
       {
         id: 'select',
@@ -79,12 +78,11 @@ const ConsorciosAdmin = () => {
         }
       },
       {
-        header: 'Nombre',
-        accessorKey: 'nombre',
-        cell: ({ row, getValue }) => (
+        header: 'Descripción',
+        accessorKey: 'descripcion',
+        cell: ({ getValue }) => (
           <Stack spacing={0}>
             <Typography variant="subtitle1">{getValue() as string}</Typography>
-            <Typography color="text.secondary">{row.original.direccion as string}</Typography>
           </Stack>
         )
       },
@@ -92,29 +90,18 @@ const ConsorciosAdmin = () => {
         header: 'Tipo',
         accessorKey: 'tipo',
         cell: (cell) => {
-          const tipo = cell.getValue() as TipoConsorcio;
+          const tipo = cell.getValue() as TipoCuenta;
           switch (tipo) {
-            case 'edificio':
-              return <Chip color="primary" label="Edificio" size="small" variant="light" />;
-            case 'barrio':
-              return <Chip color="success" label="Barrio" size="small" variant="light" />;
-            case 'country':
-              return <Chip color="info" label="Country" size="small" variant="light" />;
-            case 'complejo':
-              return <Chip color="warning" label="Complejo" size="small" variant="light" />;
+            case 'corriente':
+              return <Chip color="primary" label="Corriente" size="small" variant="light" />;
+            case 'ahorro':
+              return <Chip color="success" label="Ahorro" size="small" variant="light" />;
+            case 'caja':
+              return <Chip color="info" label="Caja" size="small" variant="light" />;
             default:
               return <Chip label={tipo} size="small" variant="light" />;
           }
         }
-      },
-      {
-        header: 'Imagen',
-        accessorKey: 'imagen',
-        cell: ({ row }) => (
-          <Avatar src={row.original.imagen ? row.original.imagen : ''} alt="imagen" size="sm" variant="rounded" type="filled">
-            {!row.original.imagen && <HomeOutlined />}
-          </Avatar>
-        )
       },
       {
         header: intl.formatMessage({ id: 'table.actions' }), // Translated 'Actions'
@@ -141,8 +128,8 @@ const ConsorciosAdmin = () => {
                   color="primary"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
-                    setSelectedConsorcio(row.original);
-                    setConsorcioModal(true);
+                    setSelectedCuenta(row.original);
+                    setCuentaModal(true);
                   }}
                 >
                   <EditOutlined />
@@ -154,7 +141,7 @@ const ConsorciosAdmin = () => {
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
                     handleClose();
-                    setConsorcioDeleteId(row.original);
+                    setCuentaDeleteId(row.original);
                   }}
                 >
                   <DeleteOutlined />
@@ -173,21 +160,21 @@ const ConsorciosAdmin = () => {
 
   return (
     <>
-      <ConsorcioList
+      <CuentasList
         {...{
-          data: consorciosData || [],
+          data: cuentasData || [],
           columns,
           initialColumnVisibility: { id: false },
           modalToggler: () => {
-            setConsorcioModal(true);
-            setSelectedConsorcio(null);
+            setCuentaModal(true);
+            setSelectedCuenta(null);
           }
         }}
       />
-      <AlertConsorcioDelete id={consorcioDeleteId.id} title={consorcioDeleteId.nombre} open={open} handleClose={handleClose} />
-      <ConsorcioModal open={consorcioModal} modalToggler={setConsorcioModal} consorcio={selectedConsorcio} />
+      <AlertCuentaDelete id={cuentaDeleteId.id} title={String(cuentaDeleteId.descripcion)} open={open} handleClose={handleClose} />
+      <CuentasModal open={cuentaModal} modalToggler={setCuentaModal} cuenta={selectedCuenta} />
     </>
   );
 };
 
-export default ConsorciosAdmin;
+export default CuentasAdmin;
