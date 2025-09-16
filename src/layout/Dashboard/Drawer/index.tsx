@@ -10,8 +10,8 @@ import DrawerContent from './DrawerContent';
 import MiniDrawerStyled from './MiniDrawerStyled';
 
 import { DRAWER_WIDTH } from 'config';
-import { handlerDrawerOpen } from 'api/menu';
-import { useAppSelector } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { openDashboardDrawer } from 'store/slices/menu';
 
 // ==============================|| MAIN LAYOUT - DRAWER ||============================== //
 
@@ -21,6 +21,7 @@ interface Props {
 
 const MainDrawer = ({ window }: Props) => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
   const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -43,7 +44,7 @@ const MainDrawer = ({ window }: Props) => {
           container={container}
           variant="temporary"
           open={drawerOpen}
-          onClose={() => handlerDrawerOpen(!drawerOpen)}
+          onClose={() => dispatch(openDashboardDrawer({ isDashboardDrawerOpened: !drawerOpen }))}
           ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: 'block', lg: 'none' },

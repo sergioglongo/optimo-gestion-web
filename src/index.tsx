@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 
 // scroll bar
 import 'simplebar-react/dist/simplebar.min.css';
@@ -7,8 +8,7 @@ import 'simplebar-react/dist/simplebar.min.css';
 
 // project import
 import App from './App';
-import { store } from 'store';
-import { ConfigProvider } from 'contexts/ConfigContext';
+import { store, persistor } from 'store';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -17,8 +17,8 @@ const root = createRoot(container!);
 
 root.render(
   <Provider store={store}>
-    <ConfigProvider>
+    <PersistGate loading={null} persistor={persistor}>
       <App />
-    </ConfigProvider>
+    </PersistGate>
   </Provider>
 );

@@ -27,8 +27,8 @@ import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 import { APP_DEFAULT_PATH } from 'config';
-import { handlerComponentDrawer } from 'api/menu';
-import { useAppSelector } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { openComponentDrawer } from 'store/slices/menu';
 
 // assets
 import { MenuOutlined, LineOutlined } from '@ant-design/icons';
@@ -40,6 +40,7 @@ import { ThemeMode } from 'types/config';
 
 const Header = () => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const { isComponentDrawerOpened } = useAppSelector((state) => state.menu);
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -131,7 +132,7 @@ const Header = () => {
 
               <IconButton
                 color="secondary"
-                onClick={() => handlerComponentDrawer(!isComponentDrawerOpened)}
+                onClick={() => dispatch(openComponentDrawer({ isComponentDrawerOpened: !isComponentDrawerOpened }))}
                 sx={{
                   '&:hover': { bgcolor: theme.palette.mode === ThemeMode.DARK ? 'secondary.lighter' : 'secondary.dark' }
                 }}

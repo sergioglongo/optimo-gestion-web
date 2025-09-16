@@ -6,8 +6,8 @@ import { useTheme } from '@mui/material/styles';
 import MainCard from 'components/MainCard';
 
 //asset
-import WelcomeImage from 'assets/images/analytics/welcome-banner.png';
-import WelcomeImageArrow from 'assets/images/analytics/welcome-arrow.png';
+import CondoImage from 'assets/images/logos/Logo Optimo Gestion edif trans.png';
+// import AIImage from 'assets/images/consorcio/AI.png';
 
 // types
 import { ThemeDirection, ThemeMode } from 'types/config';
@@ -31,14 +31,15 @@ const WelcomeBanner = () => {
         <Grid item md={6} sm={6} xs={12}>
           <Stack spacing={2} sx={{ padding: 3.4 }}>
             <Typography variant="h2" color={theme.palette.background.paper}>
-              Welcome to Mantis
+              Bienvenidos a Optimo Gestión
             </Typography>
             <Typography variant="h6" color={theme.palette.background.paper}>
-              The purpose of a product update is to add new features, fix bugs or improve the performance of the product.
+              La mejor forma de administrar tus consorcios sin perder tiempo.
             </Typography>
             <Box>
               <Button
                 variant="outlined"
+                size="large"
                 color="secondary"
                 sx={{
                   color: theme.palette.background.paper,
@@ -50,17 +51,21 @@ const WelcomeBanner = () => {
                   }
                 }}
               >
-                View full statistic
+                Condominios
               </Button>
             </Box>
           </Stack>
         </Grid>
         <Grid item sm={6} xs={12} sx={{ display: { xs: 'none', sm: 'initial' } }}>
-          <Stack sx={{ position: 'relative', pr: { sm: 3, md: 8 } }} justifyContent="center" alignItems="flex-end">
-            <img src={WelcomeImage} alt="Welcome" />
-            <Box sx={{ position: 'absolute', bottom: 0, right: '10%' }}>
-              <img src={WelcomeImageArrow} alt="Welcome Arrow" />
-            </Box>
+          <Stack
+            sx={{ position: 'relative', pr: 3, pt: 3, filter: 'drop-shadow(0px 8px 8px rgba(0,0,0,0.25))' }}
+            justifyContent="center"
+            alignItems="flex-end"
+          >
+            <img src={CondoImage} alt="Welcome" height={'200px'} />
+            {/* <Box sx={{ position: 'absolute', bottom: -15, right: '5%', filter: 'drop-shadow(0px 8px 8px rgba(0,0,0,0.25))' }}>
+              <img src={AIImage} alt="Welcome Arrow" width="100px" height="100px" />
+            </Box> */}
           </Stack>
         </Grid>
       </Grid>

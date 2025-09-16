@@ -18,9 +18,9 @@ import ProductReview from 'sections/apps/e-commerce/product-details/ProductRevie
 import ProductSpecifications from 'sections/apps/e-commerce/product-details/ProductSpecifications';
 import RelatedProducts from 'sections/apps/e-commerce/product-details/RelatedProducts';
 
-import { useAppSelector } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { resetCart, useGetCart } from 'api/cart';
-import { handlerActiveItem } from 'api/menu';
+import { activeItem } from 'store/slices/menu';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
   return (
@@ -48,6 +48,7 @@ function a11yProps(index: number) {
 const ProductDetails = () => {
   const theme = useTheme();
   const { id } = useParams();
+  const dispatch = useAppDispatch();
 
   const menu = useAppSelector((state) => state.menu);
   const product = useLoaderData() as Products;
@@ -61,7 +62,9 @@ const ProductDetails = () => {
   };
 
   useEffect(() => {
-    if (menu.openedItem !== 'product-details') handlerActiveItem('product-details');
+    if (menu.openedItem !== 'product-details') {
+      dispatch(activeItem({ openedItem: 'product-details' }));
+    }
     // clear cart if complete order
     if (cart && cart.step > 2) {
       resetCart();

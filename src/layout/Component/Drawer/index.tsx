@@ -9,8 +9,8 @@ import DrawerContent from './DrawerContent';
 import MainCard from 'components/MainCard';
 
 import { DRAWER_WIDTH } from 'config';
-import { handlerComponentDrawer } from 'api/menu';
-import { useAppSelector } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { openComponentDrawer } from 'store/slices/menu';
 
 // assets
 import { SearchOutlined } from '@ant-design/icons';
@@ -19,6 +19,7 @@ import { SearchOutlined } from '@ant-design/icons';
 
 const Drawer = () => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const { isComponentDrawerOpened: open } = useAppSelector((state) => state.menu);
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
   const [searchValue, setSearchValue] = useState();
@@ -46,7 +47,7 @@ const Drawer = () => {
       anchor="left"
       open={open}
       ModalProps={{ keepMounted: true }}
-      onClose={() => handlerComponentDrawer(false)}
+      onClose={() => dispatch(openComponentDrawer({ isComponentDrawerOpened: false }))}
     >
       <MainCard sx={{ height: '100%' }} content={false}>
         <Box sx={{ p: 2, mb: 2 }}>

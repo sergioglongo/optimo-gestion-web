@@ -39,11 +39,11 @@ const Navigation = () => {
       }
       return false;
     });
-
     if (dashboardMenu?.id !== undefined && !isFound) {
       menuItem.items.splice(0, 1, dashboardMenu);
     }
     setMenuItems({ items: [...menuItem.items] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;

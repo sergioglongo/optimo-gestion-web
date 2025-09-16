@@ -5,7 +5,8 @@ import { CardMedia, FormControlLabel, Grid, Radio, RadioGroup, Stack, Typography
 // project import
 import MainCard from 'components/MainCard';
 import useConfig from 'hooks/useConfig';
-import { handlerDrawerOpen } from 'api/menu';
+import { useAppDispatch } from 'store/hooks';
+import { openDashboardDrawer } from 'store/slices/menu';
 
 // assets
 import defaultLayout from 'assets/images/customization/default.svg';
@@ -18,6 +19,7 @@ import { MenuOrientation, ThemeDirection } from 'types/config';
 
 const ThemeMenuLayout = () => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
   const { menuOrientation, onChangeMenuOrientation, onChangeMiniDrawer, onChangeDirection } = useConfig();
@@ -28,12 +30,12 @@ const ThemeMenuLayout = () => {
       onChangeMiniDrawer(true);
       onChangeDirection(ThemeDirection.LTR);
       onChangeMenuOrientation(e.target.value);
-      handlerDrawerOpen(false);
+      dispatch(openDashboardDrawer({ isDashboardDrawerOpened: false }));
     } else {
       onChangeMiniDrawer(true);
       onChangeDirection(ThemeDirection.LTR);
       onChangeMenuOrientation(e.target.value);
-      handlerDrawerOpen(true);
+      dispatch(openDashboardDrawer({ isDashboardDrawerOpened: true }));
     }
   };
 

@@ -176,7 +176,7 @@ const CustomerCardPage = () => {
             </Slide>
           ))
         ) : (
-          <EmptyUserCard title={isLoading ? 'Loading...' : 'You have not created any customer yet.'} />
+          <EmptyUserCard title={isLoading ? 'Cargando...' : 'You have not created any customer yet.'} />
         )}
       </Grid>
       <Stack spacing={2} sx={{ p: 2.5 }} alignItems="flex-end">
@@ -196,5 +196,5 @@ const CustomerCardPage = () => {
     </>
   );
 };
-  
+
 export default CustomerCardPage;

@@ -7,6 +7,7 @@ import DashboardLayout from 'layout/Dashboard';
 import PagesLayout from 'layout/Pages';
 
 import { loader as productsLoader, productLoader } from 'api/products';
+import HomePage from 'pages/home/home';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
@@ -83,7 +84,6 @@ const ReactTableColumnVisibility = Loadable(lazy(() => import('pages/tables/reac
 const ReactTableColumnResizing = Loadable(lazy(() => import('pages/tables/react-table/column-resizing')));
 const ReactTableStickyTable = Loadable(lazy(() => import('pages/tables/react-table/sticky')));
 const ReactTableUmbrella = Loadable(lazy(() => import('pages/tables/react-table/umbrella')));
-const ReactTableEmpty = Loadable(lazy(() => import('pages/tables/react-table/empty')));
 const ReactTableVirtualized = Loadable(lazy(() => import('pages/tables/react-table/virtualized')));
 
 // render - charts & map
@@ -117,6 +117,14 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 const PricingPage = Loadable(lazy(() => import('pages/extra-pages/pricing')));
 
+// render - consorcios
+const ConsorciosPage = Loadable(lazy(() => import('pages/consorcios/consorciosAdmin')));
+const CuentasPage = Loadable(lazy(() => import('pages/consorcios/cuentasAdmin')));
+const ProveedoresPage = Loadable(lazy(() => import('pages/consorcios/proveedoresAdmin')));
+const PersonasPage = Loadable(lazy(() => import('pages/consorcios/personasAdmin')));
+const UnidadOperativaPage = Loadable(lazy(() => import('pages/consorcios/unidadOperativaAdmin'))); // New import for UnidadOperativaAdmin
+const RubrosPage = Loadable(lazy(() => import('pages/consorcios/rubrosAdmin'))); // New import for UnidadOperativaAdmin
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -138,6 +146,10 @@ const MainRoutes = {
               element: <DashboardAnalytics />
             }
           ]
+        },
+        {
+          path: 'home',
+          element: <HomePage />
         },
         {
           path: 'widget',
@@ -430,10 +442,10 @@ const MainRoutes = {
                   path: 'umbrella',
                   element: <ReactTableUmbrella />
                 },
-                {
-                  path: 'empty',
-                  element: <ReactTableEmpty />
-                },
+                // {
+                //   path: 'empty',
+                //   element: <ReactTableEmpty />
+                // },
                 {
                   path: 'virtualized',
                   element: <ReactTableVirtualized />
@@ -499,6 +511,40 @@ const MainRoutes = {
         {
           path: 'pricing',
           element: <PricingPage />
+        },
+        {
+          path: 'consorcio',
+          children: [
+            {
+              path: 'cuentas',
+              element: <CuentasPage />
+            },
+            {
+              path: 'proveedores',
+              element: <ProveedoresPage />
+            },
+            {
+              path: 'personas',
+              element: <PersonasPage />
+            },
+            {
+              path: 'unidades',
+              element: <UnidadOperativaPage />
+            },
+            {
+              path: 'rubros',
+              element: <RubrosPage />
+            }
+          ]
+        },
+        {
+          path: 'parameters',
+          children: [
+            {
+              path: 'consorcios',
+              element: <ConsorciosPage />
+            }
+          ]
         }
       ]
     },

@@ -8,8 +8,8 @@ import { useMediaQuery, Box } from '@mui/material';
 // project import
 import Drawer from './Drawer';
 import { DRAWER_WIDTH } from 'config';
-import { handlerComponentDrawer } from 'api/menu';
-import { useAppSelector } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { openComponentDrawer } from 'store/slices/menu';
 
 // components content
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }: { theme: Theme; open: boolean }) => ({
@@ -35,14 +35,15 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 
 const ComponentsLayout = () => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
 
   const { isComponentDrawerOpened } = useAppSelector((state) => state.menu);
 
   useEffect(() => {
-    handlerComponentDrawer(!matchDownMd);
+    dispatch(openComponentDrawer({ isComponentDrawerOpened: !matchDownMd }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchDownMd]);
+  }, [matchDownMd, dispatch]);
 
   return (
     <Box sx={{ display: 'flex', pt: isComponentDrawerOpened ? { xs: 0, md: 3, xl: 5.5 } : 0 }}>

@@ -27,7 +27,8 @@ import SimpleBar from 'components/third-party/SimpleBar';
 import Transitions from 'components/@extended/Transitions';
 
 import useConfig from 'hooks/useConfig';
-import { handlerHorizontalActiveItem } from 'api/menu';
+import { useDispatch } from 'react-redux';
+import { activeItem } from 'store/slices/menu';
 import { useAppSelector } from 'store/hooks';
 
 // assets
@@ -81,6 +82,7 @@ const NavGroup = ({ item, lastItem, remItems, lastItemId, setSelectedItems, sele
 
   const { menuOrientation } = useConfig();
   const { isDashboardDrawerOpened: drawerOpen, openedHorizontalItem: selectedID } = useAppSelector((state) => state.menu);
+  const dispatch = useDispatch();
 
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -109,7 +111,7 @@ const NavGroup = ({ item, lastItem, remItems, lastItemId, setSelectedItems, sele
         checkOpenForParent(ele.children, currentItem.id!);
       }
       if (ele.url === pathname) {
-        handlerHorizontalActiveItem(id);
+        dispatch(activeItem({ openedItem: id }));
       }
     });
   };
@@ -121,7 +123,7 @@ const NavGroup = ({ item, lastItem, remItems, lastItemId, setSelectedItems, sele
         checkOpenForParent(itemCheck.children, currentItem.id!);
       }
       if (itemCheck?.url === pathname) {
-        handlerHorizontalActiveItem(currentItem.id!);
+        dispatch(activeItem({ openedItem: currentItem.id! }));
       }
     });
   };

@@ -20,12 +20,14 @@ import {
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useSignIn } from 'services/api/authApi';
+import { useDispatch } from 'react-redux'; // Added this import
 
 // project import
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 import useAuth from 'hooks/useAuth';
 import useScriptRef from 'hooks/useScriptRef';
+import { setConsorcios } from 'store/slices/consorcio'; // Added this import
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
@@ -34,6 +36,7 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
 const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
   const [checked, setChecked] = React.useState(false);
+  const dispatch = useDispatch(); // Added this line
 
   const { login } = useAuth();
   const scriptedRef = useScriptRef();
@@ -58,17 +61,21 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          email: Yup.string().email('Formato de email inválido').max(255).required('Email es requerido'),
+          password: Yup.string().max(255).required('La contraseña es requerida')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          mutate(
+          await mutate(
             { email: values.email, password: values.password },
             {
-              onSuccess: (data) => {
-                const { token, rol, usuario, ...rest } = data;
-                const user: any = { ...rest, email: values.email, role: rol, usuario };
-                login(user, token);
+              onSuccess: async (data) => {
+                const { token, usuario, consorcios } = data.result; // Added consorcios
+                await login(usuario, token);
+
+                // Dispatch consorcios to the store
+                if (consorcios) {
+                  dispatch(setConsorcios(consorcios));
+                }
 
                 if (scriptedRef.current) {
                   setStatus({ success: true });
@@ -91,7 +98,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
+                  <InputLabel htmlFor="email-login">Ingrese el Email</InputLabel>
                   <OutlinedInput
                     id="email-login"
                     type="email"
@@ -99,7 +106,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
                     name="email"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Enter email address"
+                    placeholder="Ingrese el email"
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
                   />
@@ -112,7 +119,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-login">Password</InputLabel>
+                  <InputLabel htmlFor="password-login">Contraseña</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.password && errors.password)}
@@ -135,7 +142,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
                         </IconButton>
                       </InputAdornment>
                     }
-                    placeholder="Enter password"
+                    placeholder="Ingrese contraseña"
                   />
                 </Stack>
                 {touched.password && errors.password && (
@@ -157,10 +164,10 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
                         size="small"
                       />
                     }
-                    label={<Typography variant="h6">Keep me sign in</Typography>}
+                    label={<Typography variant="h6">Mantenerme conectado</Typography>}
                   />
-                  <Link variant="h6" component={RouterLink} to={isDemo ? '/auth/forgot-password' : '/forgot-password'} color="text.primary">
-                    Forgot Password?
+                  <Link variant="h6" component={RouterLink} to={isDemo ? '/auth/forgot-password' : '/forgot-password'}>
+                    restaurar contraseña?
                   </Link>
                 </Stack>
               </Grid>
@@ -172,7 +179,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
               <Grid item xs={12}>
                 <AnimateButton>
                   <Button disableElevation disabled={isLoading} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Login
+                    Iniciar
                   </Button>
                 </AnimateButton>
               </Grid>

@@ -1,16 +1,20 @@
-import { useContext } from 'react';
-
-// auth provider
-import AuthContext from 'contexts/AuthContext';
-
-// ==============================|| AUTH HOOKS ||============================== //
+import { useSelector, useDispatch } from 'react-redux';
+import { login, logout } from 'store/slices/auth';
+import { RootState } from 'store';
+import { UserProfile } from 'types/auth';
 
 const useAuth = () => {
-  const context = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const { isLoggedIn, isInitialized, user, token } = useSelector((state: RootState) => state.auth);
 
-  if (!context) throw new Error('context must be use inside provider');
-
-  return context;
+  return {
+    isLoggedIn,
+    isInitialized,
+    user,
+    token,
+    login: (user: UserProfile, token: string) => dispatch(login({ user, token })),
+    logout: () => dispatch(logout()),
+    resetPassword: async (email: string) => {}
+  };
 };
-
 export default useAuth;

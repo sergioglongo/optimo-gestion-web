@@ -11,11 +11,11 @@ import IconButton from 'components/@extended/IconButton';
 
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from 'config';
 import useConfig from 'hooks/useConfig';
-import { handlerDrawerOpen } from 'api/menu';
-import { useAppSelector } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { openDashboardDrawer } from 'store/slices/menu';
 
 // assets
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { VerticalLeftOutlined, VerticalRightOutlined } from '@ant-design/icons';
 
 // types
 import { MenuOrientation, ThemeMode } from 'types/config';
@@ -24,6 +24,7 @@ import { MenuOrientation, ThemeMode } from 'types/config';
 
 const Header = () => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
   const { menuOrientation } = useConfig();
 
@@ -42,13 +43,13 @@ const Header = () => {
       {!isHorizontal ? (
         <IconButton
           aria-label="open drawer"
-          onClick={() => handlerDrawerOpen(!drawerOpen)}
+          onClick={() => dispatch(openDashboardDrawer({ isDashboardDrawerOpened: !drawerOpen }))}
           edge="start"
           color="secondary"
           variant="light"
-          sx={{ color: 'text.primary', bgcolor: drawerOpen ? 'transparent' : iconBackColor, ml: { xs: 0, lg: -2 } }}
+          sx={{ color: 'text.primary', bgcolor: drawerOpen ? 'transparent' : iconBackColor, ml: { xs: 0, lg: -3 } }}
         >
-          {!drawerOpen ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          {!drawerOpen ? <VerticalLeftOutlined style={{ fontSize: '28px' }} /> : <VerticalRightOutlined style={{ fontSize: '28px' }} />}
         </IconButton>
       ) : null}
       {headerContent}

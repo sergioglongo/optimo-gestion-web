@@ -6,10 +6,10 @@ import { ButtonBase } from '@mui/material';
 import { SxProps } from '@mui/system';
 
 // project import
-import Logo from './LogoMain';
-import LogoIcon from './LogoIcon';
 import { APP_DEFAULT_PATH } from 'config';
 import useAuth from 'hooks/useAuth';
+import LogoOptimoGestionTextoTrans from 'assets/images/logos/Logo Optimo Gestion texto trans.png';
+import LogoOptimoGestionTrans from 'assets/images/logos/Logo Optimo Gestion trans.png';
 
 // ==============================|| MAIN LOGO ||============================== //
 
@@ -25,7 +25,11 @@ const LogoSection = ({ reverse, isIcon, sx, to }: Props) => {
 
   return (
     <ButtonBase disableRipple {...(isLoggedIn && { component: Link, to: !to ? APP_DEFAULT_PATH : to, sx })}>
-      {isIcon ? <LogoIcon /> : <Logo reverse={reverse} />}
+      {isIcon ? (
+        <img src={LogoOptimoGestionTrans} alt="Logo Icon" style={{ height: '40px' }} />
+      ) : (
+        <img src={LogoOptimoGestionTextoTrans} alt="Logo" style={{ height: '90px', paddingTop: 20 }} />
+      )}
     </ButtonBase>
   );
 };

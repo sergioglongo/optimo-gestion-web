@@ -2,7 +2,6 @@
 import { FormattedMessage } from 'react-intl';
 
 // project-imports
-import { dispatch } from 'store';
 import { openCustomerModal } from 'store/slices/customer';
 
 // assets
@@ -91,7 +90,7 @@ const applications: NavItemType = {
             {
               type: NavActionType.FUNCTION,
               label: 'Add Customer',
-              function: () => dispatch(openCustomerModal()),
+              action: openCustomerModal(),
               icon: icons.PlusOutlined
             }
           ]
@@ -100,7 +99,7 @@ const applications: NavItemType = {
         //   id: 'customer-card',
         //   title: <FormattedMessage id="cards" />,
         //   type: 'item',
-        //   url: '/apps/customer/customer-card'
+        //   // url: '/apps/customer/customer-card'
         // }
       ]
     }
@@ -186,7 +185,7 @@ const applications: NavItemType = {
     //     },
     //     {
     //       id: 'product-list',
-    //       title: <FormattedMessage id="product-list" />,
+    //       title: <FormattedMessage id="list" />,
     //       type: 'item',
     //       url: '/apps/e-commerce/product-list'
     //     },

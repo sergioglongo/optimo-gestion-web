@@ -15,7 +15,7 @@ export enum NavActionType {
 export type NavActionProps = {
   type: NavActionType;
   label: string;
-  function?: any;
+  action?: any; // Renamed from 'function'
   url?: string;
   target?: boolean;
   icon: GenericCardProps['iconPrimary'] | string;

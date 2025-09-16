@@ -10,8 +10,8 @@ import Dot from 'components/@extended/Dot';
 import IconButton from 'components/@extended/IconButton';
 
 import useConfig from 'hooks/useConfig';
-import { handlerHorizontalActiveItem, handlerActiveItem, handlerDrawerOpen } from 'api/menu';
-import { useAppSelector } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { activeItem, openDashboardDrawer, activeHorizontalItem } from 'store/slices/menu';
 
 // types
 import { MenuOrientation, ThemeMode } from 'types/config';
@@ -27,6 +27,7 @@ interface Props {
 
 const NavItem = ({ item, level, isParents = false }: Props) => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
 
   const { isDashboardDrawerOpened: drawerOpen, openedItem: openItem } = useAppSelector((state) => state.menu);
 
@@ -55,9 +56,9 @@ const NavItem = ({ item, level, isParents = false }: Props) => {
 
   // active menu item on page load
   useEffect(() => {
-    if (pathname === item.url) handlerActiveItem(item.id!);
+    if (pathname === item.url) dispatch(activeItem({ openedItem: item.id! }));
     // eslint-disable-next-line
-  }, [pathname]);
+  }, [pathname, dispatch, item.id, item.url]);
 
   const textColor = theme.palette.mode === ThemeMode.DARK ? 'grey.400' : 'text.primary';
   const iconSelectedColor = theme.palette.mode === ThemeMode.DARK && drawerOpen ? 'text.primary' : 'primary.main';
@@ -103,7 +104,7 @@ const NavItem = ({ item, level, isParents = false }: Props) => {
               })
             }}
             {...(downLG && {
-              onClick: () => handlerDrawerOpen(false)
+              onClick: () => dispatch(openDashboardDrawer({ isDashboardDrawerOpened: false }))
             })}
           >
             {itemIcon && (
@@ -156,14 +157,14 @@ const NavItem = ({ item, level, isParents = false }: Props) => {
             item?.actions &&
             item?.actions.map((action, index) => {
               const ActionIcon = action.icon!;
-              const callAction = action?.function;
+              const actionToDispatch = action?.action;
               return (
                 <IconButton
                   key={index}
                   {...(action.type === NavActionType.FUNCTION && {
                     onClick: (event) => {
                       event.stopPropagation();
-                      callAction();
+                      dispatch(actionToDispatch);
                     }
                   })}
                   {...(action.type === NavActionType.LINK && {
@@ -201,7 +202,7 @@ const NavItem = ({ item, level, isParents = false }: Props) => {
           selected={isSelected}
           {...(isParents && {
             onClick: () => {
-              handlerHorizontalActiveItem(item.id!);
+              dispatch(activeHorizontalItem({ openedHorizontalItem: item.id! }));
             }
           })}
           sx={{
