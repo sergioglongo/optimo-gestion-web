@@ -66,6 +66,15 @@ export const updateUnidadOperativa = async (unidadOperativaId: number, unidadOpe
   }
 };
 
+export const deleteUnidadOperativa = async (unidadOperativaId: number) => {
+  const { data } = await apiClient.delete<{ success: boolean; message?: string }>(`/unidades/${unidadOperativaId}`);
+  if (data.success) {
+    return true;
+  } else {
+    throw new Error(data.message || 'Error deleting unidad operativa');
+  }
+};
+
 // React Query hooks
 export function useGetUnidadesOperativas(consorcio_id: string | number, options?: { enabled?: boolean }) {
   return useQuery({
@@ -91,6 +100,17 @@ export function useCreateUnidadOperativa() {
       // TODO: Dispatch setUnidadesOperativas once the slice is created
       // const updatedUnidadesOperativas = await fetchUnidadesOperativasByConsorcio(variables.consorcio_id);
       // dispatch(setUnidadesOperativas(updatedUnidadesOperativas));
+    }
+  });
+}
+
+export function useDeleteUnidadOperativa() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (unidadOperativaId: number) => deleteUnidadOperativa(unidadOperativaId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: unidadOperativaQueryKeys.lists() });
+      // TODO: Dispatch setUnidadesOperativas once the slice is created
     }
   });
 }

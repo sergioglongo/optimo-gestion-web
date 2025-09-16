@@ -20,7 +20,7 @@ const Modal = ({
   onClose,
   title,
   children,
-  cancelButtonLabel = 'Cancelar',
+  cancelButtonLabel,
   confirmButtonLabel = 'Confirmar',
   onCancel,
   onConfirm,
@@ -47,12 +47,16 @@ const Modal = ({
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
       <DialogActions>
-        <Button color="error" onClick={handleCancel}>
-          {cancelButtonLabel}
-        </Button>
-        <Button type="submit" variant="contained" onClick={handleConfirm} disabled={isSubmitting}>
-          {confirmButtonLabel}
-        </Button>
+        {cancelButtonLabel && (
+          <Button color="error" onClick={handleCancel}>
+            {cancelButtonLabel}
+          </Button>
+        )}
+        {onConfirm && (
+          <Button type="submit" variant="contained" onClick={handleConfirm} disabled={isSubmitting}>
+            {confirmButtonLabel}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

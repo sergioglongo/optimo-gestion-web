@@ -6,7 +6,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from 'services/api/apiClient';
 
 // types
-import { Persona } from 'types/persona';
+import { Persona, PersonaUsuario } from 'types/persona'; // Import PersonaUsuario
+// import { Usuario } from 'types/usuario'; // Keep Usuario for updatePersona
 
 // API response types
 interface ApiSuccessResponse {
@@ -27,7 +28,7 @@ interface PersonaApiSuccessResponse {
   result: Persona;
 }
 
-type PersonaCreateData = Omit<Persona, 'id'>;
+// type PersonaCreateData = Omit<Persona, 'id'>; // This type might become obsolete or need adjustment
 
 type PersonaApiResponse = PersonaApiSuccessResponse | ApiErrorResponse;
 
@@ -48,8 +49,9 @@ export const fetchPersonasByConsorcio = async (consorcio_id: string | number) =>
   }
 };
 
-export const createPersona = async (personaData: PersonaCreateData) => {
-  const { data } = await apiClient.post<PersonaApiResponse>('/personas/', personaData);
+// Modified createPersona function
+export const createPersona = async (personausuario: PersonaUsuario) => {
+  const { data } = await apiClient.post<PersonaApiResponse>('/personas/usuario', personausuario); // Send single object
   if (data.success) {
     return data.result;
   } else {
@@ -57,8 +59,8 @@ export const createPersona = async (personaData: PersonaCreateData) => {
   }
 };
 
-export const updatePersona = async (personaId: number, personaData: Partial<Persona>) => {
-  const { data } = await apiClient.put<PersonaApiResponse>(`/personas/${personaId}`, personaData);
+export const updatePersona = async (personausuario: Partial<PersonaUsuario>) => {
+  const { data } = await apiClient.put<PersonaApiResponse>(`/personas/${personausuario.id}`, personausuario);
   if (data.success) {
     return data.result;
   } else {
@@ -78,8 +80,7 @@ export function useGetPersonas(consorcio_id: string | number, options?: { enable
 export function useCreatePersona() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ personaData, consorcio_id }: { personaData: PersonaCreateData; consorcio_id: string | number }) =>
-      createPersona(personaData),
+    mutationFn: ({ personausuario }: { personausuario: PersonaUsuario }) => createPersona(personausuario), // Pass single object
     onSuccess: async (data, variables) => {
       queryClient.invalidateQueries({ queryKey: personaQueryKeys.lists() });
       // TODO: Dispatch setPersonas once the slice is created
@@ -92,7 +93,7 @@ export function useCreatePersona() {
 export function useUpdatePersona() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ personaId, personaData }: { personaId: number; personaData: Partial<Persona> }) => updatePersona(personaId, personaData),
+    mutationFn: ({ personausuario }: { personausuario: PersonaUsuario }) => updatePersona(personausuario),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: personaQueryKeys.lists() });
       // TODO: Dispatch setPersonas once the slice is created

@@ -15,7 +15,8 @@ import {
   AppstoreAddOutlined,
   PlusOutlined,
   LinkOutlined,
-  HddOutlined
+  HddOutlined,
+  DatabaseOutlined
 } from '@ant-design/icons';
 
 // type
@@ -30,6 +31,7 @@ const icons = {
   ShoppingCartOutlined,
   UserOutlined,
   AppstoreAddOutlined,
+  DatabaseOutlined,
   FileTextOutlined,
   PlusOutlined,
   LinkOutlined,
@@ -49,7 +51,7 @@ const parametersColapsable: NavItemType = {
       title: <FormattedMessage id="Consorcios" />,
       type: 'item',
       url: '/parameters/consorcios',
-      icon: icons.HddOutlined
+      icon: icons.DatabaseOutlined
     }
   ]
 };

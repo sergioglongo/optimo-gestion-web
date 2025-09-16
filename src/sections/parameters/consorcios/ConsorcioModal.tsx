@@ -64,7 +64,7 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
     },
     enableReinitialize: true, // Add this line
     validationSchema,
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         if (isCreating) {
           // For creation, omit the 'id' field as it should be assigned by the backend
@@ -74,6 +74,7 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
         } else {
           await updateConsorcioMutation.mutateAsync({ consorcioId: values.id, consorcioData: values, imageFile, usuario_id });
         }
+        resetForm();
         modalToggler(false);
       } catch (error) {
         console.error(error);

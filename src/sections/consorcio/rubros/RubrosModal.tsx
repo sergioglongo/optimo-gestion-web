@@ -3,38 +3,39 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 
 // project import
-import { Cuenta } from 'types/cuenta';
+import { Rubro } from 'types/rubro';
 import Modal from 'components/Modal/ModalBasico';
-import CuentaForm from './CuentaForm';
-import { useCreateCuenta, useUpdateCuenta } from 'services/api/cuentasapi';
+import RubroForm from './RubroForm';
+import { useCreateRubro, useUpdateRubro } from 'services/api/rubrosapi';
 import { RootState } from 'store';
-
-// ==============================|| CUENTA MODAL ||============================== //
-
-interface CuentasModalProps {
+// ==============================|| RUBRO MODAL ||============================== //
+interface RubrosModalProps {
   open: boolean;
   modalToggler: (open: boolean) => void;
-  cuenta: Cuenta | null;
+  rubro: Rubro | null;
 }
 
-const CuentasModal = ({ open, modalToggler, cuenta }: CuentasModalProps) => {
-  const isCreating = !cuenta;
+const RubrosModal = ({ open, modalToggler, rubro }: RubrosModalProps) => {
+  const isCreating = !rubro;
   const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
 
-  const createCuentaMutation = useCreateCuenta();
-  const updateCuentaMutation = useUpdateCuenta();
+  const createRubroMutation = useCreateRubro();
+  const updateRubroMutation = useUpdateRubro();
 
   const validationSchema = Yup.object().shape({
-    descripcion: Yup.string().max(255).required('La descripción es requerida'),
-    tipo: Yup.string().oneOf(['corriente', 'ahorro', 'caja', 'otro']).required('El tipo es requerido')
+    rubro: Yup.string().max(255).required('El nombre del rubro es requerido'),
+    orden: Yup.number()
+      .integer('El orden debe ser un número entero')
+      .moreThan(0, 'El orden debe ser mayor que 0')
+      .required('El orden es requerido')
   });
 
-  const formik = useFormik<Omit<Cuenta, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
+  const formik = useFormik<Omit<Rubro, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
     initialValues: {
-      id: cuenta?.id,
-      descripcion: cuenta?.descripcion || '',
-      tipo: cuenta?.tipo || 'corriente',
-      consorcio_id: selectedConsorcio?.id || null
+      id: rubro?.id,
+      rubro: rubro?.rubro || '',
+      consorcio_id: selectedConsorcio?.id || null,
+      orden: rubro?.orden || 0
     },
     enableReinitialize: true,
     validationSchema,
@@ -48,9 +49,9 @@ const CuentasModal = ({ open, modalToggler, cuenta }: CuentasModalProps) => {
         if (isCreating) {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { id, ...dataToCreate } = finalValues;
-          await createCuentaMutation.mutateAsync({ cuentaData: dataToCreate, consorcio_id: selectedConsorcio?.id });
+          await createRubroMutation.mutateAsync({ rubroData: dataToCreate, consorcio_id: selectedConsorcio?.id });
         } else {
-          await updateCuentaMutation.mutateAsync({ cuentaId: cuenta!.id, cuentaData: finalValues });
+          await updateRubroMutation.mutateAsync({ rubroId: rubro!.id, rubroData: finalValues });
         }
         resetForm();
         modalToggler(false);
@@ -69,9 +70,9 @@ const CuentasModal = ({ open, modalToggler, cuenta }: CuentasModalProps) => {
       open={open}
       onClose={() => {
         modalToggler(false);
-        formik.resetForm(); // Reset Formik state on close
+        formik.resetForm();
       }}
-      title={isCreating ? 'Nueva Cuenta' : 'Editar Cuenta'}
+      title={isCreating ? 'Nuevo Rubro' : 'Editar Rubro'}
       cancelButtonLabel="Cancelar"
       confirmButtonLabel={isCreating ? 'Agregar' : 'Guardar'}
       onConfirm={handleSubmit}
@@ -79,11 +80,11 @@ const CuentasModal = ({ open, modalToggler, cuenta }: CuentasModalProps) => {
     >
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate>
-          <CuentaForm />
+          <RubroForm />
         </Form>
       </FormikProvider>
     </Modal>
   );
 };
 
-export default CuentasModal;
+export default RubrosModal;

@@ -16,3 +16,14 @@ export interface Proveedor {
   identificacion: string | null;
   CBU: string | null;
 }
+
+/**
+ * Interfaz que representa la relación entre un proveedor y un rubro.
+ * Mapeada desde la tabla `proveedores_rubros`.
+ */
+export interface ProveedorRubro {
+  id: number;
+  proveedor_id: number;
+  rubro_id: number;
+  principal: boolean;
+}

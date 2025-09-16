@@ -14,13 +14,14 @@ import EmptyReactTable from 'pages/tables/react-table/empty';
 import { IndeterminateCheckbox } from 'components/third-party/react-table';
 import UnidadOperativaModal from 'sections/consorcio/unidadOperativa/UnidadOperativaModal';
 import AlertUnidadOperativaDelete from 'sections/consorcio/unidadOperativa/AlertUnidadOperativaDelete';
+import PersonaUnidadModal from 'sections/consorcio/unidadOperativa/PersonaUnidadModal'; // Import the new modal
 
 // API hooks
 import useAuth from 'hooks/useAuth';
 import useConsorcio from 'hooks/useConsorcio';
 
 // assets
-import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import { useGetUnidadesOperativas } from 'services/api/unidadOperativaapi'; // Assuming a new API hook
 import UnidadOperativaList from 'sections/consorcio/unidadOperativa/UnidadOperativaList';
 import { UnidadOperativa, TipoUnidadOperativa, LiquidarA } from 'types/unidadOperativa'; // Using new types
@@ -40,6 +41,7 @@ const UnidadOperativaAdmin = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [unidadOperativaModal, setUnidadOperativaModal] = useState<boolean>(false);
   const [selectedUnidadOperativa, setSelectedUnidadOperativa] = useState<UnidadOperativa | null>(null);
+  const [personaUnidadModalOpen, setPersonaUnidadModalOpen] = useState<boolean>(false);
   const [unidadOperativaDeleteId, setUnidadOperativaDeleteId] = useState<any>('');
 
   const handleClose = () => {
@@ -49,6 +51,12 @@ const UnidadOperativaAdmin = () => {
   // New function to handle modal close and reset selectedUnidadOperativa
   const handleUnidadOperativaModalClose = () => {
     setUnidadOperativaModal(false);
+    setSelectedUnidadOperativa(null);
+  };
+
+  // Handler for the new modal
+  const handlePersonaUnidadModalClose = () => {
+    setPersonaUnidadModalOpen(false);
     setSelectedUnidadOperativa(null);
   };
 
@@ -205,6 +213,18 @@ const UnidadOperativaAdmin = () => {
                   <DeleteOutlined />
                 </IconButton>
               </Tooltip>
+              <Tooltip title="Asociar Personas">
+                <IconButton
+                  color="success"
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    e.stopPropagation();
+                    setSelectedUnidadOperativa(row.original);
+                    setPersonaUnidadModalOpen(true);
+                  }}
+                >
+                  <UsergroupAddOutlined />
+                </IconButton>
+              </Tooltip>
             </Stack>
           );
         }
@@ -240,6 +260,7 @@ const UnidadOperativaAdmin = () => {
         modalToggler={handleUnidadOperativaModalClose}
         unidadOperativa={selectedUnidadOperativa}
       />
+      <PersonaUnidadModal open={personaUnidadModalOpen} onClose={handlePersonaUnidadModalClose} unidadOperativa={selectedUnidadOperativa} />
     </>
   );
 };

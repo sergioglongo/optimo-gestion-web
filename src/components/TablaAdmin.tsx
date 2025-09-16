@@ -73,6 +73,7 @@ interface TablaAdminProps<T extends object> {
   renderExpandedRow?: (row: Row<T>) => React.ReactNode;
   title?: string;
   initialColumnVisibility?: Record<string, boolean>;
+  initialSorting?: SortingState;
 }
 
 // ==============================|| REACT TABLE - GENERIC ADMIN TABLE ||============================== //
@@ -86,17 +87,13 @@ function TablaAdmin<T extends object>({
   searchPlaceholder = 'Search records...',
   renderExpandedRow,
   title,
-  initialColumnVisibility
+  initialColumnVisibility,
+  initialSorting
 }: TablaAdminProps<T>) {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const [sorting, setSorting] = useState<SortingState>([
-    {
-      id: 'id', // Assuming 'id' is a common identifier, might need to be configurable
-      desc: true
-    }
-  ]);
+  const [sorting, setSorting] = useState<SortingState>(initialSorting || []);
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState('');
   const [columnVisibility, setColumnVisibility] = useState(initialColumnVisibility || {});

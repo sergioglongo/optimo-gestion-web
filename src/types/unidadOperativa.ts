@@ -25,3 +25,19 @@ export interface UnidadOperativa {
   alquilada: boolean;
   notas?: string | null;
 }
+
+/**
+ * Tipos de enumeración para el rol de una persona en una unidad.
+ */
+export type TipoPersonaUnidad = 'propietario' | 'inquilino' | 'habitante';
+
+/**
+ * Interfaz que representa la relación entre una persona y una unidad operativa.
+ * Mapeada desde la tabla `personas_unidades`.
+ */
+export interface PersonaUnidad {
+  id: number;
+  persona_id: number;
+  unidad_operativa_id: number;
+  tipo: TipoPersonaUnidad;
+}

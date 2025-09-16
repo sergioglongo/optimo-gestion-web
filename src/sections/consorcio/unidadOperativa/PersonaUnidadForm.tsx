@@ -1,0 +1,208 @@
+import {
+  Grid,
+  Select,
+  MenuItem,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  Typography,
+  Box,
+  ListItemSecondaryAction
+} from '@mui/material';
+import { useState } from 'react';
+import { useTheme } from '@mui/material/styles';
+
+// project import
+import { UnidadOperativa, PersonaUnidad, TipoPersonaUnidad } from 'types/unidadOperativa';
+import { Persona } from 'types/persona';
+import { useGetPersonas } from 'services/api/personasapi';
+import { useGetPersonaUnidades, useCreatePersonaUnidad, useDeletePersonaUnidad } from 'services/api/personaUnidadapi';
+import useConsorcio from 'hooks/useConsorcio';
+
+// assets
+import { DeleteOutlined } from '@ant-design/icons';
+
+interface PersonaUnidadFormProps {
+  unidadOperativa: UnidadOperativa;
+  open?: boolean;
+}
+
+const PersonaUnidadForm = ({ unidadOperativa, open = true }: PersonaUnidadFormProps) => {
+  const { selectedConsorcio } = useConsorcio();
+  const theme = useTheme();
+
+  // ==============================|| API & STATE ||============================== //
+
+  const { data: allPersonas = [], isLoading: isLoadingPersonas } = useGetPersonas(selectedConsorcio?.id || 0, {
+    enabled: !!selectedConsorcio?.id && open
+  });
+
+  const { data: existingAssociations = [], isLoading: isLoadingAssociations } = useGetPersonaUnidades(
+    { unidad_operativa_id: unidadOperativa?.id },
+    { enabled: !!unidadOperativa?.id && open }
+  );
+
+  const createAssociation = useCreatePersonaUnidad();
+  const deleteAssociation = useDeletePersonaUnidad();
+
+  const [selectedPropietario, setSelectedPropietario] = useState<number | ''>('');
+  const [selectedInquilino, setSelectedInquilino] = useState<number | ''>('');
+  const [selectedHabitante, setSelectedHabitante] = useState<number | ''>('');
+
+  // ==============================|| HANDLERS ||============================== //
+
+  const handleAdd = async (persona_id: number | '', tipo: TipoPersonaUnidad) => {
+    if (!persona_id || !unidadOperativa) return;
+
+    try {
+      await createAssociation.mutateAsync({
+        persona_id: Number(persona_id),
+        unidad_operativa_id: unidadOperativa.id,
+        tipo
+      });
+
+      if (tipo === 'propietario') setSelectedPropietario('');
+      if (tipo === 'inquilino') setSelectedInquilino('');
+      if (tipo === 'habitante') setSelectedHabitante('');
+    } catch (error) {
+      console.error(`Error al añadir ${tipo}:`, error);
+    }
+  };
+
+  const handleDelete = async (associationId: number) => {
+    try {
+      await deleteAssociation.mutateAsync(associationId);
+    } catch (error) {
+      console.error('Error al eliminar la asociación:', error);
+    }
+  };
+
+  const getPersonaName = (persona_id: number) => {
+    const persona = allPersonas.find((p) => p.id === persona_id);
+    return persona ? `${persona.nombre} ${persona.apellido}` : `Persona ID: ${persona_id}`;
+  };
+
+  // ==============================|| RENDER ||============================== //
+
+  const renderAssociationSection = (
+    title: string,
+    tipo: TipoPersonaUnidad,
+    selectedPersona: number | '',
+    setSelectedPersona: (id: number | '') => void
+  ) => {
+    // Filter associations for the current type (propietario, inquilino, habitante)
+    const associationsForType = existingAssociations.filter((a) => a.tipo === tipo);
+
+    // A person can only have one role per unit. Get all IDs of people already associated with this unit.
+    const allAssociatedPersonIds = existingAssociations.map((a) => a.persona_id);
+
+    // People available in the dropdown are those not already associated with this unit in any role.
+    const availablePersonas = allPersonas.filter((p) => !allAssociatedPersonIds.includes(p.id));
+
+    // For single-association types (propietario, inquilino), check if an association already exists.
+    const isSingleAssociationType = tipo === 'propietario' || tipo === 'inquilino';
+    const canAdd = !isSingleAssociationType || associationsForType.length === 0;
+
+    return (
+      <>
+        <Box borderBottom={1} borderColor="darkgrey" padding={0} width={'100%'}>
+          <Typography padding={1} variant="h5">
+            {title}
+          </Typography>
+        </Box>
+        {canAdd && (
+          <Grid container spacing={1} alignItems="center" sx={{ ml: 1, mt: 1 }}>
+            <Grid item xs={8}>
+              <FormControl fullWidth size="small">
+                <InputLabel>{`Seleccionar ${title}`}</InputLabel>
+                <Select
+                  value={selectedPersona}
+                  onChange={(e) => setSelectedPersona(e.target.value as number)}
+                  label={`Seleccionar ${title}`}
+                  disabled={isLoadingPersonas || createAssociation.isLoading}
+                >
+                  {availablePersonas.map((persona: Persona) => (
+                    <MenuItem key={persona.id} value={persona.id}>
+                      {`${persona.nombre} ${persona.apellido}`}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={4}>
+              <Button
+                variant="contained"
+                onClick={() => handleAdd(selectedPersona, tipo)}
+                disabled={!selectedPersona || createAssociation.isLoading}
+              >
+                Añadir
+              </Button>
+            </Grid>
+          </Grid>
+        )}
+        <List dense>
+          {associationsForType.map((assoc: PersonaUnidad) => (
+            <ListItem key={assoc.id}>
+              <ListItemText primary={getPersonaName(assoc.persona_id)} primaryTypographyProps={{ variant: 'h5' }} />
+              <ListItemSecondaryAction>
+                <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(assoc.id)} disabled={deleteAssociation.isLoading}>
+                  <DeleteOutlined />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+      </>
+    );
+  };
+
+  if (isLoadingAssociations) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <Grid container spacing={2}>
+      {selectedConsorcio && (
+        <Grid item xs={12}>
+          <Box sx={{ p: 1, borderRadius: 1, textAlign: 'center', color: 'white', backgroundColor: theme.palette.primary.main }}>
+            <Typography variant="body1">
+              <strong>Consorcio {selectedConsorcio.nombre}</strong>
+            </Typography>
+          </Box>
+        </Grid>
+      )}
+      {/* Columna Izquierda: Propietario e Inquilino */}
+      <Grid item xs={12} md={6}>
+        <Grid container spacing={0}>
+          <Box border={1} borderColor="lightgray" borderRadius={1} padding={0} width={'100%'}>
+            <Grid item xs={12}>
+              {renderAssociationSection('Propietario', 'propietario', selectedPropietario, setSelectedPropietario)}
+            </Grid>
+          </Box>
+          <Box border={1} borderColor="lightgray" borderRadius={1} padding={0} width={'100%'} marginTop={1}>
+            <Grid item xs={12}>
+              {renderAssociationSection('Inquilino', 'inquilino', selectedInquilino, setSelectedInquilino)}
+            </Grid>
+          </Box>
+        </Grid>
+      </Grid>
+      {/* Columna Derecha: Habitantes */}
+      <Grid item xs={12} md={6} padding={0}>
+        <Box border={1} borderColor="lightgray" borderRadius={1} padding={0} marginTop={0}>
+          {renderAssociationSection('Habitante', 'habitante', selectedHabitante, setSelectedHabitante)}
+        </Box>
+      </Grid>
+    </Grid>
+  );
+};
+
+export default PersonaUnidadForm;

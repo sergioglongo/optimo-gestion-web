@@ -1,15 +1,14 @@
-import { Grid, TextField, MenuItem, Typography, Box, Switch, FormControlLabel } from '@mui/material';
+import { Grid, TextField, MenuItem, Typography, Box, Switch, FormControlLabel, InputAdornment, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useFormikContext } from 'formik';
 import { UnidadOperativa, TipoUnidadOperativa, LiquidarA } from 'types/unidadOperativa'; // Assuming new types
-import { useSelector } from 'react-redux';
-import { RootState } from 'store';
 import { useState, useEffect } from 'react';
+import useConsorcio from 'hooks/useConsorcio';
 
 const UnidadOperativaForm = () => {
   const theme = useTheme();
   const { errors, touched, getFieldProps, setFieldValue, values } = useFormikContext<UnidadOperativa>();
-  const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
+  const { selectedConsorcio } = useConsorcio();
 
   const [isEtiquetaManual, setIsEtiquetaManual] = useState(false);
 
@@ -41,24 +40,34 @@ const UnidadOperativaForm = () => {
           </Box>
         </Grid>
       )}
-      <Grid item xs={12} md={6}>
+      <Grid item xs={6} md={4}>
         <TextField
           fullWidth
           label="Etiqueta"
           {...getFieldProps('etiqueta')}
           error={Boolean(touched.etiqueta && errors.etiqueta)}
           helperText={touched.etiqueta && errors.etiqueta}
-          disabled={!isEtiquetaManual}
           InputLabelProps={{ shrink: true }}
+          InputProps={{
+            readOnly: !isEtiquetaManual,
+            sx: { padding: 0 },
+            endAdornment: (
+              <InputAdornment position="end">
+                <Tooltip title={isEtiquetaManual ? 'Generar automaticamente' : 'Escribir manualmente'}>
+                  <Switch
+                    size="small"
+                    checked={isEtiquetaManual}
+                    onChange={handleEtiquetaManualToggle}
+                    name="isEtiquetaManual"
+                    color="primary"
+                  />
+                </Tooltip>
+              </InputAdornment>
+            )
+          }}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
-        <FormControlLabel
-          control={<Switch checked={isEtiquetaManual} onChange={handleEtiquetaManualToggle} name="isEtiquetaManual" color="primary" />}
-          label="Editar Etiqueta Manualmente"
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={6} md={3}>
         <TextField
           select
           fullWidth
@@ -75,7 +84,7 @@ const UnidadOperativaForm = () => {
         </TextField>
       </Grid>
       {selectedConsorcio?.identificador1 && (
-        <Grid item xs={12} md={4}>
+        <Grid item xs={4} md={1.66}>
           <TextField
             fullWidth
             label={selectedConsorcio.identificador1}
@@ -86,7 +95,7 @@ const UnidadOperativaForm = () => {
         </Grid>
       )}
       {selectedConsorcio?.identificador2 && (
-        <Grid item xs={12} md={4}>
+        <Grid item xs={4} md={1.66}>
           <TextField
             fullWidth
             label={selectedConsorcio.identificador2}
@@ -97,7 +106,7 @@ const UnidadOperativaForm = () => {
         </Grid>
       )}
       {selectedConsorcio?.identificador3 && (
-        <Grid item xs={12} md={4}>
+        <Grid item xs={4} md={1.66}>
           <TextField
             fullWidth
             label={selectedConsorcio.identificador3}
@@ -107,67 +116,82 @@ const UnidadOperativaForm = () => {
           />
         </Grid>
       )}
+      {/* --- Bloque de Liquidación --- */}
       <Grid item xs={12} md={6}>
-        <TextField
-          select
-          fullWidth
-          label="Liquidar a"
-          {...getFieldProps('liquidar_a')}
-          error={Boolean(touched.liquidar_a && errors.liquidar_a)}
-          helperText={touched.liquidar_a && errors.liquidar_a}
-        >
-          {(['propietario', 'inquilino', 'ambos'] as LiquidarA[]).map((option) => (
-            <MenuItem key={option} value={option}>
-              {option.charAt(0).toUpperCase() + option.slice(1)}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          fullWidth
-          label="Prorrateo"
-          type="number"
-          {...getFieldProps('prorrateo')}
-          error={Boolean(touched.prorrateo && errors.prorrateo)}
-          helperText={touched.prorrateo && errors.prorrateo}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={getFieldProps('Intereses').value}
-              onChange={(event) => setFieldValue('Intereses', event.target.checked)}
-              name="Intereses"
-              color="primary"
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              select
+              fullWidth
+              label="Liquidar a"
+              {...getFieldProps('liquidar_a')}
+              error={Boolean(touched.liquidar_a && errors.liquidar_a)}
+              helperText={touched.liquidar_a && errors.liquidar_a}
+            >
+              {(['propietario', 'inquilino', 'ambos'] as LiquidarA[]).map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option.charAt(0).toUpperCase() + option.slice(1)}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <FormControlLabel
+              control={
+                <Tooltip title={getFieldProps('alquilada').value ? 'Inquilino Habilitado' : 'Sin Inquilino'}>
+                  <Switch
+                    checked={getFieldProps('alquilada').value}
+                    onChange={(event) => setFieldValue('alquilada', event.target.checked)}
+                    name="alquilada"
+                    color="primary"
+                  />
+                </Tooltip>
+              }
+              label="Alquilada"
+              labelPlacement="top"
+              sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', lineHeight: 0.1 } }}
             />
-          }
-          label="Intereses"
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={getFieldProps('alquilada').value}
-              onChange={(event) => setFieldValue('alquilada', event.target.checked)}
-              name="alquilada"
-              color="primary"
+          </Grid>
+          <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <FormControlLabel
+              control={
+                <Tooltip title={getFieldProps('Intereses').value ? 'Genera intereses' : 'No genera intereses'}>
+                  <Switch
+                    checked={getFieldProps('Intereses').value}
+                    onChange={(event) => setFieldValue('Intereses', event.target.checked)}
+                    name="Intereses"
+                    color="primary"
+                  />
+                </Tooltip>
+              }
+              label="Intereses"
+              labelPlacement="top"
+              sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', lineHeight: 0.1 } }}
             />
-          }
-          label="Alquilada"
-        />
+          </Grid>
+          <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center' }}>
+            <TextField
+              label="Prorrateo"
+              type="number"
+              {...getFieldProps('prorrateo')}
+              error={Boolean(touched.prorrateo && errors.prorrateo)}
+              helperText={touched.prorrateo && errors.prorrateo}
+              inputProps={{ style: { textAlign: 'center' }, step: 0.1 }}
+            />
+          </Grid>
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
+      {/* --- Bloque de Notas --- */}
+      <Grid item xs={12} md={6}>
         <TextField
           fullWidth
           label="Notas"
           multiline
-          rows={3}
           {...getFieldProps('notas')}
           error={Boolean(touched.notas && errors.notas)}
           helperText={touched.notas && errors.notas}
+          sx={{ height: '100%' }}
+          InputProps={{ sx: { height: '100%', alignItems: 'flex-start' } }}
         />
       </Grid>
     </Grid>

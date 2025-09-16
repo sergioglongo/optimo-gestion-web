@@ -1,19 +1,19 @@
 import { useMemo, useState, MouseEvent } from 'react';
 
 // material-ui
-import { Chip, Stack, Tooltip, Typography } from '@mui/material';
+import { Stack, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
-import { useIntl } from 'react-intl'; // Import useIntl
+import { useIntl } from 'react-intl';
 
 // project import
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
 import { IndeterminateCheckbox } from 'components/third-party/react-table';
-import PersonasModal from 'sections/consorcio/personas/PersonasModal';
-import AlertPersonaDelete from 'sections/consorcio/personas/AlertPersonaDelete';
+import RubrosModal from 'sections/consorcio/rubros/RubrosModal';
+import AlertRubroDelete from 'sections/consorcio/rubros/AlertRubroDelete';
 
 // API hooks
 import useAuth from 'hooks/useAuth';
@@ -21,30 +21,30 @@ import useConsorcio from 'hooks/useConsorcio';
 
 // assets
 import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { useGetPersonas } from 'services/api/personasapi'; // Assuming a new API hook
-import PersonasList from 'sections/consorcio/personas/PersonasList';
-import { Persona, TipoPersona } from 'types/persona'; // Assuming new types
+import { useGetRubros } from 'services/api/rubrosapi';
+import RubrosList from 'sections/consorcio/rubros/RubrosList';
+import { Rubro } from 'types/rubro';
 
-// ==============================|| PERSONAS - ADMIN ||============================== //
+// ==============================|| RUBROS - ADMIN ||============================== //
 
-const PersonasAdmin = () => {
+const RubrosAdmin = () => {
   const theme = useTheme();
   const { user, token } = useAuth();
   const { selectedConsorcio } = useConsorcio();
-  const intl = useIntl(); // Initialize useIntl
+  const intl = useIntl();
 
-  const { data: personasData, isLoading } = useGetPersonas(selectedConsorcio?.id || 0, { enabled: !!user?.id && !!token });
+  const { data: rubrosData, isLoading } = useGetRubros(selectedConsorcio?.id || 0, { enabled: !!user?.id && !!token });
 
   const [open, setOpen] = useState<boolean>(false);
-  const [personaModal, setPersonaModal] = useState<boolean>(false);
-  const [selectedPersona, setSelectedPersona] = useState<Persona | null>(null);
-  const [personaDeleteId, setPersonaDeleteId] = useState<any>('');
+  const [rubroModal, setRubroModal] = useState<boolean>(false);
+  const [selectedRubro, setSelectedRubro] = useState<Rubro | null>(null);
+  const [rubroDeleteId, setRubroDeleteId] = useState<any>('');
 
   const handleClose = () => {
     setOpen(!open);
   };
 
-  const columns = useMemo<ColumnDef<Persona>[]>(
+  const columns = useMemo<ColumnDef<Rubro>[]>(
     () => [
       {
         id: 'select',
@@ -71,15 +71,13 @@ const PersonasAdmin = () => {
       {
         header: 'ID',
         accessorKey: 'id',
-        enableColumnFilter: false,
-        enableSorting: true,
         meta: {
-          className: 'd-none' // Hide the column visually
+          className: 'd-none'
         }
       },
       {
-        header: 'Nombre', // Changed from 'Descripción'
-        accessorKey: 'nombre', // Assuming 'nombre' for Persona
+        header: 'Rubro',
+        accessorKey: 'rubro',
         cell: ({ getValue }) => (
           <Stack spacing={0}>
             <Typography variant="subtitle1">{getValue() as string}</Typography>
@@ -87,8 +85,8 @@ const PersonasAdmin = () => {
         )
       },
       {
-        header: 'Apellido', // Added 'Apellido' for Persona
-        accessorKey: 'apellido', // Assuming 'apellido' for Persona
+        header: 'Orden',
+        accessorKey: 'orden',
         cell: ({ getValue }) => (
           <Stack spacing={0}>
             <Typography variant="subtitle1">{getValue() as string}</Typography>
@@ -96,31 +94,7 @@ const PersonasAdmin = () => {
         )
       },
       {
-        header: 'DNI', // Added 'DNI' for Persona
-        accessorKey: 'dni', // Assuming 'dni' for Persona
-        cell: ({ getValue }) => (
-          <Stack spacing={0}>
-            <Typography variant="subtitle1">{getValue() as string}</Typography>
-          </Stack>
-        )
-      },
-      {
-        header: 'Tipo',
-        accessorKey: 'tipo',
-        cell: (cell) => {
-          const tipo = cell.getValue() as TipoPersona; // Using TipoPersona
-          switch (tipo) {
-            case 'persona juridica': // Example types for Persona
-              return <Chip color="primary" label="Persona Jurdíca" size="small" variant="light" />;
-            case 'persona fisica':
-              return <Chip color="success" label="Persona Física" size="small" variant="light" />;
-            default:
-              return <Chip label={tipo} size="small" variant="light" />;
-          }
-        }
-      },
-      {
-        header: intl.formatMessage({ id: 'table.actions' }), // Translated 'Actions'
+        header: intl.formatMessage({ id: 'table.actions' }),
         meta: {
           className: 'cell-center'
         },
@@ -144,8 +118,8 @@ const PersonasAdmin = () => {
                   color="primary"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
-                    setSelectedPersona(row.original);
-                    setPersonaModal(true);
+                    setSelectedRubro(row.original);
+                    setRubroModal(true);
                   }}
                 >
                   <EditOutlined />
@@ -157,7 +131,7 @@ const PersonasAdmin = () => {
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
                     handleClose();
-                    setPersonaDeleteId(row.original);
+                    setRubroDeleteId(row.original);
                   }}
                 >
                   <DeleteOutlined />
@@ -169,28 +143,29 @@ const PersonasAdmin = () => {
       }
     ],
     // eslint-disable-next-line
-    [theme, intl] // Add intl to dependency array
+    [theme, intl]
   );
 
   if (isLoading) return <EmptyReactTable />;
 
   return (
     <>
-      <PersonasList
+      <RubrosList
         {...{
-          data: personasData || [],
+          data: rubrosData || [],
           columns,
+          initialSorting: [{ id: 'orden', desc: false }],
           initialColumnVisibility: { id: false },
           modalToggler: () => {
-            setPersonaModal(true);
-            setSelectedPersona(null);
+            setRubroModal(true);
+            setSelectedRubro(null);
           }
         }}
       />
-      <AlertPersonaDelete id={personaDeleteId.id} title={String(personaDeleteId.nombre)} open={open} handleClose={handleClose} />
-      <PersonasModal open={personaModal} modalToggler={setPersonaModal} persona={selectedPersona} />
+      <AlertRubroDelete id={rubroDeleteId.id} title={String(rubroDeleteId.rubro)} open={open} handleClose={handleClose} />
+      <RubrosModal open={rubroModal} modalToggler={setRubroModal} rubro={selectedRubro} />
     </>
   );
 };
 
-export default PersonasAdmin;
+export default RubrosAdmin;

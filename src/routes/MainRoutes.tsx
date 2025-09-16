@@ -123,6 +123,7 @@ const CuentasPage = Loadable(lazy(() => import('pages/consorcios/cuentasAdmin'))
 const ProveedoresPage = Loadable(lazy(() => import('pages/consorcios/proveedoresAdmin')));
 const PersonasPage = Loadable(lazy(() => import('pages/consorcios/personasAdmin')));
 const UnidadOperativaPage = Loadable(lazy(() => import('pages/consorcios/unidadOperativaAdmin'))); // New import for UnidadOperativaAdmin
+const RubrosPage = Loadable(lazy(() => import('pages/consorcios/rubrosAdmin'))); // New import for UnidadOperativaAdmin
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -529,6 +530,10 @@ const MainRoutes = {
             {
               path: 'unidades',
               element: <UnidadOperativaPage />
+            },
+            {
+              path: 'rubros',
+              element: <RubrosPage />
             }
           ]
         },

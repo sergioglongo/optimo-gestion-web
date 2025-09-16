@@ -1,13 +1,20 @@
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
+
+// material-ui
+import { Box, Collapse, Divider, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 // project import
 import { UnidadOperativa } from 'types/unidadOperativa';
 import Modal from 'components/Modal/ModalBasico';
 import UnidadOperativaForm from './UnidadOperativaForm';
 import { useCreateUnidadOperativa, useUpdateUnidadOperativa } from 'services/api/unidadOperativaapi'; // Assuming new API hooks
-import { RootState } from 'store';
+import PersonaUnidadForm from './PersonaUnidadForm';
+
+// assets
+import { DownOutlined, UpOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import useConsorcio from 'hooks/useConsorcio';
 
 // ==============================|| UNIDAD OPERATIVA MODAL ||============================== //
 
@@ -19,7 +26,8 @@ interface UnidadOperativaModalProps {
 
 const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa }: UnidadOperativaModalProps) => {
   const isCreating = !unidadOperativa;
-  const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
+  const { selectedConsorcio } = useConsorcio();
+  const [isPersonaFormOpen, setPersonaFormOpen] = useState(false);
 
   const createUnidadOperativaMutation = useCreateUnidadOperativa();
   const updateUnidadOperativaMutation = useUpdateUnidadOperativa();
@@ -54,7 +62,7 @@ const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa }: UnidadOpe
     },
     enableReinitialize: true,
     validationSchema,
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         if (!selectedConsorcio?.id) {
           throw new Error('No hay un consorcio seleccionado.');
@@ -68,6 +76,7 @@ const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa }: UnidadOpe
         } else {
           await updateUnidadOperativaMutation.mutateAsync({ unidadOperativaId: unidadOperativa!.id, unidadOperativaData: finalValues });
         }
+        resetForm();
         modalToggler(false);
       } catch (error) {
         console.error(error);
@@ -97,6 +106,26 @@ const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa }: UnidadOpe
           <UnidadOperativaForm />
         </Form>
       </FormikProvider>
+      {unidadOperativa && (
+        <>
+          <Divider sx={{ my: 2 }} />
+          <ListItemButton
+            onClick={() => setPersonaFormOpen(!isPersonaFormOpen)}
+            sx={{ bgcolor: 'primary.lighter', '&:hover': { bgcolor: 'primary.light' }, borderRadius: 1 }}
+          >
+            <ListItemIcon>
+              <UsergroupAddOutlined />
+            </ListItemIcon>
+            <ListItemText primary="Asociar Personas" />
+            {isPersonaFormOpen ? <UpOutlined /> : <DownOutlined />}
+          </ListItemButton>
+          <Collapse in={isPersonaFormOpen} timeout="auto" unmountOnExit>
+            <Box sx={{ pt: 2 }}>
+              <PersonaUnidadForm unidadOperativa={unidadOperativa} open={isPersonaFormOpen} />
+            </Box>
+          </Collapse>
+        </>
+      )}
     </Modal>
   );
 };

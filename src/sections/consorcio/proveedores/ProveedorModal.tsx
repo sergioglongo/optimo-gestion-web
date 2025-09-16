@@ -8,6 +8,7 @@ import Modal from 'components/Modal/ModalBasico';
 import ProveedorForm from './ProveedorForm';
 import { useCreateProveedor, useUpdateProveedor } from 'services/api/proveedoresapi';
 import { RootState } from 'store';
+import ProveedorRubrosForm from './ProveedorRubrosForm';
 
 // ==============================|| PROVEEDOR MODAL ||============================== //
 
@@ -44,7 +45,7 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
     },
     enableReinitialize: true,
     validationSchema,
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         if (!selectedConsorcio?.id) {
           throw new Error('No hay un consorcio seleccionado.');
@@ -58,6 +59,7 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
         } else {
           await updateProveedorMutation.mutateAsync({ proveedorId: proveedor!.id, proveedorData: finalValues });
         }
+        resetForm();
         modalToggler(false);
       } catch (error) {
         console.error(error);
@@ -87,6 +89,7 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
           <ProveedorForm />
         </Form>
       </FormikProvider>
+      {proveedor && <ProveedorRubrosForm proveedor={proveedor} />}
     </Modal>
   );
 };
