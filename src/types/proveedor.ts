@@ -1,3 +1,5 @@
+import { Rubro } from "./rubro";
+
 /**
  * Tipos de enumeración para el tipo de identificación del proveedor.
  */
@@ -15,6 +17,7 @@ export interface Proveedor {
   tipo_identificacion: TipoIdentificacionProveedor;
   identificacion: string | null;
   CBU: string | null;
+  Rubros?: Rubro[];
 }
 
 /**

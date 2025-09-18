@@ -31,8 +31,8 @@ const AlertProveedorDelete = ({ id, title, open, handleClose }: AlertDeleteProps
       onConfirm={handleDelete}
       title="¿Estás seguro de eliminar?"
       content={`Estás a punto de eliminar el proveedor "${title}". Esta acción es irreversible.`}
-      confirmText="Delete"
-      cancelText="Cancel"
+      confirmText="delete"
+      cancelText="cancel"
       confirmColor="error"
     />
   );

@@ -99,7 +99,7 @@ const NavCollapse = ({ menu, level, parentId, setSelectedItems, selectedItems, s
   const navigation = useNavigate();
 
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<string | null | undefined>(null);
+  const [selected, setSelected] = useState<string | null | undefined>(selectedItems === menu.id ? menu.id : null);
   const [anchorEl, setAnchorEl] = useState<VirtualElement | (() => VirtualElement) | null | undefined>(null);
 
   const [anchorElCollapse, setAnchorElCollapse] = React.useState<null | HTMLElement>(null);
@@ -152,7 +152,7 @@ const NavCollapse = ({ menu, level, parentId, setSelectedItems, selectedItems, s
   };
 
   useMemo(() => {
-    if (selected === selectedItems) {
+    if (menu.id === selectedItems) {
       if (level === 1) {
         setOpen(true);
       }
@@ -167,6 +167,7 @@ const NavCollapse = ({ menu, level, parentId, setSelectedItems, selectedItems, s
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedItems, level, selected, miniMenuOpened, drawerOpen, selectedLevel]);
 
   const { pathname } = useLocation();
@@ -203,15 +204,15 @@ const NavCollapse = ({ menu, level, parentId, setSelectedItems, selectedItems, s
           }
         }
 
-        if (pathname && pathname.includes('invoice')) {
-          if (item.url && item.url.includes('invoice')) {
+        if (pathname && pathname.includes('consorcio-collapse')) {
+          if (item.url && item.url.includes('consorcio-collapse')) {
             setSelected(menu.id);
             setOpen(true);
           }
         }
 
-        if (pathname && pathname.includes('profiles')) {
-          if (item.url && item.url.includes('profiles')) {
+        if (pathname && pathname.includes('expensas')) {
+          if (item.url && item.url.includes('expensas')) {
             setSelected(menu.id);
             setOpen(true);
           }

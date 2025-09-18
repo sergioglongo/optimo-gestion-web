@@ -167,5 +167,18 @@
   "table.actions": "Acciones",
   "Providers": "Proveedores",
   "providers": "proveedores",
-  "unidades-operativas": "Unidades Operativas"
+  "unidades-operativas": "Unidades Operativas",
+  "Payments": "Pagos",
+  "payments": "pagos",
+  "payment": "pago",
+  "Payment": "Pago",
+  "Transactions": "Movimientos",
+  "Expenses": "Gastos",
+  "Income": "Cobranza",
+  "Incomes": "Cobranzas",
+  "Fees": "Expensas",
+  "overdue-list": "Deudores",
+  "fees-list": "Lista Expensas",
+  "Statement": "Liquidaciones",
+  "Reconciliation": "Conciliaciones"
 }

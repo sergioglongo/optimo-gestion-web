@@ -14,7 +14,6 @@ import {
   LinkOutlined,
   DollarOutlined,
   TeamOutlined,
-  ShopOutlined,
   HomeOutlined,
   DashboardOutlined, // Added DashboardOutlined
   AppstoreOutlined,
@@ -56,13 +55,6 @@ const consorcioColapsable: NavItemType = {
       type: 'item',
       url: '/consorcio/cuentas',
       icon: DollarOutlined
-    },
-    {
-      id: 'proveedores',
-      title: <FormattedMessage id="Providers" />,
-      type: 'item',
-      url: '/consorcio/proveedores',
-      icon: ShopOutlined
     },
     {
       id: 'personas',

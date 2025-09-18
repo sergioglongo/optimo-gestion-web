@@ -96,17 +96,8 @@ const PersonasAdmin = () => {
         )
       },
       {
-        header: 'DNI', // Added 'DNI' for Persona
-        accessorKey: 'dni', // Assuming 'dni' for Persona
-        cell: ({ getValue }) => (
-          <Stack spacing={0}>
-            <Typography variant="subtitle1">{getValue() as string}</Typography>
-          </Stack>
-        )
-      },
-      {
         header: 'Tipo',
-        accessorKey: 'tipo',
+        accessorKey: 'tipo_persona',
         cell: (cell) => {
           const tipo = cell.getValue() as TipoPersona; // Using TipoPersona
           switch (tipo) {
@@ -118,6 +109,15 @@ const PersonasAdmin = () => {
               return <Chip label={tipo} size="small" variant="light" />;
           }
         }
+      },
+      {
+        header: 'Indentificación', // Added 'DNI' for Persona
+        accessorKey: 'identificacion', // Assuming 'dni' for Persona
+        cell: ({ getValue }) => (
+          <Stack spacing={0}>
+            <Typography variant="subtitle1">{getValue() as string}</Typography>
+          </Stack>
+        )
       },
       {
         header: intl.formatMessage({ id: 'table.actions' }), // Translated 'Actions'
