@@ -1,3 +1,6 @@
+import { Cuenta } from "./cuenta";
+import { Rubro } from "./rubro";
+
 /**
  * Tipos de enumeración para el tipo de identificación del proveedor.
  */
@@ -15,6 +18,9 @@ export interface Proveedor {
   tipo_identificacion: TipoIdentificacionProveedor;
   identificacion: string | null;
   CBU: string | null;
+  cuenta_id: number | null;
+  Rubros?: Rubro[];
+  Cuenta?: Cuenta;
 }
 
 /**

@@ -21,9 +21,9 @@ import useConsorcio from 'hooks/useConsorcio';
 import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useGetProveedores } from 'services/api/proveedoresapi';
 import { Proveedor } from 'types/proveedor';
-import ProveedoresList from 'sections/consorcio/proveedores/ProveedoresList';
+import ProveedoresList from 'sections/proveedores/proveedores/ProveedoresList';
 import AlertProductDelete from 'sections/apps/invoice/AlertProductDelete';
-import ProveedorModal from 'sections/consorcio/proveedores/ProveedorModal';
+import ProveedorModal from 'sections/proveedores/proveedores/ProveedorModal';
 
 // ==============================|| CUENTAS - ADMIN ||============================== //
 

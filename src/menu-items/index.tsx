@@ -1,6 +1,6 @@
 // project import
 // import applications from './applications';
-import widget from './widget';
+// import widget from './widget';
 // import formsTables from './forms-tables';
 // import samplePage from './sample-page';
 // import chartsMap from './charts-map';
@@ -12,12 +12,15 @@ import parameters from './parameters';
 
 // types
 import { NavItemType } from 'types/menu';
+import proveedores from './proveedores';
+import movimientos from './movimientos';
+import expensas from './expensas';
 // import samplePage from './sample-page';
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems: { items: NavItemType[] } = {
-  items: [home, widget, consorcio, parameters]
+  items: [home, expensas, movimientos, proveedores, consorcio, parameters]
 };
 
 export default menuItems;

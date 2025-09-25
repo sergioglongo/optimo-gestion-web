@@ -19,6 +19,13 @@ const UnidadOperativaForm = () => {
     }
   }, [values.identificador1, values.identificador2, values.identificador3, isEtiquetaManual, setFieldValue]);
 
+  useEffect(() => {
+    // Si la unidad no está alquilada, forzar que se liquide solo al propietario.
+    if (!values.alquilada && values.liquidar_a !== 'propietario') {
+      setFieldValue('liquidar_a', 'propietario');
+    }
+  }, [values.alquilada, values.liquidar_a, setFieldValue]);
+
   const handleEtiquetaManualToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
     setIsEtiquetaManual(checked);
@@ -28,6 +35,8 @@ const UnidadOperativaForm = () => {
       setFieldValue('etiqueta', generatedEtiqueta);
     }
   };
+
+  const liquidarAOptions: LiquidarA[] = values.alquilada ? ['propietario', 'inquilino', 'ambos'] : ['propietario'];
 
   return (
     <Grid container spacing={3}>
@@ -124,11 +133,12 @@ const UnidadOperativaForm = () => {
               select
               fullWidth
               label="Liquidar a"
+              disabled={!values.alquilada}
               {...getFieldProps('liquidar_a')}
               error={Boolean(touched.liquidar_a && errors.liquidar_a)}
               helperText={touched.liquidar_a && errors.liquidar_a}
             >
-              {(['propietario', 'inquilino', 'ambos'] as LiquidarA[]).map((option) => (
+              {liquidarAOptions.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option.charAt(0).toUpperCase() + option.slice(1)}
                 </MenuItem>

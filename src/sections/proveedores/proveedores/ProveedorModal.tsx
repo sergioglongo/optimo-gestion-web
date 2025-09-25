@@ -1,14 +1,14 @@
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useSelector } from 'react-redux';
 
 // project import
 import { Proveedor } from 'types/proveedor';
 import Modal from 'components/Modal/ModalBasico';
 import ProveedorForm from './ProveedorForm';
 import { useCreateProveedor, useUpdateProveedor } from 'services/api/proveedoresapi';
-import { RootState } from 'store';
-import ProveedorRubrosForm from './ProveedorRubrosForm';
+import useConsorcio from 'hooks/useConsorcio';
+
+type ProveedorCreateData = Omit<Proveedor, 'id'>;
 
 // ==============================|| PROVEEDOR MODAL ||============================== //
 
@@ -20,7 +20,7 @@ interface ProveedorModalProps {
 
 const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) => {
   const isCreating = !proveedor;
-  const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
+  const { selectedConsorcio } = useConsorcio();
 
   const createProveedorMutation = useCreateProveedor();
   const updateProveedorMutation = useUpdateProveedor();
@@ -28,36 +28,33 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().max(255).required('El nombre es requerido'),
     servicio: Yup.string().max(255).required('El servicio es requerido'),
-    tipo_identificacion: Yup.string().oneOf(['documento', 'cuit', 'cuil', 'otro']),
     identificacion: Yup.string().nullable(),
-    CBU: Yup.string().nullable()
+    CBU: Yup.string().nullable(),
+    cuenta_id: Yup.number().nullable()
   });
 
-  const formik = useFormik<Omit<Proveedor, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
+  const formik = useFormik<ProveedorCreateData>({
     initialValues: {
-      id: proveedor?.id,
       nombre: proveedor?.nombre || '',
       servicio: proveedor?.servicio || '',
-      consorcio_id: selectedConsorcio?.id || null,
+      consorcio_id: selectedConsorcio?.id || 0,
       tipo_identificacion: proveedor?.tipo_identificacion || 'cuit',
       identificacion: proveedor?.identificacion || null,
-      CBU: proveedor?.CBU || null
+      CBU: proveedor?.CBU || null,
+      cuenta_id: proveedor?.cuenta_id || null
     },
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         if (!selectedConsorcio?.id) {
-          throw new Error('No hay un consorcio seleccionado.');
+          return;
         }
-        const finalValues = { ...values, consorcio_id: selectedConsorcio.id };
 
         if (isCreating) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { id, ...dataToCreate } = finalValues;
-          await createProveedorMutation.mutateAsync({ proveedorData: dataToCreate, consorcio_id: selectedConsorcio?.id });
+          await createProveedorMutation.mutateAsync({ proveedorData: values, consorcio_id: selectedConsorcio.id });
         } else {
-          await updateProveedorMutation.mutateAsync({ proveedorId: proveedor!.id, proveedorData: finalValues });
+          await updateProveedorMutation.mutateAsync({ proveedorId: proveedor!.id, proveedorData: values });
         }
         resetForm();
         modalToggler(false);
@@ -69,27 +66,24 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
     }
   });
 
-  const { handleSubmit, isSubmitting } = formik;
-
   return (
     <Modal
       open={open}
       onClose={() => {
         modalToggler(false);
-        formik.resetForm(); // Reset Formik state on close
+        formik.resetForm();
       }}
       title={isCreating ? 'Nuevo Proveedor' : 'Editar Proveedor'}
       cancelButtonLabel="Cancelar"
       confirmButtonLabel={isCreating ? 'Agregar' : 'Guardar'}
-      onConfirm={handleSubmit}
-      isSubmitting={isSubmitting || !selectedConsorcio}
+      onConfirm={formik.handleSubmit}
+      isSubmitting={formik.isSubmitting || !selectedConsorcio}
     >
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate>
-          <ProveedorForm />
+          <ProveedorForm proveedor={proveedor} open={open} />
         </Form>
       </FormikProvider>
-      {proveedor && <ProveedorRubrosForm proveedor={proveedor} />}
     </Modal>
   );
 };

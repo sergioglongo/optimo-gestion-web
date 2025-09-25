@@ -1,3 +1,5 @@
+import { Persona } from "./persona";
+
 /**
  * Tipos de enumeración para el tipo de unidad operativa.
  */
@@ -24,6 +26,9 @@ export interface UnidadOperativa {
   Intereses: boolean;
   alquilada: boolean;
   notas?: string | null;
+  propietario?: Persona | null;
+  inquilino?: Persona | null;
+  habitantes?: Persona[] | null;
 }
 
 /**

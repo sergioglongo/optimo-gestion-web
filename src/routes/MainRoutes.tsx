@@ -120,10 +120,12 @@ const PricingPage = Loadable(lazy(() => import('pages/extra-pages/pricing')));
 // render - consorcios
 const ConsorciosPage = Loadable(lazy(() => import('pages/consorcios/consorciosAdmin')));
 const CuentasPage = Loadable(lazy(() => import('pages/consorcios/cuentasAdmin')));
-const ProveedoresPage = Loadable(lazy(() => import('pages/consorcios/proveedoresAdmin')));
+const ProveedoresPage = Loadable(lazy(() => import('pages/proveedores/proveedoresAdmin')));
 const PersonasPage = Loadable(lazy(() => import('pages/consorcios/personasAdmin')));
+const PagosProveedoresPage = Loadable(lazy(() => import('pages/proveedores/proveedoresPagosAdmin')));
 const UnidadOperativaPage = Loadable(lazy(() => import('pages/consorcios/unidadOperativaAdmin'))); // New import for UnidadOperativaAdmin
 const RubrosPage = Loadable(lazy(() => import('pages/consorcios/rubrosAdmin'))); // New import for UnidadOperativaAdmin
+const GastosPage = Loadable(lazy(() => import('pages/movimientos/gastosAdmin'))); // New import for UnidadOperativaAdmin
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -520,10 +522,6 @@ const MainRoutes = {
               element: <CuentasPage />
             },
             {
-              path: 'proveedores',
-              element: <ProveedoresPage />
-            },
-            {
               path: 'personas',
               element: <PersonasPage />
             },
@@ -534,6 +532,37 @@ const MainRoutes = {
             {
               path: 'rubros',
               element: <RubrosPage />
+            }
+          ]
+        },
+        {
+          path: 'expensas',
+          children: [
+            {
+              path: 'expensas',
+              element: <ProveedoresPage />
+            }
+          ]
+        },
+        {
+          path: 'proveedores',
+          children: [
+            {
+              path: 'listado',
+              element: <ProveedoresPage />
+            },
+            {
+              path: 'pagos',
+              element: <PagosProveedoresPage />
+            }
+          ]
+        },
+        {
+          path: 'movimientos',
+          children: [
+            {
+              path: 'gastos',
+              element: <GastosPage />
             }
           ]
         },

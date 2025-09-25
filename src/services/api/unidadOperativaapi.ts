@@ -35,7 +35,8 @@ type UnidadOperativaApiResponse = UnidadOperativaApiSuccessResponse | ApiErrorRe
 export const unidadOperativaQueryKeys = {
   all: ['unidadesOperativas'] as const,
   lists: () => [...unidadOperativaQueryKeys.all, 'list'] as const,
-  list: (filters: { consorcio_id: string | number }) => [...unidadOperativaQueryKeys.lists(), filters] as const
+  list: (filters: { consorcio_id: string | number }) => [...unidadOperativaQueryKeys.lists(), filters] as const,
+  detail: (id: number | string) => [...unidadOperativaQueryKeys.all, 'detail', id] as const
 };
 
 // API functions
@@ -43,6 +44,15 @@ export const fetchUnidadesOperativasByConsorcio = async (consorcio_id: string | 
   const { data } = await apiClient.post<ApiResponse>('/unidades/getall', { consorcio_id });
   if (data.success) {
     return data.result || [];
+  } else {
+    throw new Error(data.message);
+  }
+};
+
+export const fetchUnidadOperativaById = async (id: number | string) => {
+  const { data } = await apiClient.get<UnidadOperativaApiResponse>(`/unidades/${id}`);
+  if (data.success) {
+    return data.result;
   } else {
     throw new Error(data.message);
   }
@@ -81,6 +91,14 @@ export function useGetUnidadesOperativas(consorcio_id: string | number, options?
     queryKey: unidadOperativaQueryKeys.list({ consorcio_id }),
     queryFn: () => fetchUnidadesOperativasByConsorcio(consorcio_id),
     enabled: !!consorcio_id && (options?.enabled ?? true)
+  });
+}
+
+export function useGetUnidadOperativa(id: number | string, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: unidadOperativaQueryKeys.detail(id),
+    queryFn: () => fetchUnidadOperativaById(id),
+    enabled: !!id && (options?.enabled ?? true)
   });
 }
 

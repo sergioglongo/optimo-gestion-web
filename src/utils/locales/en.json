@@ -167,5 +167,18 @@
   "table.actions": "Actions",
   "Providers": "Providers",
   "providers": "providers",
-  "unidades-operativas": "Operatives Units"
+  "unidades-operativas": "Operatives Units",
+  "Payments": "Payments",
+  "payments": "payments",
+  "payment": "payment",
+  "Payment": "Payment",
+  "Transactions": "Transactions",
+  "Expenses": "Expenses",
+  "Income": "Income",
+  "Incomes": "Incomes",
+  "Fees": "Fees",
+  "overdue-list": "overdue list",
+  "fees-list": "Fee List",
+  "Statement": "Statement",
+  "Reconciliation": "Reconciliation"
 }
