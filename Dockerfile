@@ -1,10 +1,14 @@
 
 # Etapa 1: Construcción de la aplicación React
 # Usamos una imagen de Node.js para construir la aplicación React
-FROM node:18-alpine as builder
+FROM node:18-alpine AS builder
 
 # Establecemos el directorio de trabajo dentro del contenedor
 WORKDIR /app
+
+# Esta variable de entorno soluciona problemas de compatibilidad de OpenSSL en Node.js v17+
+# Es necesaria para que 'npm install' y 'npm run build' funcionen correctamente con ciertas dependencias.
+ENV NODE_OPTIONS=--openssl-legacy-provider
 
 # Copiamos package.json y package-lock.json para instalar las dependencias
 # Esto permite que Docker cachee esta capa si las dependencias no cambian
