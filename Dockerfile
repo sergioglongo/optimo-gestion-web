@@ -1,7 +1,7 @@
 
 # Etapa 1: Construcción de la aplicación React
-# Usamos una imagen de Node.js para construir la aplicación React
-FROM node:18-alpine AS builder
+# Usamos una imagen de Node.js (slim) que incluye herramientas de compilación para mayor compatibilidad.
+FROM node:18-slim AS builder
 
 # Establecemos el directorio de trabajo dentro del contenedor
 WORKDIR /app
