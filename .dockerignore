@@ -28,8 +28,3 @@ yarn-error.log*
 .DS_Store
 .vscode
 .idea
-
-# Archivos de Docker
-Dockerfile
-nginx.conf
-.dockerignore
