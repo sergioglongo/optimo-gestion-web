@@ -96,6 +96,7 @@ const PagoProveedorForm = ({ gastosDelProveedor, isLoadingGastos }: PagoProveedo
                 setFieldValue('proveedor_id', newValue ? newValue.id : null);
                 setFieldValue('gasto_id', null); // Limpiar gasto seleccionado
                 setFieldValue('monto', ''); // Limpiar monto
+                setFieldValue('cuenta_id', newValue?.cuenta_id || null); // Seleccionar cuenta del proveedor si existe
               }}
               loading={isLoadingProveedores}
               renderInput={(params) => (

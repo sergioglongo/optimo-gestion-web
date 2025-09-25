@@ -22,10 +22,12 @@ import { useState } from 'react';
 // project import
 import { Proveedor, TipoIdentificacionProveedor } from 'types/proveedor';
 import { Rubro } from 'types/rubro';
+import { Cuenta } from 'types/cuenta';
 import { useGetRubros } from 'services/api/rubrosapi';
 import { useGetProveedorRubros, useCreateProveedorRubro, useDeleteProveedorRubro } from 'services/api/proveedorRubroapi';
 import useConsorcio from 'hooks/useConsorcio';
 
+import { useGetCuentas } from 'services/api/cuentasapi';
 // assets
 import { DeleteOutlined } from '@ant-design/icons';
 
@@ -38,6 +40,10 @@ const ProveedorForm = ({ proveedor, open }: ProveedorFormProps) => {
   const theme = useTheme();
   const { errors, touched, getFieldProps, values } = useFormikContext<any>();
   const { selectedConsorcio } = useConsorcio();
+
+  const { data: cuentas = [] } = useGetCuentas(selectedConsorcio?.id || 0, {
+    enabled: !!selectedConsorcio?.id && open
+  });
 
   // --- Lógica de Asociación de Rubros (basada en PersonaUnidadForm) ---
 
@@ -114,7 +120,7 @@ const ProveedorForm = ({ proveedor, open }: ProveedorFormProps) => {
           helperText={getIn(touched, 'servicio') && getIn(errors, 'servicio')}
         />
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid item xs={12} sm={3}>
         <TextField select fullWidth label="Tipo de Identificación" {...getFieldProps('tipo_identificacion')}>
           {(['documento', 'cuit', 'cuil', 'otro'] as TipoIdentificacionProveedor[]).map((option) => (
             <MenuItem key={option} value={option}>
@@ -123,7 +129,7 @@ const ProveedorForm = ({ proveedor, open }: ProveedorFormProps) => {
           ))}
         </TextField>
       </Grid>
-      <Grid item xs={12} sm={8}>
+      <Grid item xs={12} sm={3}>
         <TextField fullWidth label="Identificación" {...getFieldProps('identificacion')} value={values.identificacion || ''} />
       </Grid>
       <Grid item xs={6}>
@@ -132,8 +138,23 @@ const ProveedorForm = ({ proveedor, open }: ProveedorFormProps) => {
           label="CBU / Alias (Opcional)"
           {...getFieldProps('CBU')}
           value={values.CBU || ''}
-          InputProps={{ sx: { '.MuiInputBase-input': { py: 2 } } }}
+          InputProps={{ sx: { '.MuiInputBase-input': { py: 1.3 } } }}
         />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <TextField
+          select
+          fullWidth
+          label="Cuenta Principal"
+          {...getFieldProps('cuenta_id')}
+          value={values.cuenta_id || ''}
+          InputProps={{ sx: { '.MuiInputBase-input': { py: 2 } } }}
+        >
+          <MenuItem value="">Sin cuenta principal</MenuItem>
+          {cuentas.map((cuenta: Cuenta) => (
+            <MenuItem key={cuenta.id} value={cuenta.id}>{`${cuenta.descripcion} (${cuenta.tipo})`}</MenuItem>
+          ))}
+        </TextField>
       </Grid>
       {proveedor && (
         <Grid item xs={6}>

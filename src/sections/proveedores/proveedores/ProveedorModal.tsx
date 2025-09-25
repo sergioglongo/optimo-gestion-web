@@ -29,7 +29,8 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
     nombre: Yup.string().max(255).required('El nombre es requerido'),
     servicio: Yup.string().max(255).required('El servicio es requerido'),
     identificacion: Yup.string().nullable(),
-    CBU: Yup.string().nullable()
+    CBU: Yup.string().nullable(),
+    cuenta_id: Yup.number().nullable()
   });
 
   const formik = useFormik<ProveedorCreateData>({
@@ -39,7 +40,8 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
       consorcio_id: selectedConsorcio?.id || 0,
       tipo_identificacion: proveedor?.tipo_identificacion || 'cuit',
       identificacion: proveedor?.identificacion || null,
-      CBU: proveedor?.CBU || null
+      CBU: proveedor?.CBU || null,
+      cuenta_id: proveedor?.cuenta_id || null
     },
     enableReinitialize: true,
     validationSchema,
