@@ -10,18 +10,18 @@ WORKDIR /app
 # Es necesaria para que 'npm install' y 'npm run build' funcionen correctamente con ciertas dependencias.
 ENV NODE_OPTIONS=--openssl-legacy-provider
 
-# Copiamos package.json y package-lock.json para instalar las dependencias
+# Copiamos package.json y yarn.lock para instalar las dependencias
 # Esto permite que Docker cachee esta capa si las dependencias no cambian
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock ./
 
-# Instalamos las dependencias. --frozen-lockfile asegura que se use el lockfile existente.
-RUN npm install --frozen-lockfile
+# Instalamos las dependencias con Yarn. --frozen-lockfile asegura que se use el lockfile existente.
+RUN yarn install --frozen-lockfile
 
 # Copiamos el resto del código de la aplicación
 COPY . .
 
 # Construimos la aplicación React. Esto generará los archivos estáticos en la carpeta 'build'.
-RUN npm run build
+RUN yarn build
 
 # Etapa 2: Servir la aplicación con Nginx
 # Usamos una imagen ligera de Nginx para servir los archivos estáticos
