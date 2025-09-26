@@ -1,7 +1,27 @@
 
 # Etapa 1: Construcción de la aplicación React
 # Usamos una imagen de Node.js (slim) que incluye herramientas de compilación para mayor compatibilidad.
-FROM node:18-slim AS builder
+FROM node:18-slim AS builder 
+
+# Declaramos el argumento que se pasará durante el build.
+# create-react-app lo usará automáticamente.
+# --- Variables de la API y de la aplicación ---
+ARG REACT_APP_API_URL
+ARG REACT_APP_VERSION
+ARG REACT_APP_BASE_NAME
+
+# --- Variables de servicios de terceros (Google, Mapbox, etc.) ---
+ARG REACT_APP_GOOGLE_MAPS_API_KEY
+ARG REACT_APP_MAPBOX_ACCESS_TOKEN
+
+# --- Variables de Firebase ---
+ARG REACT_APP_FIREBASE_API_KEY
+ARG REACT_APP_FIREBASE_AUTH_DOMAIN
+ARG REACT_APP_FIREBASE_PROJECT_ID
+ARG REACT_APP_FIREBASE_STORAGE_BUCKET
+ARG REACT_APP_FIREBASE_MESSAGING_SENDER_ID
+ARG REACT_APP_FIREBASE_APP_ID
+ARG REACT_APP_FIREBASE_MEASUREMENT_ID
 
 # Establecemos el directorio de trabajo dentro del contenedor
 WORKDIR /app
