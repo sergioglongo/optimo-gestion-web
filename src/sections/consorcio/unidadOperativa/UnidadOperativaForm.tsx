@@ -1,11 +1,15 @@
 import { Grid, TextField, MenuItem, Typography, Box, Switch, FormControlLabel, InputAdornment, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useFormikContext } from 'formik';
-import { UnidadOperativa, TipoUnidadOperativa, LiquidarA } from 'types/unidadOperativa'; // Assuming new types
+import { UnidadOperativa, LiquidarA, TipoUnidadOperativa } from 'types/unidadOperativa'; // Assuming new types
 import { useState, useEffect } from 'react';
 import useConsorcio from 'hooks/useConsorcio';
 
-const UnidadOperativaForm = () => {
+interface UnidadOperativaFormProps {
+  tiposUnidadOperativa: TipoUnidadOperativa[];
+}
+
+const UnidadOperativaForm = ({ tiposUnidadOperativa }: UnidadOperativaFormProps) => {
   const theme = useTheme();
   const { errors, touched, getFieldProps, setFieldValue, values } = useFormikContext<UnidadOperativa>();
   const { selectedConsorcio } = useConsorcio();
@@ -24,6 +28,23 @@ const UnidadOperativaForm = () => {
     if (!values.alquilada && values.liquidar_a !== 'propietario') {
       setFieldValue('liquidar_a', 'propietario');
     }
+  }, [values.alquilada, values.liquidar_a, setFieldValue]);
+
+  useEffect(() => {
+    // Si el prorrateo del consorcio no es por 'auto', deshabilitar y apagar el prorrateo automático.
+    if (selectedConsorcio?.prorrateo !== 'auto') {
+      if (values.prorrateo_automatico) {
+        setFieldValue('prorrateo_automatico', false);
+      }
+    } else if (values.prorrateo_automatico) {
+      // Si el prorrateo automático está activado, buscar el índice del tipo de unidad y asignarlo.
+      const tipoSeleccionado = tiposUnidadOperativa.find((tipo) => tipo.id === values.tipo_unidad_operativa_id);
+      const nuevoProrrateo = tipoSeleccionado ? tipoSeleccionado.indice : 0;
+      if (values.prorrateo !== nuevoProrrateo) {
+        setFieldValue('prorrateo', nuevoProrrateo);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values.alquilada, values.liquidar_a, setFieldValue]);
 
   const handleEtiquetaManualToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,13 +102,14 @@ const UnidadOperativaForm = () => {
           select
           fullWidth
           label="Tipo de Unidad Operativa"
-          {...getFieldProps('tipo')}
-          error={Boolean(touched.tipo && errors.tipo)}
-          helperText={touched.tipo && errors.tipo}
+          {...getFieldProps('tipo_unidad_operativa_id')}
+          error={Boolean(touched.tipo_unidad_operativa_id && errors.tipo_unidad_operativa_id)}
+          helperText={touched.tipo_unidad_operativa_id && errors.tipo_unidad_operativa_id}
+          InputLabelProps={{ shrink: true }}
         >
-          {(['departamento', 'casa', 'duplex', 'local', 'cochera', 'baulera'] as TipoUnidadOperativa[]).map((option) => (
-            <MenuItem key={option} value={option}>
-              {option.charAt(0).toUpperCase() + option.slice(1)}
+          {tiposUnidadOperativa.map((option) => (
+            <MenuItem key={option.id} value={option.id}>
+              {option.nombre}
             </MenuItem>
           ))}
         </TextField>
@@ -128,7 +150,7 @@ const UnidadOperativaForm = () => {
       {/* --- Bloque de Liquidación --- */}
       <Grid item xs={12} md={6}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={8}>
             <TextField
               select
               fullWidth
@@ -145,7 +167,7 @@ const UnidadOperativaForm = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Grid item xs={12} md={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <FormControlLabel
               control={
                 <Tooltip title={getFieldProps('alquilada').value ? 'Inquilino Habilitado' : 'Sin Inquilino'}>
@@ -162,7 +184,7 @@ const UnidadOperativaForm = () => {
               sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', lineHeight: 0.1 } }}
             />
           </Grid>
-          <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Grid item xs={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <FormControlLabel
               control={
                 <Tooltip title={getFieldProps('Intereses').value ? 'Genera intereses' : 'No genera intereses'}>
@@ -179,14 +201,41 @@ const UnidadOperativaForm = () => {
               sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', lineHeight: 0.1 } }}
             />
           </Grid>
-          <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center' }}>
+          <Grid item xs={5} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <FormControlLabel
+              control={
+                <Tooltip title={getFieldProps('prorrateo_automatico').value ? 'Prorrateo automático' : 'Prorrateo manual'}>
+                  <Switch
+                    checked={getFieldProps('prorrateo_automatico').value}
+                    onChange={(event) => setFieldValue('prorrateo_automatico', event.target.checked)}
+                    name="prorrateo_automatico"
+                    disabled={selectedConsorcio?.prorrateo !== 'auto'}
+                    color="primary"
+                  />
+                </Tooltip>
+              }
+              label="Prorrat. Auto"
+              labelPlacement="top"
+              sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', lineHeight: 0.1 } }}
+            />
+          </Grid>
+          <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <TextField
               label="Prorrateo"
               type="number"
-              {...getFieldProps('prorrateo')}
+              name="prorrateo"
+              value={values.prorrateo}
+              onChange={getFieldProps('prorrateo').onChange}
               error={Boolean(touched.prorrateo && errors.prorrateo)}
               helperText={touched.prorrateo && errors.prorrateo}
-              inputProps={{ style: { textAlign: 'center' }, step: 0.1 }}
+              onBlur={(e) => {
+                const value = parseFloat(e.target.value);
+                if (!isNaN(value)) {
+                  setFieldValue('prorrateo', value.toFixed(2));
+                }
+              }}
+              disabled={values.prorrateo_automatico}
+              inputProps={{ style: { textAlign: 'center' }, step: 0.01 }}
             />
           </Grid>
         </Grid>

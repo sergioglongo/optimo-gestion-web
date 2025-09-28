@@ -1,5 +1,5 @@
 import { useEffect, useState, SyntheticEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // material-ui
 import {
@@ -20,7 +20,6 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 
 // project import
-import useAuth from 'hooks/useAuth';
 import useScriptRef from 'hooks/useScriptRef';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
@@ -30,19 +29,23 @@ import { openSnackbar } from 'api/snackbar';
 
 // types
 import { SnackbarProps } from 'types/snackbar';
+import { useResetPassword } from 'services/api/authApi';
 import { StringColorProps } from 'types/password';
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import { useIntl } from 'react-intl';
+import firstCapitalized from 'utils/textFormat';
 
 // ============================|| STATIC - RESET PASSWORD ||============================ //
 
 const AuthResetPassword = () => {
   const scriptedRef = useScriptRef();
   const navigate = useNavigate();
+  const { token } = useParams();
+  const intl = useIntl();
 
-  const { isLoggedIn } = useAuth();
-
+  const { mutate, isLoading } = useResetPassword();
   const [level, setLevel] = useState<StringColorProps>();
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
@@ -70,46 +73,54 @@ const AuthResetPassword = () => {
         submit: null
       }}
       validationSchema={Yup.object().shape({
-        password: Yup.string().max(255).required('Password is required'),
+        password: Yup.string()
+          .max(255)
+          .required(`${firstCapitalized(intl.formatMessage({ id: 'password-required' }))}`),
         confirmPassword: Yup.string()
-          .required('Confirm Password is required')
-          .test('confirmPassword', 'Both Password must be match!', (confirmPassword, yup) => yup.parent.password === confirmPassword)
+          .required(`${firstCapitalized(intl.formatMessage({ id: 'confirm-password-required' }))}`)
+          .test(
+            'confirmPassword',
+            `${firstCapitalized(intl.formatMessage({ id: 'both-password-match' }))}`,
+            (confirmPassword, yup) => yup.parent.password === confirmPassword
+          )
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-        try {
-          // password reset
-          if (scriptedRef.current) {
-            setStatus({ success: true });
-            setSubmitting(false);
-            openSnackbar({
-              open: true,
-              message: 'Successfuly reset password.',
-              variant: 'alert',
-              alert: {
-                color: 'success'
-              }
-            } as SnackbarProps);
+        mutate(
+          { password: values.password, token: token! },
+          {
+            onSuccess: () => {
+              setStatus({ success: true });
+              setSubmitting(false);
+              openSnackbar({
+                open: true,
+                message: `${firstCapitalized(intl.formatMessage({ id: 'password-restablished-successful' }))}`,
+                variant: 'alert',
+                alert: {
+                  color: 'success'
+                }
+              } as SnackbarProps);
 
-            setTimeout(() => {
-              navigate(isLoggedIn ? '/auth/login' : '/login', { replace: true });
-            }, 1500);
+              setTimeout(() => {
+                navigate('/login', { replace: true });
+              }, 1500);
+            },
+            onError: (err: any) => {
+              if (scriptedRef.current) {
+                setStatus({ success: false });
+                setErrors({ submit: err.message });
+                setSubmitting(false);
+              }
+            }
           }
-        } catch (err: any) {
-          console.error(err);
-          if (scriptedRef.current) {
-            setStatus({ success: false });
-            setErrors({ submit: err.message });
-            setSubmitting(false);
-          }
-        }
+        );
       }}
     >
-      {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+      {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
         <form noValidate onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="password-reset">Password</InputLabel>
+                <InputLabel htmlFor="password-reset">{firstCapitalized(intl.formatMessage({ id: 'password' }))}</InputLabel>
                 <OutlinedInput
                   fullWidth
                   error={Boolean(touched.password && errors.password)}
@@ -135,7 +146,7 @@ const AuthResetPassword = () => {
                       </IconButton>
                     </InputAdornment>
                   }
-                  placeholder="Enter password"
+                  placeholder={firstCapitalized(intl.formatMessage({ id: 'enter-password' }))}
                 />
               </Stack>
               {touched.password && errors.password && (
@@ -158,7 +169,7 @@ const AuthResetPassword = () => {
             </Grid>
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="confirm-password-reset">Confirm Password</InputLabel>
+                <InputLabel htmlFor="confirm-password-reset">{firstCapitalized(intl.formatMessage({ id: 'confirm-password' }))}</InputLabel>
                 <OutlinedInput
                   fullWidth
                   error={Boolean(touched.confirmPassword && errors.confirmPassword)}
@@ -168,7 +179,7 @@ const AuthResetPassword = () => {
                   name="confirmPassword"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  placeholder="Enter confirm password"
+                  placeholder={firstCapitalized(intl.formatMessage({ id: 'enter-password' }))}
                 />
               </Stack>
               {touched.confirmPassword && errors.confirmPassword && (
@@ -185,8 +196,8 @@ const AuthResetPassword = () => {
             )}
             <Grid item xs={12}>
               <AnimateButton>
-                <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                  Reset Password
+                <Button disableElevation disabled={isLoading} fullWidth size="large" type="submit" variant="contained" color="primary">
+                  {firstCapitalized(intl.formatMessage({ id: 'reset-password' }))}
                 </Button>
               </AnimateButton>
             </Grid>

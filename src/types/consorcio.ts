@@ -25,6 +25,11 @@ export type TipoInteres = 'compuesto' | 'acumulado';
 export type Modalidad = 'vencido' | 'adelantado';
 
 /**
+ * Tipos de enumeración para el tipo de prorrateo del consorcio.
+ */
+export type ProrrateoConsorcio = 'auto' | 'libre';
+
+/**
  * Interfaz que representa la estructura de un consorcio,
  * mapeada desde la tabla `public.consorcios` de la base de datos.
  */
@@ -39,9 +44,13 @@ export interface Consorcio {
   tipo_interes?: TipoInteres | null;
   modalidad?: Modalidad | null;
   vencimiento1?: number | null;
+  vencimiento1valor?: number | null;
   vencimiento2?: number | null;
+  vencimiento2valor?: number | null;
   identificador1?: string | null;
   identificador2?: string | null;
   identificador3?: string | null;
   imagen: string | null;
+  prorrateo?: ProrrateoConsorcio | null;
+  activo: boolean;
 }

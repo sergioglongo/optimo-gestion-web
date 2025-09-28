@@ -12,7 +12,6 @@ import { useIntl } from 'react-intl'; // Import useIntl
 import ConsorcioList from 'sections/parameters/consorcios/ConsorciosList';
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
-import { IndeterminateCheckbox } from 'components/third-party/react-table';
 import ConsorcioModal from 'sections/parameters/consorcios/ConsorcioModal';
 import AlertConsorcioDelete from 'sections/parameters/consorcios/AlertConsorcioDelete';
 import Avatar from 'components/@extended/Avatar';
@@ -47,28 +46,6 @@ const ConsorciosAdmin = () => {
 
   const columns = useMemo<ColumnDef<Consorcio>[]>(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
-          />
-        )
-      },
       {
         header: 'ID',
         accessorKey: 'id',
@@ -178,6 +155,7 @@ const ConsorciosAdmin = () => {
           data: consorciosData || [],
           columns,
           initialColumnVisibility: { id: false },
+          showSelection: true,
           modalToggler: () => {
             setConsorcioModal(true);
             setSelectedConsorcio(null);

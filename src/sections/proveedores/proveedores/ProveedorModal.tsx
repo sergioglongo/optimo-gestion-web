@@ -41,7 +41,8 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
       tipo_identificacion: proveedor?.tipo_identificacion || 'cuit',
       identificacion: proveedor?.identificacion || null,
       CBU: proveedor?.CBU || null,
-      cuenta_id: proveedor?.cuenta_id || null
+      cuenta_id: proveedor?.cuenta_id || null,
+      activo: proveedor?.activo || true
     },
     enableReinitialize: true,
     validationSchema,

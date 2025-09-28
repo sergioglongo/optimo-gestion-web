@@ -1,7 +1,7 @@
 import { useMemo, useState, MouseEvent } from 'react';
 
 // material-ui
-import { Chip, Stack, Tooltip, Typography } from '@mui/material';
+import { Stack, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 // third-party
@@ -11,19 +11,19 @@ import { useIntl } from 'react-intl'; // Import useIntl
 // project import
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
-import { IndeterminateCheckbox } from 'components/third-party/react-table';
 import PersonasModal from 'sections/consorcio/personas/PersonasModal';
-import AlertPersonaDelete from 'sections/consorcio/personas/AlertPersonaDelete';
+import AlertPersonaDelete from 'sections/consorcio/personas/AlertPersonaDelete'; // This seems to have a placeholder implementation
+import PersonaDetalleDrawer from 'sections/consorcio/personas/PersonaDetalleDrawer';
 
 // API hooks
 import useAuth from 'hooks/useAuth';
 import useConsorcio from 'hooks/useConsorcio';
 
 // assets
-import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useGetPersonas } from 'services/api/personasapi'; // Assuming a new API hook
 import PersonasList from 'sections/consorcio/personas/PersonasList';
-import { Persona, TipoPersona } from 'types/persona'; // Assuming new types
+import { Persona } from 'types/persona'; // Assuming new types
 
 // ==============================|| PERSONAS - ADMIN ||============================== //
 
@@ -35,39 +35,17 @@ const PersonasAdmin = () => {
 
   const { data: personasData, isLoading } = useGetPersonas(selectedConsorcio?.id || 0, { enabled: !!user?.id && !!token });
 
-  const [open, setOpen] = useState<boolean>(false);
   const [personaModal, setPersonaModal] = useState<boolean>(false);
   const [selectedPersona, setSelectedPersona] = useState<Persona | null>(null);
-  const [personaDeleteId, setPersonaDeleteId] = useState<any>('');
+  const [personaToDelete, setPersonaToDelete] = useState<{ id: number; nombre: string } | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
-  const handleClose = () => {
-    setOpen(!open);
+  const handleCloseDelete = (deleted: boolean) => {
+    setPersonaToDelete(null);
   };
 
   const columns = useMemo<ColumnDef<Persona>[]>(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
-          />
-        )
-      },
       {
         header: 'ID',
         accessorKey: 'id',
@@ -76,15 +54,6 @@ const PersonasAdmin = () => {
         meta: {
           className: 'd-none' // Hide the column visually
         }
-      },
-      {
-        header: 'Nombre', // Changed from 'Descripción'
-        accessorKey: 'nombre', // Assuming 'nombre' for Persona
-        cell: ({ getValue }) => (
-          <Stack spacing={0}>
-            <Typography variant="subtitle1">{getValue() as string}</Typography>
-          </Stack>
-        )
       },
       {
         header: 'Apellido', // Added 'Apellido' for Persona
@@ -96,19 +65,37 @@ const PersonasAdmin = () => {
         )
       },
       {
-        header: 'Tipo',
-        accessorKey: 'tipo_persona',
-        cell: (cell) => {
-          const tipo = cell.getValue() as TipoPersona; // Using TipoPersona
-          switch (tipo) {
-            case 'persona juridica': // Example types for Persona
-              return <Chip color="primary" label="Persona Jurdíca" size="small" variant="light" />;
-            case 'persona fisica':
-              return <Chip color="success" label="Persona Física" size="small" variant="light" />;
-            default:
-              return <Chip label={tipo} size="small" variant="light" />;
-          }
-        }
+        header: 'Nombre', // Changed from 'Descripción'
+        accessorKey: 'nombre', // Assuming 'nombre' for Persona
+        cell: ({ getValue }) => (
+          <Stack spacing={0}>
+            <Typography variant="subtitle1">{getValue() as string}</Typography>
+          </Stack>
+        )
+      },
+      // {
+      //   header: 'Tipo',
+      //   accessorKey: 'tipo_persona',
+      //   cell: ({ getValue }) => {
+      //     const tipo_persona = getValue() as TipoPersona; // Using TipoPersona
+      //     switch (tipo_persona) {
+      //       case 'persona juridica': // Example types for Persona
+      //         return <Chip color="primary" label="Persona Jurdíca" size="small" variant="light" />;
+      //       case 'persona fisica':
+      //         return <Chip color="success" label="Persona Física" size="small" variant="light" />;
+      //       default:
+      //         return <Chip label={tipo_persona} size="small" variant="light" />;
+      //     }
+      //   }
+      // },
+      {
+        header: 'Telefono', // Added 'DNI' for Persona
+        accessorKey: 'telefono', // Assuming 'dni' for Persona
+        cell: ({ getValue }) => (
+          <Stack spacing={0}>
+            <Typography variant="subtitle1">{getValue() as string}</Typography>
+          </Stack>
+        )
       },
       {
         header: 'Indentificación', // Added 'DNI' for Persona
@@ -126,20 +113,21 @@ const PersonasAdmin = () => {
         },
         disableSortBy: true,
         cell: ({ row }) => {
-          const collapseIcon =
-            row.getCanExpand() && row.getIsExpanded() ? (
-              <PlusOutlined style={{ color: theme.palette.error.main, transform: 'rotate(45deg)' }} />
-            ) : (
-              <EyeOutlined />
-            );
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              <Tooltip title="View">
-                <IconButton color="secondary" onClick={row.getToggleExpandedHandler()}>
-                  {collapseIcon}
+              <Tooltip title="Ver Detalles">
+                <IconButton
+                  color="secondary"
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    e.stopPropagation();
+                    setSelectedPersona(row.original);
+                    setDrawerOpen(true);
+                  }}
+                >
+                  <EyeOutlined />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Edit">
+              <Tooltip title="Editar">
                 <IconButton
                   color="primary"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
@@ -151,13 +139,12 @@ const PersonasAdmin = () => {
                   <EditOutlined />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete">
+              <Tooltip title="Eliminar">
                 <IconButton
                   color="error"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
-                    handleClose();
-                    setPersonaDeleteId(row.original);
+                    setPersonaToDelete({ id: row.original.id, nombre: `${row.original.nombre} ${row.original.apellido}` });
                   }}
                 >
                   <DeleteOutlined />
@@ -180,6 +167,7 @@ const PersonasAdmin = () => {
         {...{
           data: personasData || [],
           columns,
+          showSelection: true,
           initialColumnVisibility: { id: false },
           modalToggler: () => {
             setPersonaModal(true);
@@ -187,8 +175,16 @@ const PersonasAdmin = () => {
           }
         }}
       />
-      <AlertPersonaDelete id={personaDeleteId.id} title={String(personaDeleteId.nombre)} open={open} handleClose={handleClose} />
+      {personaToDelete && (
+        <AlertPersonaDelete
+          id={personaToDelete.id}
+          title={personaToDelete.nombre}
+          open={!!personaToDelete}
+          handleClose={handleCloseDelete}
+        />
+      )}
       <PersonasModal open={personaModal} modalToggler={setPersonaModal} persona={selectedPersona} />
+      <PersonaDetalleDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} persona={selectedPersona} />
     </>
   );
 };

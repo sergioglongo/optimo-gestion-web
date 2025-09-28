@@ -60,9 +60,9 @@ const PersonaForm = () => {
           select
           fullWidth
           label="Tipo de Persona"
-          {...getFieldProps('tipo')}
-          error={Boolean(getIn(touched, 'tipo') && getIn(errors, 'tipo'))}
-          helperText={getIn(touched, 'tipo') && getIn(errors, 'tipo')}
+          {...getFieldProps('tipo_persona')}
+          error={Boolean(getIn(touched, 'tipo_persona') && getIn(errors, 'tipo_persona'))}
+          helperText={getIn(touched, 'tipo_persona') && getIn(errors, 'tipo_persona')}
         >
           {TipoPersonaOptions.map((option) => (
             <MenuItem key={option} value={option}>

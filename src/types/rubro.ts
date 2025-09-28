@@ -7,4 +7,5 @@ export interface Rubro {
   rubro: string;
   consorcio_id: number;
   orden: number;
+  activo: boolean;
 }

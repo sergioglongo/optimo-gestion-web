@@ -1,3 +1,7 @@
+import { Cuenta } from './cuenta';
+import { Gasto } from './gasto';
+import { Proveedor } from './proveedor';
+
 /**
  * Tipos de enumeración para el tipo de pago a un proveedor.
  */
@@ -16,6 +20,10 @@ export interface PagoProveedor {
   fecha: string; // Format: YYYY-MM-DD
   tipo_pago: TipoPagoProveedor;
   comentario?: string | null;
+
+  Gasto?: Gasto;
+  cuenta?: Cuenta;
+  Proveedor?: Proveedor;
 }
 
 export type PagoProveedorCreateData = Omit<PagoProveedor, 'id'>;

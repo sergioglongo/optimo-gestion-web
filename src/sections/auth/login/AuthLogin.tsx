@@ -31,12 +31,15 @@ import { setConsorcios } from 'store/slices/consorcio'; // Added this import
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import { useIntl } from 'react-intl';
+import firstCapitalized from 'utils/textFormat';
 
 // ============================|| LOGIN ||============================ //
 
 const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
   const [checked, setChecked] = React.useState(false);
   const dispatch = useDispatch(); // Added this line
+  const intl = useIntl();
 
   const { login } = useAuth();
   const scriptedRef = useScriptRef();
@@ -98,7 +101,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Ingrese el Email</InputLabel>
+                  <InputLabel htmlFor="email-login">{firstCapitalized(intl.formatMessage({ id: 'type-email-address' }))}</InputLabel>
                   <OutlinedInput
                     id="email-login"
                     type="email"
@@ -106,7 +109,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
                     name="email"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Ingrese el email"
+                    placeholder={firstCapitalized(intl.formatMessage({ id: 'email-address' }))}
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
                   />
@@ -119,7 +122,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-login">Contraseña</InputLabel>
+                  <InputLabel htmlFor="password-login">{firstCapitalized(intl.formatMessage({ id: 'password' }))}</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.password && errors.password)}
@@ -142,7 +145,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
                         </IconButton>
                       </InputAdornment>
                     }
-                    placeholder="Ingrese contraseña"
+                    placeholder={firstCapitalized(intl.formatMessage({ id: 'type-password' }))}
                   />
                 </Stack>
                 {touched.password && errors.password && (
@@ -164,10 +167,10 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
                         size="small"
                       />
                     }
-                    label={<Typography variant="h6">Mantenerme conectado</Typography>}
+                    label={<Typography variant="h6">{firstCapitalized(intl.formatMessage({ id: 'keep-me-sign-in' }))}</Typography>}
                   />
                   <Link variant="h6" component={RouterLink} to={isDemo ? '/auth/forgot-password' : '/forgot-password'}>
-                    restaurar contraseña?
+                    {firstCapitalized(intl.formatMessage({ id: 'reset-password' }))}
                   </Link>
                 </Stack>
               </Grid>
@@ -179,7 +182,7 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
               <Grid item xs={12}>
                 <AnimateButton>
                   <Button disableElevation disabled={isLoading} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Iniciar
+                    {firstCapitalized(intl.formatMessage({ id: 'login' }))}
                   </Button>
                 </AnimateButton>
               </Grid>

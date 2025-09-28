@@ -35,7 +35,8 @@ const RubrosModal = ({ open, modalToggler, rubro }: RubrosModalProps) => {
       id: rubro?.id,
       rubro: rubro?.rubro || '',
       consorcio_id: selectedConsorcio?.id || null,
-      orden: rubro?.orden || 0
+      orden: rubro?.orden || 0,
+      activo: rubro?.activo || true
     },
     enableReinitialize: true,
     validationSchema,

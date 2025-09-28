@@ -43,6 +43,7 @@ import {
   HeaderSort,
   RowSelection,
   SelectColumnSorting,
+  IndeterminateCheckbox,
   TablePagination
 } from 'components/third-party/react-table';
 
@@ -73,6 +74,7 @@ interface TablaAdminProps<T extends object> {
   renderExpandedRow?: (row: Row<T>) => React.ReactNode;
   title?: string;
   initialColumnVisibility?: Record<string, boolean>;
+  showSelection?: boolean;
   initialSorting?: SortingState;
 }
 
@@ -88,6 +90,7 @@ function TablaAdmin<T extends object>({
   renderExpandedRow,
   title,
   initialColumnVisibility,
+  showSelection = false,
   initialSorting
 }: TablaAdminProps<T>) {
   const theme = useTheme();
@@ -98,9 +101,34 @@ function TablaAdmin<T extends object>({
   const [globalFilter, setGlobalFilter] = useState('');
   const [columnVisibility, setColumnVisibility] = useState(initialColumnVisibility || {});
 
+  const tableColumns = [
+    ...(showSelection
+      ? [
+          {
+            id: 'select',
+            header: ({ table }: { table: any }) => (
+              <IndeterminateCheckbox
+                {...{
+                  checked: table.getIsAllRowsSelected(),
+                  indeterminate: table.getIsSomeRowsSelected(),
+                  onChange: table.getToggleAllRowsSelectedHandler()
+                }}
+              />
+            ),
+            cell: ({ row }: { row: any }) => (
+              <IndeterminateCheckbox
+                {...{ checked: row.getIsSelected(), indeterminate: row.getIsSomeSelected(), onChange: row.getToggleSelectedHandler() }}
+              />
+            )
+          }
+        ]
+      : []),
+    ...columns
+  ];
+
   const table = useReactTable({
     data,
-    columns,
+    columns: tableColumns,
     state: {
       sorting,
       rowSelection,
@@ -173,7 +201,7 @@ function TablaAdmin<T extends object>({
       </Stack>
       <ScrollX>
         <Stack>
-          <RowSelection selected={Object.keys(rowSelection).length} />
+          {showSelection && <RowSelection selected={Object.keys(rowSelection).length} />}
           <TableContainer>
             <Table>
               <TableHead>

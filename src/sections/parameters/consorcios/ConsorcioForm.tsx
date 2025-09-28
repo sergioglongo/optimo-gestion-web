@@ -1,7 +1,7 @@
 import { Grid, TextField, MenuItem, Select, InputLabel, FormControl, FormHelperText, Input, Box } from '@mui/material';
 import Avatar from 'components/@extended/Avatar';
 import { FormikProps } from 'formik';
-import { Consorcio, CondicionFiscal, TipoConsorcio, TipoInteres, Modalidad } from 'types/consorcio';
+import { Consorcio, CondicionFiscal, TipoConsorcio, TipoInteres, Modalidad, ProrrateoConsorcio } from 'types/consorcio';
 
 interface ConsorcioFormProps {
   formik: FormikProps<Consorcio>;
@@ -16,6 +16,7 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
   const tipoConsorcioOptions: TipoConsorcio[] = ['edificio', 'barrio', 'country', 'complejo'];
   const tipoInteresOptions: TipoInteres[] = ['compuesto', 'acumulado'];
   const modalidadOptions: Modalidad[] = ['vencido', 'adelantado'];
+  const prorrateoOptions: ProrrateoConsorcio[] = ['auto', 'libre'];
 
   return (
     <Grid container spacing={3} sx={{ mt: 1 }}>
@@ -62,7 +63,7 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           helperText={touched.identificacion && errors.identificacion}
         />
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid item xs={6} sm={3}>
         <FormControl fullWidth error={Boolean(touched.tipo && errors.tipo)}>
           <InputLabel>Tipo de Consorcio</InputLabel>
           <Select label="Tipo de Consorcio" {...getFieldProps('tipo')} value={formik.values.tipo || ''}>
@@ -75,7 +76,7 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           {touched.tipo && errors.tipo && <FormHelperText>{errors.tipo}</FormHelperText>}
         </FormControl>
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid item xs={6} sm={3}>
         <FormControl fullWidth error={Boolean(touched.tipo_interes && errors.tipo_interes)}>
           <InputLabel>Tipo de Interés</InputLabel>
           <Select label="Tipo de Interés" {...getFieldProps('tipo_interes')} value={formik.values.tipo_interes || ''}>
@@ -88,7 +89,7 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           {touched.tipo_interes && errors.tipo_interes && <FormHelperText>{errors.tipo_interes}</FormHelperText>}
         </FormControl>
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid item xs={6} sm={3}>
         <FormControl fullWidth error={Boolean(touched.modalidad && errors.modalidad)}>
           <InputLabel>Modalidad de Pago</InputLabel>
           <Select label="Modalidad de Pago" {...getFieldProps('modalidad')} value={formik.values.modalidad || ''}>
@@ -101,54 +102,97 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           {touched.modalidad && errors.modalidad && <FormHelperText>{errors.modalidad}</FormHelperText>}
         </FormControl>
       </Grid>
-      <Grid item xs={12} sm={6}>
-        <TextField
-          fullWidth
-          label="Vencimiento 1"
-          type="number"
-          {...getFieldProps('vencimiento1')}
-          value={formik.values.vencimiento1 || ''}
-          error={Boolean(touched.vencimiento1 && errors.vencimiento1)}
-          helperText={touched.vencimiento1 && errors.vencimiento1}
-        />
+      <Grid item xs={6} sm={3}>
+        <FormControl fullWidth error={Boolean(touched.prorrateo && errors.prorrateo)}>
+          <InputLabel>Tipo de Prorrateo</InputLabel>
+          <Select label="Tipo de Prorrateo" {...getFieldProps('prorrateo')} value={formik.values.prorrateo || ''}>
+            {prorrateoOptions.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </MenuItem>
+            ))}
+          </Select>
+          {touched.prorrateo && errors.prorrateo && <FormHelperText>{errors.prorrateo}</FormHelperText>}
+        </FormControl>
       </Grid>
       <Grid item xs={12} sm={6}>
-        <TextField
-          fullWidth
-          label="Vencimiento 2"
-          type="number"
-          {...getFieldProps('vencimiento2')}
-          value={formik.values.vencimiento2 || ''}
-          error={Boolean(touched.vencimiento2 && errors.vencimiento2)}
-          helperText={touched.vencimiento2 && errors.vencimiento2}
-        />
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Vencimiento 1 (día)"
+              type="number"
+              {...getFieldProps('vencimiento1')}
+              value={formik.values.vencimiento1 || ''}
+              error={Boolean(touched.vencimiento1 && errors.vencimiento1)}
+              helperText={touched.vencimiento1 && errors.vencimiento1}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Vencimiento 1 (%)"
+              type="number"
+              {...getFieldProps('vencimiento1valor')}
+              value={formik.values.vencimiento1valor || ''}
+              error={Boolean(touched.vencimiento1valor && errors.vencimiento1valor)}
+              helperText={touched.vencimiento1valor && errors.vencimiento1valor}
+            />
+          </Grid>
+        </Grid>
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid item xs={12} sm={6}>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Vencimiento 2 (día)"
+              type="number"
+              {...getFieldProps('vencimiento2')}
+              value={formik.values.vencimiento2 || ''}
+              error={Boolean(touched.vencimiento2 && errors.vencimiento2)}
+              helperText={touched.vencimiento2 && errors.vencimiento2}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Vencimiento 2 (%)"
+              type="number"
+              {...getFieldProps('vencimiento2valor')}
+              value={formik.values.vencimiento2valor || ''}
+              error={Boolean(touched.vencimiento2valor && errors.vencimiento2valor)}
+              helperText={touched.vencimiento2valor && errors.vencimiento2valor}
+            />
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item xs={6} sm={4}>
         <TextField
           fullWidth
           label="Identificador 1"
           {...getFieldProps('identificador1')}
-          value={formik.values.identificador1 || ''}
+          value={formik.values.identificador1 ?? ''}
           error={Boolean(touched.identificador1 && errors.identificador1)}
           helperText={touched.identificador1 && errors.identificador1}
         />
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid item xs={6} sm={4}>
         <TextField
           fullWidth
           label="Identificador 2"
           {...getFieldProps('identificador2')}
-          value={formik.values.identificador2 || ''}
+          value={formik.values.identificador2 ?? ''}
           error={Boolean(touched.identificador2 && errors.identificador2)}
           helperText={touched.identificador2 && errors.identificador2}
         />
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid item xs={6} sm={4}>
         <TextField
           fullWidth
           label="Identificador 3"
           {...getFieldProps('identificador3')}
-          value={formik.values.identificador3 || ''}
+          value={formik.values.identificador3 ?? ''}
           error={Boolean(touched.identificador3 && errors.identificador3)}
           helperText={touched.identificador3 && errors.identificador3}
         />

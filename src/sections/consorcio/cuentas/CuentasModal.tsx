@@ -26,7 +26,8 @@ const CuentasModal = ({ open, modalToggler, cuenta }: CuentasModalProps) => {
 
   const validationSchema = Yup.object().shape({
     descripcion: Yup.string().max(255).required('La descripción es requerida'),
-    tipo: Yup.string().oneOf(['corriente', 'ahorro', 'caja', 'otro']).required('El tipo es requerido')
+    tipo: Yup.string().oneOf(['corriente', 'ahorro', 'caja', 'otro']).required('El tipo es requerido'),
+    balance: Yup.number().min(0, 'El balance inicial no puede ser negativo').required('El balance inicial es requerido')
   });
 
   const formik = useFormik<Omit<Cuenta, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
@@ -34,7 +35,9 @@ const CuentasModal = ({ open, modalToggler, cuenta }: CuentasModalProps) => {
       id: cuenta?.id,
       descripcion: cuenta?.descripcion || '',
       tipo: cuenta?.tipo || 'corriente',
-      consorcio_id: selectedConsorcio?.id || null
+      consorcio_id: selectedConsorcio?.id || null,
+      balance: cuenta?.balance || 0,
+      activa: cuenta?.activa || true
     },
     enableReinitialize: true,
     validationSchema,

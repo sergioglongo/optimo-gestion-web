@@ -1,18 +1,16 @@
 import {
   Grid,
-  Select,
-  MenuItem,
   Button,
   List,
   ListItem,
   ListItemText,
   IconButton,
   CircularProgress,
-  FormControl,
-  InputLabel,
   Typography,
   Box,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
+  Autocomplete,
+  TextField
 } from '@mui/material';
 import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
@@ -50,25 +48,25 @@ const PersonaUnidadForm = ({ unidadOperativa, open = true }: PersonaUnidadFormPr
   const createAssociation = useCreatePersonaUnidad();
   const deleteAssociation = useDeletePersonaUnidad();
 
-  const [selectedPropietario, setSelectedPropietario] = useState<number | ''>('');
-  const [selectedInquilino, setSelectedInquilino] = useState<number | ''>('');
-  const [selectedHabitante, setSelectedHabitante] = useState<number | ''>('');
+  const [selectedPropietario, setSelectedPropietario] = useState<Persona | null>(null);
+  const [selectedInquilino, setSelectedInquilino] = useState<Persona | null>(null);
+  const [selectedHabitante, setSelectedHabitante] = useState<Persona | null>(null);
 
   // ==============================|| HANDLERS ||============================== //
 
-  const handleAdd = async (persona_id: number | '', tipo: TipoPersonaUnidad) => {
-    if (!persona_id || !unidadOperativa) return;
+  const handleAdd = async (persona: Persona | null, tipo: TipoPersonaUnidad) => {
+    if (!persona || !unidadOperativa) return;
 
     try {
       await createAssociation.mutateAsync({
-        persona_id: Number(persona_id),
+        persona_id: persona.id,
         unidad_operativa_id: unidadOperativa.id,
         tipo
       });
 
-      if (tipo === 'propietario') setSelectedPropietario('');
-      if (tipo === 'inquilino') setSelectedInquilino('');
-      if (tipo === 'habitante') setSelectedHabitante('');
+      if (tipo === 'propietario') setSelectedPropietario(null);
+      if (tipo === 'inquilino') setSelectedInquilino(null);
+      if (tipo === 'habitante') setSelectedHabitante(null);
     } catch (error) {
       console.error(`Error al añadir ${tipo}:`, error);
     }
@@ -92,8 +90,8 @@ const PersonaUnidadForm = ({ unidadOperativa, open = true }: PersonaUnidadFormPr
   const renderAssociationSection = (
     title: string,
     tipo: TipoPersonaUnidad,
-    selectedPersona: number | '',
-    setSelectedPersona: (id: number | '') => void
+    selectedPersona: Persona | null,
+    setSelectedPersona: (persona: Persona | null) => void
   ) => {
     // Filter associations for the current type (propietario, inquilino, habitante)
     const associationsForType = existingAssociations.filter((a) => a.tipo === tipo);
@@ -118,21 +116,26 @@ const PersonaUnidadForm = ({ unidadOperativa, open = true }: PersonaUnidadFormPr
         {canAdd && (
           <Grid container spacing={1} alignItems="center" sx={{ ml: 1, mt: 1 }}>
             <Grid item xs={8}>
-              <FormControl fullWidth size="small">
-                <InputLabel>{`Seleccionar ${title}`}</InputLabel>
-                <Select
-                  value={selectedPersona}
-                  onChange={(e) => setSelectedPersona(e.target.value as number)}
-                  label={`Seleccionar ${title}`}
-                  disabled={isLoadingPersonas || createAssociation.isLoading}
-                >
-                  {availablePersonas.map((persona: Persona) => (
-                    <MenuItem key={persona.id} value={persona.id}>
-                      {`${persona.nombre} ${persona.apellido}`}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Autocomplete
+                options={availablePersonas}
+                getOptionLabel={(option) => `${option.nombre} ${option.apellido}`}
+                value={selectedPersona}
+                onChange={(event, newValue) => {
+                  setSelectedPersona(newValue);
+                }}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={`Seleccionar ${title}`}
+                    size="small"
+                    disabled={isLoadingPersonas || createAssociation.isLoading}
+                  />
+                )}
+                noOptionsText="No hay personas disponibles"
+                disabled={isLoadingPersonas || createAssociation.isLoading}
+                fullWidth
+              />
             </Grid>
             <Grid item xs={4}>
               <Button
@@ -188,11 +191,13 @@ const PersonaUnidadForm = ({ unidadOperativa, open = true }: PersonaUnidadFormPr
               {renderAssociationSection('Propietario', 'propietario', selectedPropietario, setSelectedPropietario)}
             </Grid>
           </Box>
-          <Box border={1} borderColor="lightgray" borderRadius={1} padding={0} width={'100%'} marginTop={1}>
-            <Grid item xs={12}>
-              {renderAssociationSection('Inquilino', 'inquilino', selectedInquilino, setSelectedInquilino)}
-            </Grid>
-          </Box>
+          {unidadOperativa.alquilada && (
+            <Box border={1} borderColor="lightgray" borderRadius={1} padding={0} width={'100%'} marginTop={1}>
+              <Grid item xs={12}>
+                {renderAssociationSection('Inquilino', 'inquilino', selectedInquilino, setSelectedInquilino)}
+              </Grid>
+            </Box>
+          )}
         </Grid>
       </Grid>
       {/* Columna Derecha: Habitantes */}

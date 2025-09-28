@@ -37,11 +37,14 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
     tipo_interes: Yup.string().nullable(),
     modalidad: Yup.string().nullable(),
     vencimiento1: Yup.number().nullable().min(1, 'Debe ser un número positivo').max(31, 'Debe ser un día del mes'),
+    vencimiento1valor: Yup.number().nullable().min(0, 'Debe ser un número positivo'),
     vencimiento2: Yup.number().nullable().min(1, 'Debe ser un número positivo').max(31, 'Debe ser un día del mes'),
+    vencimiento2valor: Yup.number().nullable().min(0, 'Debe ser un número positivo'),
     identificador1: Yup.string().nullable(),
     identificador2: Yup.string().nullable(),
     identificador3: Yup.string().nullable(),
-    imagen: Yup.string().nullable()
+    imagen: Yup.string().nullable(),
+    prorrateo: Yup.string().oneOf(['auto', 'libre']).required('El tipo de prorrateo es requerido')
   });
 
   const formik = useFormik<Consorcio>({
@@ -56,11 +59,15 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
       tipo_interes: consorcio?.tipo_interes || null,
       modalidad: consorcio?.modalidad || null,
       vencimiento1: consorcio?.vencimiento1 || null,
+      vencimiento1valor: consorcio?.vencimiento1valor ?? 0,
       vencimiento2: consorcio?.vencimiento2 || null,
-      identificador1: consorcio?.identificador1 || null,
-      identificador2: consorcio?.identificador2 || null,
-      identificador3: consorcio?.identificador3 || null,
-      imagen: consorcio?.imagen || null
+      vencimiento2valor: consorcio?.vencimiento2valor ?? 0,
+      identificador1: consorcio?.identificador1 || '',
+      identificador2: consorcio?.identificador2 || '',
+      identificador3: consorcio?.identificador3 || '',
+      imagen: consorcio?.imagen || null,
+      prorrateo: consorcio?.prorrateo || 'auto',
+      activo: consorcio?.activo || true
     },
     enableReinitialize: true, // Add this line
     validationSchema,

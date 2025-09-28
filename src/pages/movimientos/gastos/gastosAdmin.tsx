@@ -15,6 +15,7 @@ import GastosModal from './GastosModal';
 import AlertGastoDelete from './AlertGastoDelete';
 import GastoAsignacionModal from './GastoAsignacionModal';
 import GastosList from './GastosList';
+import GastoDetalleDrawer from './GastosDetalleDrawer';
 
 // API hooks
 import useAuth from 'hooks/useAuth';
@@ -26,7 +27,7 @@ import { Gasto, GastoEstado, GastoTipo } from 'types/gasto';
 import { UnidadOperativa } from 'types/unidadOperativa';
 
 // assets
-import { EditOutlined, DeleteOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, UsergroupAddOutlined, EyeOutlined } from '@ant-design/icons';
 
 // ==============================|| GASTOS - ADMIN ||============================== //
 
@@ -41,6 +42,7 @@ const GastosAdmin = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [gastoModal, setGastoModal] = useState<boolean>(false);
   const [selectedGasto, setSelectedGasto] = useState<Gasto | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [asignacionModalOpen, setAsignacionModalOpen] = useState<boolean>(false);
 
   const [gastoDelete, setGastoDelete] = useState<{ id: number; descripcion: string } | null>(null);
@@ -62,6 +64,13 @@ const GastosAdmin = () => {
         header: 'Fecha',
         accessorKey: 'fecha',
         cell: ({ getValue }) => <Typography>{new Date(getValue() as string).toLocaleDateString()}</Typography>
+      },
+      {
+        header: 'Proveedor',
+        accessorKey: 'Proveedor',
+        cell: ({ row }) => {
+          return <Typography>{row.original.Proveedor?.nombre || '-'}</Typography>;
+        }
       },
       {
         header: 'Descripción',
@@ -110,6 +119,18 @@ const GastosAdmin = () => {
           const isLiquidado = !!row.original.liquidacion_id;
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
+              <Tooltip title="Ver Detalles">
+                <IconButton
+                  color="secondary"
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    e.stopPropagation();
+                    setSelectedGasto(row.original);
+                    setDrawerOpen(true);
+                  }}
+                >
+                  <EyeOutlined />
+                </IconButton>
+              </Tooltip>
               <Tooltip title={isLiquidado ? 'El gasto ya fue liquidado' : 'Editar'}>
                 <span>
                   <IconButton
@@ -190,6 +211,7 @@ const GastosAdmin = () => {
       />
       <GastosModal open={gastoModal} modalToggler={setGastoModal} gasto={selectedGasto} />
       <GastoAsignacionModal open={asignacionModalOpen} modalToggler={setAsignacionModalOpen} gasto={selectedGasto} />
+      <GastoDetalleDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} gasto={selectedGasto} />
     </>
   );
 };

@@ -31,7 +31,8 @@ type PagoProveedorApiResponse = PagoProveedorApiSuccessResponse | ApiErrorRespon
 export const pagoProveedorQueryKeys = {
   all: ['pagosProveedores'] as const,
   lists: () => [...pagoProveedorQueryKeys.all, 'list'] as const,
-  list: (filters: { consorcio_id: string | number }) => [...pagoProveedorQueryKeys.lists(), filters] as const
+  list: (filters: { consorcio_id: string | number }) => [...pagoProveedorQueryKeys.lists(), filters] as const,
+  detail: (id: number | string) => [...pagoProveedorQueryKeys.all, 'detail', id] as const
 };
 
 // API functions
@@ -45,8 +46,8 @@ export const fetchPagosProveedores = async (consorcio_id: string | number) => {
   }
 };
 
-export const createPagoProveedor = async (pagoData: PagoProveedorCreateData) => {
-  const { data } = await apiClient.post<PagoProveedorApiResponse>('/pagos-proveedores/', pagoData);
+export const fetchPagoProveedorById = async (pagoId: number | string) => {
+  const { data } = await apiClient.get<PagoProveedorApiResponse>(`/pagos-proveedores/${pagoId}`);
   if (data.success) {
     return data.result;
   } else {
@@ -54,8 +55,19 @@ export const createPagoProveedor = async (pagoData: PagoProveedorCreateData) => 
   }
 };
 
-export const updatePagoProveedor = async (pagoId: number, pagoData: Partial<PagoProveedor>) => {
-  const { data } = await apiClient.put<PagoProveedorApiResponse>(`/pagos-proveedores/${pagoId}`, pagoData);
+export const createPagoProveedor = async (pagoData: PagoProveedorCreateData, usuario_id: number | string) => {
+  const body = { ...pagoData, usuario_id };
+  const { data } = await apiClient.post<PagoProveedorApiResponse>('/pagos-proveedores/', body);
+  if (data.success) {
+    return data.result;
+  } else {
+    throw new Error(data.message);
+  }
+};
+
+export const updatePagoProveedor = async (pagoId: number, pagoData: Partial<PagoProveedor>, usuario_id: number | string) => {
+  const body = { ...pagoData, usuario_id };
+  const { data } = await apiClient.put<PagoProveedorApiResponse>(`/pagos-proveedores/${pagoId}`, body);
   if (data.success) {
     return data.result;
   } else {
@@ -81,10 +93,19 @@ export function useGetPagosProveedores(consorcio_id: string | number, options?: 
   });
 }
 
+export function useGetPagoProveedor(pagoId: number | string, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: pagoProveedorQueryKeys.detail(pagoId),
+    queryFn: () => fetchPagoProveedorById(pagoId),
+    enabled: !!pagoId && (options?.enabled ?? true)
+  });
+}
+
 export function useCreatePagoProveedor() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (pagoData: PagoProveedorCreateData) => createPagoProveedor(pagoData),
+    mutationFn: ({ pagoData, usuario_id }: { pagoData: PagoProveedorCreateData; usuario_id: number | string }) =>
+      createPagoProveedor(pagoData, usuario_id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: pagoProveedorQueryKeys.lists() });
     }
@@ -94,7 +115,8 @@ export function useCreatePagoProveedor() {
 export function useUpdatePagoProveedor() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ pagoId, pagoData }: { pagoId: number; pagoData: Partial<PagoProveedor> }) => updatePagoProveedor(pagoId, pagoData),
+    mutationFn: ({ pagoId, pagoData, usuario_id }: { pagoId: number; pagoData: Partial<PagoProveedor>; usuario_id: number | string }) =>
+      updatePagoProveedor(pagoId, pagoData, usuario_id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: pagoProveedorQueryKeys.lists() });
     }

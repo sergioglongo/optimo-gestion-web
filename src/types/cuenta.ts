@@ -13,4 +13,6 @@ export interface Cuenta {
   consorcio_id: number;
   tipo: TipoCuenta;
   descripcion: string;
+  balance: number;
+  activa: boolean;
 }

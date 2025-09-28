@@ -1,4 +1,6 @@
-import { UnidadOperativa } from "./unidadOperativa";
+import { Proveedor } from './proveedor';
+import { Rubro } from './rubro';
+import { UnidadOperativa } from './unidadOperativa';
 
 export type GastoEstado = 'impago' | 'parcial' | 'pagado';
 export type GastoTipo = 'ordinario' | 'extraordinario';
@@ -12,6 +14,8 @@ export interface Gasto {
   deuda?: number | null;
   fecha: string; // Format: YYYY-MM-DD
   proveedor_id: number | null;
+  Proveedor?: Proveedor;
+  Rubro?: Rubro;
   estado: GastoEstado;
   fecha_carga: string | null; // Format: YYYY-MM-DD
   tipo_gasto: GastoTipo;

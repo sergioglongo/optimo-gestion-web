@@ -21,7 +21,7 @@ interface PersonasModalProps {
 // Define a combined type for Formik values
 type FormValues = Omit<Persona, 'id' | 'consorcio_id' | 'Usuario' | 'rol'> & {
   id?: number;
-  consorcio_id: number | null;
+  consorcio_id?: number | null;
   tipo_identificacion: TipoIdentificacionPersona | '';
   identificacion: string;
   domicilio: string;
@@ -43,7 +43,7 @@ const PersonasModal = ({ open, modalToggler, persona }: PersonasModalProps) => {
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().max(255).required('El nombre es requerido'),
     apellido: Yup.string().max(255).required('El apellido es requerido'),
-    tipo: Yup.string().oneOf(['persona fisica', 'persona juridica']).required('El tipo es requerido'),
+    tipo_persona: Yup.string().oneOf(['persona fisica', 'persona juridica']).required('El tipo es requerido'),
     tipo_identificacion: Yup.string().nullable(),
     identificacion: Yup.string().nullable(),
     domicilio: Yup.string().nullable(),
@@ -60,8 +60,8 @@ const PersonasModal = ({ open, modalToggler, persona }: PersonasModalProps) => {
       id: persona?.id,
       nombre: persona?.nombre || '',
       apellido: persona?.apellido || '',
-      tipo: persona?.tipo || 'persona fisica',
-      consorcio_id: selectedConsorcio?.id || null,
+      tipo_persona: persona?.tipo_persona || 'persona fisica',
+      consorcio_id: persona?.consorcio_id || selectedConsorcio?.id,
       tipo_identificacion: persona?.tipo_identificacion || 'documento',
       identificacion: persona?.identificacion || '',
       domicilio: persona?.domicilio || '',
@@ -69,7 +69,8 @@ const PersonasModal = ({ open, modalToggler, persona }: PersonasModalProps) => {
       provincia: persona?.provincia || '',
       telefono: persona?.telefono || '',
       email: persona?.Usuario?.email || '',
-      usuario: persona?.Usuario?.usuario || '',
+      usuario: persona?.Usuario?.usuario || '', // This is for the form, not directly on Persona
+      activa: persona?.activa ?? true,
       rol: 'usuario'
     },
     enableReinitialize: true,

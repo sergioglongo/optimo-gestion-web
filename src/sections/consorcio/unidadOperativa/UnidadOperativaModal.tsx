@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Box, Collapse, Divider, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 // project import
-import { UnidadOperativa } from 'types/unidadOperativa';
+import { TipoUnidadOperativa, UnidadOperativa } from 'types/unidadOperativa';
 import Modal from 'components/Modal/ModalBasico';
 import UnidadOperativaForm from './UnidadOperativaForm';
 import { useCreateUnidadOperativa, useUpdateUnidadOperativa } from 'services/api/unidadOperativaapi'; // Assuming new API hooks
@@ -22,9 +22,10 @@ interface UnidadOperativaModalProps {
   open: boolean;
   modalToggler: (open: boolean) => void;
   unidadOperativa: UnidadOperativa | null;
+  tiposUnidadOperativa: TipoUnidadOperativa[];
 }
 
-const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa }: UnidadOperativaModalProps) => {
+const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa, tiposUnidadOperativa }: UnidadOperativaModalProps) => {
   const isCreating = !unidadOperativa;
   const { selectedConsorcio } = useConsorcio();
   const [isPersonaFormOpen, setPersonaFormOpen] = useState(false);
@@ -34,12 +35,13 @@ const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa }: UnidadOpe
 
   const validationSchema = Yup.object().shape({
     etiqueta: Yup.string().max(255).nullable(),
-    tipo: Yup.string().oneOf(['departamento', 'casa', 'duplex', 'local', 'cochera', 'baulera']).required('El tipo es requerido'),
+    tipo_unidad_operativa_id: Yup.number().required('El tipo es requerido'),
     identificador1: Yup.string().nullable(),
     identificador2: Yup.string().nullable(),
     identificador3: Yup.string().nullable(),
     liquidar_a: Yup.string().oneOf(['propietario', 'inquilino', 'ambos']).required('El campo liquidar a es requerido'),
     prorrateo: Yup.number().min(0).required('El prorrateo es requerido'),
+    prorrateo_automatico: Yup.boolean().required('El campo prorrateo automático es requerido'),
     Intereses: Yup.boolean().required('El campo Intereses es requerido'),
     alquilada: Yup.boolean().required('El campo alquilada es requerido'),
     notas: Yup.string().nullable()
@@ -49,12 +51,13 @@ const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa }: UnidadOpe
     initialValues: {
       id: unidadOperativa?.id,
       etiqueta: unidadOperativa?.etiqueta || null,
-      tipo: unidadOperativa?.tipo || 'departamento',
+      tipo_unidad_operativa_id: unidadOperativa?.tipo_unidad_operativa_id || null,
       identificador1: unidadOperativa?.identificador1 || null,
       identificador2: unidadOperativa?.identificador2 || null,
       identificador3: unidadOperativa?.identificador3 || null,
       liquidar_a: unidadOperativa?.liquidar_a || 'propietario',
       prorrateo: unidadOperativa?.prorrateo || 0,
+      prorrateo_automatico: unidadOperativa?.prorrateo_automatico ?? true,
       Intereses: unidadOperativa?.Intereses || true,
       alquilada: unidadOperativa?.alquilada || false,
       notas: unidadOperativa?.notas || null,
@@ -103,7 +106,7 @@ const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa }: UnidadOpe
     >
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate>
-          <UnidadOperativaForm />
+          <UnidadOperativaForm tiposUnidadOperativa={tiposUnidadOperativa} />
         </Form>
       </FormikProvider>
       {unidadOperativa && (

@@ -20,7 +20,8 @@ export interface Proveedor {
   CBU: string | null;
   cuenta_id: number | null;
   Rubros?: Rubro[];
-  Cuenta?: Cuenta;
+  cuenta?: Cuenta;
+  activo: boolean;
 }
 
 /**
