@@ -9,6 +9,7 @@ import { Box, IconButton, IconButtonProps, List, ListItem, ListItemAvatar, ListI
 import Avatar from 'components/@extended/Avatar';
 import useAuth from 'hooks/useAuth';
 import { useAppSelector } from 'store/hooks';
+import packageJson from '../../../../../package.json'; // Importar package.json
 
 // assets
 import { RightOutlined } from '@ant-design/icons';
@@ -94,7 +95,7 @@ const NavUser = () => {
           <ListItemAvatar>
             <Avatar alt="Avatar" src={avatarImage(`./avatar-1.png`)} sx={{ ...(drawerOpen && { width: 46, height: 46 }) }} />
           </ListItemAvatar>
-          <ListItemText primary={user?.usuario} secondary="UI/UX Designer" />
+          <ListItemText primary={user?.usuario} secondary={`Versión ${packageJson.version}`} />
         </ListItem>
       </List>
       <Menu
