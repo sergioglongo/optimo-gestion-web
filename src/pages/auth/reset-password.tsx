@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 // project import
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthResetPassword from 'sections/auth/auth-forms/AuthResetPassword';
-import firstCapitalized from 'utils/textFormat';
+import { firstCapitalized } from 'utils/textFormat';
 
 // ================================|| RESET PASSWORD ||================================ //
 

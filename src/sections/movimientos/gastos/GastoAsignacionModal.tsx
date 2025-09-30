@@ -76,9 +76,12 @@ const GastoAsignacionModal = ({ open, modalToggler, gasto }: GastoAsignacionModa
   const [selectedUnidad, setSelectedUnidad] = useState<UnidadOperativa | null>(null);
 
   // ==============================|| API & STATE ||============================== //
-  const { data: allUnidades = [], isLoading: isLoadingUnidades } = useGetUnidadesOperativas(selectedConsorcio?.id || 0, {
-    enabled: !!selectedConsorcio?.id && open && !!gasto
-  });
+  const { data: allUnidades = [], isLoading: isLoadingUnidades } = useGetUnidadesOperativas(
+    { consorcio_id: selectedConsorcio?.id || 0 },
+    {
+      enabled: !!selectedConsorcio?.id && open && !!gasto
+    }
+  );
 
   const { data: existingAssignments = [], isLoading: isLoadingAssignments } = useGetGastoAsignaciones(
     { gasto_id: gasto?.id },

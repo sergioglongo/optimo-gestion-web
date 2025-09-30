@@ -128,6 +128,10 @@ const TipoUnidadesPage = Loadable(lazy(() => import('pages/consorcios/tiposUnida
 const RubrosPage = Loadable(lazy(() => import('pages/consorcios/rubrosAdmin'))); // New import for UnidadOperativaAdmin
 const GastosPage = Loadable(lazy(() => import('pages/movimientos/gastos/gastosAdmin'))); // New import for UnidadOperativaAdmin
 const TransaccionesPage = Loadable(lazy(() => import('pages/movimientos/transacciones/TransaccionesAdmin'))); // New import for UnidadOperativaAdmin
+const LiquidacionesPage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionesAdmin'))); // New import for UnidadOperativaAdmin
+const LiquidacionNuevaPage = Loadable(lazy(() => import('sections/expensas/liquidaciones/nueva/LiquidacionNueva')));
+const LiquidacionDetallePage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionDetalle')));
+const CobranzasPage = Loadable(lazy(() => import('pages/expensas/cobranzas/CobranzasAdmin')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -545,8 +549,20 @@ const MainRoutes = {
           path: 'expensas',
           children: [
             {
-              path: 'expensas',
-              element: <ProveedoresPage />
+              path: 'liquidaciones',
+              element: <LiquidacionesPage />
+            },
+            {
+              path: 'liquidaciones/nueva',
+              element: <LiquidacionNuevaPage />
+            },
+            {
+              path: 'liquidaciones/details/:id',
+              element: <LiquidacionDetallePage />
+            },
+            {
+              path: 'cobranzas',
+              element: <CobranzasPage />
             }
           ]
         },

@@ -10,11 +10,11 @@ import { useIntl } from 'react-intl';
 // project import
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
-import TransaccionesList from 'sections/movimientos/TransaccionesList';
-import TransaccionModal from 'sections/movimientos/TransaccionModal';
-import TransaccionDetalleDrawer from 'sections/movimientos/TransaccionDetalleDrawer';
-import TransaccionPagoProveedorDrawer from 'sections/movimientos/TransaccionPagoProveedorDrawer';
-import TransaccionPagoLiquidacionDrawer from 'sections/movimientos/TransaccionPagoLiquidacionDrawer';
+import TransaccionesList from 'sections/movimientos/transacciones/TransaccionesList';
+import TransaccionModal from 'sections/movimientos/transacciones/TransaccionModal';
+import TransaccionDetalleDrawer from 'sections/movimientos/transacciones/TransaccionDetalleDrawer';
+import TransaccionPagoProveedorDrawer from 'sections/movimientos/transacciones/TransaccionPagoProveedorDrawer';
+import TransaccionPagoLiquidacionDrawer from 'sections/movimientos/transacciones/TransaccionPagoLiquidacionDrawer';
 
 // API hooks
 import useConsorcio from 'hooks/useConsorcio';

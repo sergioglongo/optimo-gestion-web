@@ -32,7 +32,7 @@ import { setConsorcios } from 'store/slices/consorcio'; // Added this import
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { useIntl } from 'react-intl';
-import firstCapitalized from 'utils/textFormat';
+import { firstCapitalized } from 'utils/textFormat';
 
 // ============================|| LOGIN ||============================ //
 

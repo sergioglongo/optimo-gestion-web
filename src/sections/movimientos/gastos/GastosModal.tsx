@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 
 // project import
-import { Gasto, GastoCreateData } from 'types/gasto';
+import { Gasto } from 'types/gasto';
 import Modal from 'components/Modal/ModalBasico';
 import GastoForm from './GastoForm';
 import { useCreateGasto, useUpdateGasto } from 'services/api/gastosapi';
@@ -43,7 +43,8 @@ const GastosModal = ({ open, modalToggler, gasto }: GastosModalProps) => {
     periodo_aplica: Yup.date().nullable()
   });
 
-  const formik = useFormik<GastoCreateData>({
+  const formik = useFormik<Gasto>({
+    // Changed type to Gasto
     initialValues: {
       consorcio_id: selectedConsorcio?.id || 0,
       descripcion: gasto?.descripcion || '',
@@ -55,14 +56,17 @@ const GastosModal = ({ open, modalToggler, gasto }: GastosModalProps) => {
       estado: gasto?.estado || 'impago',
       periodo_aplica: gasto?.periodo_aplica ? gasto.periodo_aplica.split('T')[0] : getNextMonthFirstDay(),
       fecha_carga: new Date().toISOString().split('T')[0],
-      liquidacion_id: gasto?.liquidacion_id || null
+      liquidacion_id: gasto?.liquidacion_id || null,
+      id: gasto?.id || 0 // Explicitly include id
     },
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         if (isCreating) {
-          await createGastoMutation.mutateAsync(values);
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { id, ...gastoData } = values; // Omit id for creation
+          await createGastoMutation.mutateAsync(gastoData);
         } else {
           await updateGastoMutation.mutateAsync({ gastoId: gasto!.id, gastoData: values });
         }

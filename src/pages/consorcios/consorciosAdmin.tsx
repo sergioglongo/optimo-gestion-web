@@ -61,7 +61,7 @@ const ConsorciosAdmin = () => {
         cell: ({ row, getValue }) => (
           <Stack spacing={0}>
             <Typography variant="subtitle1">{getValue() as string}</Typography>
-            <Typography color="text.secondary">{row.original.direccion as string}</Typography>
+            <Typography color="text.secondary">{row.original.Domicilio?.direccion || ''}</Typography>
           </Stack>
         )
       },

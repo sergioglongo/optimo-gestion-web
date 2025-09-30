@@ -1,5 +1,7 @@
 // ==============================|| CONSORCIO - TYPES ||============================== //
 
+import { Domicilio } from './domicilio';
+
 /**
  * Tipos de enumeración para la condición fiscal del consorcio.
  * Basado en `public.enum_consorcios_condicion_fiscal`.
@@ -36,7 +38,7 @@ export type ProrrateoConsorcio = 'auto' | 'libre';
 export interface Consorcio {
   id: number;
   nombre: string;
-  direccion: string;
+  Domicilio?: Domicilio | null;
   condicion_fiscal?: CondicionFiscal | null;
   identificacion?: string | null;
   notas?: string | null;
@@ -47,6 +49,8 @@ export interface Consorcio {
   vencimiento1valor?: number | null;
   vencimiento2?: number | null;
   vencimiento2valor?: number | null;
+  dia_cierre: number;
+  ultimo_periodo_liquidado: string | null;
   identificador1?: string | null;
   identificador2?: string | null;
   identificador3?: string | null;

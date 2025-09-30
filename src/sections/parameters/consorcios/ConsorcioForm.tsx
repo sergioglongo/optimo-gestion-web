@@ -1,6 +1,20 @@
-import { Grid, TextField, MenuItem, Select, InputLabel, FormControl, FormHelperText, Input, Box } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  FormHelperText,
+  Input,
+  Box,
+  Autocomplete,
+  CircularProgress
+} from '@mui/material';
 import Avatar from 'components/@extended/Avatar';
-import { FormikProps } from 'formik';
+import { FormikProps, getIn } from 'formik';
+import { useEffect, useState } from 'react';
+import { useGetLocalidades, useGetProvincias } from 'services/api/toolsapi';
 import { Consorcio, CondicionFiscal, TipoConsorcio, TipoInteres, Modalidad, ProrrateoConsorcio } from 'types/consorcio';
 
 interface ConsorcioFormProps {
@@ -10,13 +24,27 @@ interface ConsorcioFormProps {
 }
 
 const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
-  const { errors, touched, getFieldProps } = formik;
+  const { errors, touched, getFieldProps, values, setFieldValue } = formik;
 
   const condicionFiscalOptions: CondicionFiscal[] = ['consumidor final', 'responsable inscripto', 'monotributista', 'exento'];
   const tipoConsorcioOptions: TipoConsorcio[] = ['edificio', 'barrio', 'country', 'complejo'];
   const tipoInteresOptions: TipoInteres[] = ['compuesto', 'acumulado'];
   const modalidadOptions: Modalidad[] = ['vencido', 'adelantado'];
   const prorrateoOptions: ProrrateoConsorcio[] = ['auto', 'libre'];
+
+  const { data: provincias, isLoading: isLoadingProvincias } = useGetProvincias();
+  const [selectedProvinciaId, setSelectedProvinciaId] = useState<number | string>('');
+  const { data: localidades, isLoading: isLoadingLocalidades } = useGetLocalidades(selectedProvinciaId, { enabled: !!selectedProvinciaId });
+
+  useEffect(() => {
+    if (provincias && values.Domicilio && values.Domicilio.provincia) {
+      const initialProvincia = provincias.find((p) => p.nombre === values.Domicilio!.provincia);
+      if (initialProvincia) {
+        setSelectedProvinciaId(initialProvincia.id);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provincias, values.Domicilio?.provincia]);
 
   return (
     <Grid container spacing={3} sx={{ mt: 1 }}>
@@ -30,17 +58,75 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           helperText={touched.nombre && errors.nombre}
         />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={6}>
         <TextField
           fullWidth
-          label="Dirección"
-          {...getFieldProps('direccion')}
-          value={formik.values.direccion || ''}
-          error={Boolean(touched.direccion && errors.direccion)}
-          helperText={touched.direccion && errors.direccion}
+          label="Domicilio"
+          {...getFieldProps('Domicilio.direccion')}
+          value={values.Domicilio?.direccion || ''}
+          error={Boolean(getIn(touched, 'Domicilio.direccion') && getIn(errors, 'Domicilio.direccion'))}
+          helperText={getIn(touched, 'Domicilio.direccion') && getIn(errors, 'Domicilio.direccion')}
         />
       </Grid>
       <Grid item xs={12} sm={6}>
+        <Autocomplete
+          id="provincia-autocomplete"
+          options={provincias || []}
+          getOptionLabel={(option) => option.nombre}
+          value={provincias?.find((p) => p.nombre === values.Domicilio?.provincia) || null}
+          onChange={(event, newValue) => {
+            if (newValue) {
+              setSelectedProvinciaId(newValue.id);
+              setFieldValue('Domicilio.provincia', newValue.nombre);
+              setFieldValue('Domicilio.localidad', ''); // Reset localidad on provincia change
+            } else {
+              setSelectedProvinciaId('');
+              setFieldValue('Domicilio.provincia', '');
+              setFieldValue('Domicilio.localidad', '');
+            }
+          }}
+          loading={isLoadingProvincias}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Provincia"
+              error={Boolean(getIn(touched, 'Domicilio.provincia') && getIn(errors, 'Domicilio.provincia'))}
+              helperText={getIn(touched, 'Domicilio.provincia') && getIn(errors, 'Domicilio.provincia')}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {isLoadingProvincias ? <CircularProgress color="inherit" size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                )
+              }}
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <Autocomplete
+          id="localidad-autocomplete"
+          options={localidades || []}
+          getOptionLabel={(option) => option.nombre}
+          value={localidades?.find((l) => l.nombre === values.Domicilio?.localidad) || null}
+          onChange={(event, newValue) => {
+            setFieldValue('Domicilio.localidad', newValue ? newValue.nombre : '');
+          }}
+          loading={isLoadingLocalidades}
+          disabled={!selectedProvinciaId || isLoadingLocalidades}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Localidad"
+              error={Boolean(getIn(touched, 'Domicilio.localidad') && getIn(errors, 'Domicilio.localidad'))}
+              helperText={getIn(touched, 'Domicilio.localidad') && getIn(errors, 'Domicilio.localidad')}
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} sm={3}>
         <FormControl fullWidth error={Boolean(touched.condicion_fiscal && errors.condicion_fiscal)}>
           <InputLabel>Condición Fiscal</InputLabel>
           <Select label="Condición Fiscal" {...getFieldProps('condicion_fiscal')} value={formik.values.condicion_fiscal || ''}>
@@ -53,7 +139,7 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           {touched.condicion_fiscal && errors.condicion_fiscal && <FormHelperText>{errors.condicion_fiscal}</FormHelperText>}
         </FormControl>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={3}>
         <TextField
           fullWidth
           label="Identificación"
@@ -115,7 +201,18 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           {touched.prorrateo && errors.prorrateo && <FormHelperText>{errors.prorrateo}</FormHelperText>}
         </FormControl>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={6} sm={2}>
+        <TextField
+          fullWidth
+          label="Día de Cierre"
+          type="number"
+          {...getFieldProps('dia_cierre')}
+          value={formik.values.dia_cierre || ''}
+          error={Boolean(touched.dia_cierre && errors.dia_cierre)}
+          helperText={touched.dia_cierre && errors.dia_cierre}
+        />
+      </Grid>
+      <Grid item xs={12} sm={5}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <TextField
@@ -141,7 +238,7 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={5}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <TextField
@@ -167,7 +264,7 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={6} sm={4}>
+      <Grid item xs={6} sm={3}>
         <TextField
           fullWidth
           label="Identificador 1"
@@ -177,7 +274,7 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           helperText={touched.identificador1 && errors.identificador1}
         />
       </Grid>
-      <Grid item xs={6} sm={4}>
+      <Grid item xs={6} sm={3}>
         <TextField
           fullWidth
           label="Identificador 2"
@@ -187,7 +284,7 @@ const ConsorcioForm = ({ formik, setImageFile }: ConsorcioFormProps) => {
           helperText={touched.identificador2 && errors.identificador2}
         />
       </Grid>
-      <Grid item xs={6} sm={4}>
+      <Grid item xs={6} sm={3}>
         <TextField
           fullWidth
           label="Identificador 3"

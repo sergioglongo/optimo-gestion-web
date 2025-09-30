@@ -35,13 +35,13 @@ type UnidadOperativaApiResponse = UnidadOperativaApiSuccessResponse | ApiErrorRe
 export const unidadOperativaQueryKeys = {
   all: ['unidadesOperativas'] as const,
   lists: () => [...unidadOperativaQueryKeys.all, 'list'] as const,
-  list: (filters: { consorcio_id: string | number }) => [...unidadOperativaQueryKeys.lists(), filters] as const,
+  list: (filters: { consorcio_id: string | number; activas?: boolean }) => [...unidadOperativaQueryKeys.lists(), filters] as const,
   detail: (id: number | string) => [...unidadOperativaQueryKeys.all, 'detail', id] as const
 };
 
 // API functions
-export const fetchUnidadesOperativasByConsorcio = async (consorcio_id: string | number) => {
-  const { data } = await apiClient.post<ApiResponse>('/unidades/getall', { consorcio_id });
+export const fetchUnidadesOperativasByConsorcio = async (params: { consorcio_id: string | number; activas?: boolean }) => {
+  const { data } = await apiClient.post<ApiResponse>('/unidades/getall', params);
   if (data.success) {
     return data.result || [];
   } else {
@@ -86,11 +86,11 @@ export const deleteUnidadOperativa = async (unidadOperativaId: number) => {
 };
 
 // React Query hooks
-export function useGetUnidadesOperativas(consorcio_id: string | number, options?: { enabled?: boolean }) {
+export function useGetUnidadesOperativas(params: { consorcio_id: string | number; activas?: boolean }, options?: { enabled?: boolean }) {
   return useQuery({
-    queryKey: unidadOperativaQueryKeys.list({ consorcio_id }),
-    queryFn: () => fetchUnidadesOperativasByConsorcio(consorcio_id),
-    enabled: !!consorcio_id && (options?.enabled ?? true)
+    queryKey: unidadOperativaQueryKeys.list(params),
+    queryFn: () => fetchUnidadesOperativasByConsorcio(params),
+    enabled: !!params.consorcio_id && (options?.enabled ?? true)
   });
 }
 

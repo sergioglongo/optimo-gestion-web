@@ -11,11 +11,11 @@ import { useIntl } from 'react-intl';
 // project import
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
-import GastosModal from './GastosModal';
-import AlertGastoDelete from './AlertGastoDelete';
-import GastoAsignacionModal from './GastoAsignacionModal';
-import GastosList from './GastosList';
-import GastoDetalleDrawer from './GastosDetalleDrawer';
+import GastosModal from 'sections/movimientos/gastos/GastosModal';
+import AlertGastoDelete from 'sections/movimientos/gastos/AlertGastoDelete';
+import GastoAsignacionModal from 'sections/movimientos/gastos/GastoAsignacionModal';
+import GastosList from 'sections/movimientos/gastos/GastosList';
+import GastoDetalleDrawer from 'sections/movimientos/gastos/GastosDetalleDrawer';
 
 // API hooks
 import useAuth from 'hooks/useAuth';
@@ -25,6 +25,7 @@ import { useGetGastos } from 'services/api/gastosapi';
 // types
 import { Gasto, GastoEstado, GastoTipo } from 'types/gasto';
 import { UnidadOperativa } from 'types/unidadOperativa';
+import { truncateString } from 'utils/textFormat';
 
 // assets
 import { EditOutlined, DeleteOutlined, UsergroupAddOutlined, EyeOutlined } from '@ant-design/icons';
@@ -74,12 +75,15 @@ const GastosAdmin = () => {
       },
       {
         header: 'Descripción',
-        accessorKey: 'descripcion'
-      },
-      {
-        header: 'Monto',
-        accessorKey: 'monto',
-        cell: ({ getValue }) => <Typography>${Number(getValue()).toLocaleString('es-AR')}</Typography>
+        accessorKey: 'descripcion',
+        cell: ({ getValue }) => {
+          const description = getValue() as string;
+          return (
+            <Tooltip title={description} placement="top">
+              <Typography>{truncateString(description, 30)}</Typography>
+            </Tooltip>
+          );
+        }
       },
       {
         header: 'Tipo',
@@ -108,6 +112,16 @@ const GastosAdmin = () => {
           if (estado === 'impago') color = 'error';
           return <Chip color={color} label={estado} size="small" variant="light" />;
         }
+      },
+      {
+        header: 'Monto',
+        accessorKey: 'monto',
+        cell: ({ getValue }) => <Typography>${Number(getValue()).toLocaleString('es-AR')}</Typography>
+      },
+      {
+        header: 'Saldado',
+        accessorKey: 'saldado',
+        cell: ({ getValue }) => <Typography>${Number(getValue()).toLocaleString('es-AR')}</Typography>
       },
       {
         header: intl.formatMessage({ id: 'table.actions' }),

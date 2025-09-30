@@ -7,7 +7,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import useAuth from 'hooks/useAuth';
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthLogin from 'sections/auth/login/AuthLogin';
-import firstCapitalized from 'utils/textFormat';
+import { firstCapitalized } from 'utils/textFormat';
 import { useIntl } from 'react-intl';
 
 // ================================|| LOGIN ||================================ //

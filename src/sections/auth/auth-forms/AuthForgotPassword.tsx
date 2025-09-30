@@ -16,7 +16,7 @@ import { openSnackbar } from 'api/snackbar';
 // types
 import { useForgotPassword } from 'services/api/authApi';
 import { SnackbarProps } from 'types/snackbar';
-import firstCapitalized from 'utils/textFormat';
+import { firstCapitalized } from 'utils/textFormat';
 
 // ============================|| FIREBASE - FORGOT PASSWORD ||============================ //
 

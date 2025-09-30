@@ -7,7 +7,7 @@ import { Box, Button, Grid, Typography } from '@mui/material';
 import useAuth from 'hooks/useAuth';
 import AnimateButton from 'components/@extended/AnimateButton';
 import AuthWrapper from 'sections/auth/AuthWrapper';
-import firstCapitalized from 'utils/textFormat';
+import { firstCapitalized } from 'utils/textFormat';
 import { useIntl } from 'react-intl';
 
 // ================================|| CHECK MAIL ||================================ //

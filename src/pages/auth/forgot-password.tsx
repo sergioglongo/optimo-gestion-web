@@ -10,7 +10,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import useAuth from 'hooks/useAuth';
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthForgotPassword from 'sections/auth/auth-forms/AuthForgotPassword';
-import firstCapitalized from 'utils/textFormat';
+import { firstCapitalized } from 'utils/textFormat';
 
 // ================================|| FORGOT PASSWORD ||================================ //
 

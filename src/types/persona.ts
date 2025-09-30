@@ -1,4 +1,5 @@
 import { Usuario, RolUsuario } from './usuario';
+import { Domicilio } from './domicilio';
 
 /**
  * Tipos de enumeración para el tipo de persona.
@@ -32,9 +33,7 @@ export interface Persona {
   tipo_persona: TipoPersona;
   tipo_identificacion?: TipoIdentificacionPersona | null;
   identificacion?: string | null;
-  domicilio?: string | null;
-  localidad?: string | null;
-  provincia?: string | null;
+  Domicilio?: Domicilio | null;
   telefono?: string | null;
   activa: boolean;
   Usuario?: Usuario;
@@ -48,12 +47,11 @@ export interface PersonaUsuario {
   tipo_persona: TipoPersona;
   tipo_identificacion?: TipoIdentificacionPersona | null;
   identificacion?: string | null;
-  domicilio?: string | null;
-  localidad?: string | null;
-  provincia?: string | null;
+  Domicilio?: Domicilio | null;
   telefono?: string | null;
   email: string;
   usuario?: string;
   rol?: RolUsuario;
   persona_id?: number;
+  activa?: boolean;
 }

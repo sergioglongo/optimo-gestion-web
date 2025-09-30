@@ -25,8 +25,11 @@ const PersonaDetalleDrawer = ({ open, onClose, persona }: PersonaDetalleDrawerPr
       { label: 'Identificación', value: persona.identificacion || '-' }
     ],
     { label: 'Email', value: persona.Usuario?.email || '-' },
-    { label: 'Domicilio', value: persona.domicilio || '-' },
-    { label: 'Localidad', value: `${persona.localidad || '-'}, ${persona.provincia || '-'}` }
+    { label: 'Domicilio', value: persona.Domicilio?.direccion || '-' },
+    {
+      label: 'Localidad',
+      value: persona.Domicilio ? `${persona.Domicilio.localidad || '-'}, ${persona.Domicilio.provincia || '-'}` : '-'
+    }
   ] as const;
 
   return (

@@ -35,9 +35,12 @@ const UnidadOperativaAdmin = () => {
   const { selectedConsorcio } = useConsorcio();
   const intl = useIntl(); // Initialize useIntl
 
-  const { data: unidadesOperativasData, isLoading } = useGetUnidadesOperativas(selectedConsorcio?.id || 0, {
-    enabled: !!user?.id && !!token
-  });
+  const { data: unidadesOperativasData, isLoading } = useGetUnidadesOperativas(
+    { consorcio_id: selectedConsorcio?.id || 0 },
+    {
+      enabled: !!user?.id && !!token
+    }
+  );
 
   const { data: tiposUnidadOperativaData, isLoading: isLoadingTipos } = useGetTiposUnidadOperativa(selectedConsorcio?.id || 0, {
     enabled: !!selectedConsorcio?.id

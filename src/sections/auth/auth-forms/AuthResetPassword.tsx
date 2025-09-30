@@ -35,7 +35,7 @@ import { StringColorProps } from 'types/password';
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { useIntl } from 'react-intl';
-import firstCapitalized from 'utils/textFormat';
+import { firstCapitalized } from 'utils/textFormat';
 
 // ============================|| STATIC - RESET PASSWORD ||============================ //
 

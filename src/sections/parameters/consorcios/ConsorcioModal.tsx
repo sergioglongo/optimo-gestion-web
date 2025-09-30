@@ -29,7 +29,12 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
 
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().max(255).required('El nombre es requerido'),
-    direccion: Yup.string().max(255).required('La dirección es requerida'),
+    domicilio: Yup.object().shape({
+      direccion: Yup.string().max(255).required('La dirección es requerida'),
+      localidad: Yup.string().nullable(),
+      provincia: Yup.string().nullable(),
+      codigo_postal: Yup.string().nullable()
+    }),
     condicion_fiscal: Yup.string().nullable(),
     identificacion: Yup.string().nullable(),
     notas: Yup.string().nullable(),
@@ -40,6 +45,7 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
     vencimiento1valor: Yup.number().nullable().min(0, 'Debe ser un número positivo'),
     vencimiento2: Yup.number().nullable().min(1, 'Debe ser un número positivo').max(31, 'Debe ser un día del mes'),
     vencimiento2valor: Yup.number().nullable().min(0, 'Debe ser un número positivo'),
+    dia_cierre: Yup.number().required('El día de cierre es requerido').min(1, 'Debe ser un día válido').max(31, 'Debe ser un día válido'),
     identificador1: Yup.string().nullable(),
     identificador2: Yup.string().nullable(),
     identificador3: Yup.string().nullable(),
@@ -51,7 +57,16 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
     initialValues: {
       id: consorcio?.id || 0, // Assuming ID is handled by the backend for new entries
       nombre: consorcio?.nombre || '',
-      direccion: consorcio?.direccion || '',
+      Domicilio:
+        // @ts-ignore
+        consorcio?.domicilio ||
+          consorcio?.Domicilio || {
+            id: 0,
+            direccion: '',
+            localidad: '',
+            provincia: '',
+            codigo_postal: ''
+          },
       condicion_fiscal: consorcio?.condicion_fiscal || null,
       identificacion: consorcio?.identificacion || null,
       notas: consorcio?.notas || null,
@@ -62,6 +77,8 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
       vencimiento1valor: consorcio?.vencimiento1valor ?? 0,
       vencimiento2: consorcio?.vencimiento2 || null,
       vencimiento2valor: consorcio?.vencimiento2valor ?? 0,
+      dia_cierre: consorcio?.dia_cierre || 25,
+      ultimo_periodo_liquidado: consorcio?.ultimo_periodo_liquidado || null,
       identificador1: consorcio?.identificador1 || '',
       identificador2: consorcio?.identificador2 || '',
       identificador3: consorcio?.identificador3 || '',

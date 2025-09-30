@@ -11,6 +11,7 @@ export interface Gasto {
   rubro_gasto_id: number;
   descripcion: string;
   monto: number;
+  saldado?: number | null;
   deuda?: number | null;
   fecha: string; // Format: YYYY-MM-DD
   proveedor_id: number | null;
