@@ -29,7 +29,7 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
 
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().max(255).required('El nombre es requerido'),
-    domicilio: Yup.object().shape({
+    Domicilio: Yup.object().shape({
       direccion: Yup.string().max(255).required('La dirección es requerida'),
       localidad: Yup.string().nullable(),
       provincia: Yup.string().nullable(),
@@ -57,16 +57,12 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
     initialValues: {
       id: consorcio?.id || 0, // Assuming ID is handled by the backend for new entries
       nombre: consorcio?.nombre || '',
-      Domicilio:
-        // @ts-ignore
-        consorcio?.domicilio ||
-          consorcio?.Domicilio || {
-            id: 0,
-            direccion: '',
-            localidad: '',
-            provincia: '',
-            codigo_postal: ''
-          },
+      Domicilio: consorcio?.Domicilio || {
+        id: 0,
+        direccion: '',
+        localidad: '',
+        provincia: ''
+      },
       condicion_fiscal: consorcio?.condicion_fiscal || null,
       identificacion: consorcio?.identificacion || null,
       notas: consorcio?.notas || null,
@@ -90,13 +86,20 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
+        // Transform Domicilio to domicilio for the API
+        const { Domicilio, ...rest } = values;
+        const apiData = {
+          ...rest,
+          domicilio: Domicilio
+        };
+
         if (isCreating) {
           // For creation, omit the 'id' field as it should be assigned by the backend
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { id: _id, ...dataToCreate } = values; // Destructure 'id' and rename to '_id' to indicate it's unused
+          const { id: _id, ...dataToCreate } = apiData;
           await createConsorcioMutation.mutateAsync({ consorcioData: dataToCreate, imageFile, usuario_id });
         } else {
-          await updateConsorcioMutation.mutateAsync({ consorcioId: values.id, consorcioData: values, imageFile, usuario_id });
+          await updateConsorcioMutation.mutateAsync({ consorcioId: values.id, consorcioData: apiData, imageFile, usuario_id });
         }
         resetForm();
         modalToggler(false);

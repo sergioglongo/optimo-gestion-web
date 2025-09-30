@@ -141,10 +141,6 @@ function TablaAdmin<T extends object>({
     [columns]
   );
 
-  if (data.length === 0) {
-    return <EmptyReactTable />;
-  }
-
   return (
     <MainCard content={false}>
       {title && (
@@ -165,44 +161,48 @@ function TablaAdmin<T extends object>({
           <CSVExport {...{ data: table.getSelectedRowModel().flatRows.map((row) => row.original), headers, filename: csvFilename }} />
         </Stack>
       </Stack>
-      <ScrollX>
-        {showSelection && <RowSelection selected={Object.keys(rowSelection).length} />}
-        <TableContainer>
-          <Table>
-            <TableHead>
-              {table.getHeaderGroups().map((headerGroup: HeaderGroup<any>) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableCell key={header.id} {...header.column.columnDef.meta} onClick={header.column.getToggleSortingHandler()}>
-                      {header.isPlaceholder ? null : (
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <Box>{flexRender(header.column.columnDef.header, header.getContext())}</Box>
-                          {header.column.getCanSort() && <HeaderSort column={header.column} />}
-                        </Stack>
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHead>
-            <TableBody>
-              {table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} {...cell.column.columnDef.meta}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Divider />
-        <Box sx={{ p: 2 }}>
-          <TablePagination {...{ setPageSize: table.setPageSize, setPageIndex: table.setPageIndex, getState: table.getState, getPageCount: table.getPageCount }} />
-        </Box>
-      </ScrollX>
+      {data.length > 0 ? (
+        <ScrollX>
+          {showSelection && <RowSelection selected={Object.keys(rowSelection).length} />}
+          <TableContainer>
+            <Table>
+              <TableHead>
+                {table.getHeaderGroups().map((headerGroup: HeaderGroup<any>) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableCell key={header.id} {...header.column.columnDef.meta} onClick={header.column.getToggleSortingHandler()}>
+                        {header.isPlaceholder ? null : (
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            <Box>{flexRender(header.column.columnDef.header, header.getContext())}</Box>
+                            {header.column.getCanSort() && <HeaderSort column={header.column} />}
+                          </Stack>
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHead>
+              <TableBody>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} {...cell.column.columnDef.meta}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Divider />
+          <Box sx={{ p: 2 }}>
+            <TablePagination {...{ setPageSize: table.setPageSize, setPageIndex: table.setPageIndex, getState: table.getState, getPageCount: table.getPageCount }} />
+          </Box>
+        </ScrollX>
+      ) : (
+        <EmptyReactTable />
+      )}
     </MainCard>
   );
 }
