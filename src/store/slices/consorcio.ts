@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Consorcio } from 'types/consorcio'; // Asumo que este tipo ya existe
+import { Consorcio } from 'types/consorcio';
 
 interface ConsorcioState {
   consorciosList: Consorcio[];
@@ -17,16 +17,18 @@ const consorcioSlice = createSlice({
   reducers: {
     setConsorcios(state, action: PayloadAction<Consorcio[]>) {
       state.consorciosList = action.payload;
-      // Seleccionar el primer consorcio por defecto si la lista no está vacía
-      if (action.payload.length > 0) {
-        state.selectedConsorcio = action.payload[0];
-      } else {
-        state.selectedConsorcio = null;
-      }
     },
     selectConsorcio(state, action: PayloadAction<string | number>) {
-      const consorcioId = String(action.payload);
-      state.selectedConsorcio = state.consorciosList.find((consorcio) => String(consorcio.id) === consorcioId) || null;
+      const consorcioId = action.payload;
+      state.selectedConsorcio = state.consorciosList.find((c) => c.id === consorcioId) || null;
+    },
+    setSelectedConsorcio(state, action: PayloadAction<Consorcio>) {
+      state.selectedConsorcio = action.payload;
+      // También actualizamos la lista para mantener la consistencia
+      const index = state.consorciosList.findIndex((c) => c.id === action.payload.id);
+      if (index !== -1) {
+        state.consorciosList[index] = action.payload;
+      }
     },
     clearConsorcios(state) {
       state.consorciosList = [];
@@ -35,6 +37,6 @@ const consorcioSlice = createSlice({
   }
 });
 
-export const { setConsorcios, selectConsorcio, clearConsorcios } = consorcioSlice.actions;
+export const { setConsorcios, selectConsorcio, setSelectedConsorcio, clearConsorcios } = consorcioSlice.actions;
 
 export default consorcioSlice.reducer;

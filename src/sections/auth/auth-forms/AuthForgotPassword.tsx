@@ -6,23 +6,26 @@ import { Button, FormHelperText, Grid, InputLabel, OutlinedInput, Stack, Typogra
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { useIntl } from 'react-intl';
 
 // project import
-import useAuth from 'hooks/useAuth';
 import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'components/@extended/AnimateButton';
 import { openSnackbar } from 'api/snackbar';
 
 // types
+import { useForgotPassword } from 'services/api/authApi';
 import { SnackbarProps } from 'types/snackbar';
+import { firstCapitalized } from 'utils/textFormat';
 
 // ============================|| FIREBASE - FORGOT PASSWORD ||============================ //
 
 const AuthForgotPassword = () => {
   const scriptedRef = useScriptRef();
   const navigate = useNavigate();
+  const intl = useIntl();
 
-  const { isLoggedIn, resetPassword } = useAuth();
+  const { mutate, isLoading } = useForgotPassword();
 
   return (
     <>
@@ -35,50 +38,41 @@ const AuthForgotPassword = () => {
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          try {
-            await resetPassword(values.email).then(
-              () => {
+          mutate(
+            { email: values.email },
+            {
+              onSuccess: (data) => {
                 setStatus({ success: true });
                 setSubmitting(false);
                 openSnackbar({
                   open: true,
-                  message: 'Check mail for reset password link',
+                  message: 'Se ha enviado un correo para reestablecer la contraseña.',
                   variant: 'alert',
                   alert: {
                     color: 'success'
                   }
                 } as SnackbarProps);
                 setTimeout(() => {
-                  navigate(isLoggedIn ? '/auth/check-mail' : '/check-mail', { replace: true });
+                  navigate('/auth/check-mail', { replace: true });
                 }, 1500);
-
-                // WARNING: do not set any formik state here as formik might be already destroyed here. You may get following error by doing so.
-                // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application.
-                // To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function.
-                // github issue: https://github.com/formium/formik/issues/2430
               },
-              (err: any) => {
-                setStatus({ success: false });
-                setErrors({ submit: err.message });
-                setSubmitting(false);
+              onError: (err: any) => {
+                if (scriptedRef.current) {
+                  setStatus({ success: false });
+                  setErrors({ submit: err.message });
+                  setSubmitting(false);
+                }
               }
-            );
-          } catch (err: any) {
-            console.error(err);
-            if (scriptedRef.current) {
-              setStatus({ success: false });
-              setErrors({ submit: err.message });
-              setSubmitting(false);
             }
-          }
+          );
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-forgot">Email Address</InputLabel>
+                  <InputLabel htmlFor="email-forgot">{firstCapitalized(intl.formatMessage({ id: 'email-address' }))}</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
@@ -88,7 +82,7 @@ const AuthForgotPassword = () => {
                     name="email"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Enter email address"
+                    placeholder={firstCapitalized(intl.formatMessage({ id: 'type-email-address' }))}
                     inputProps={{}}
                   />
                 </Stack>
@@ -104,12 +98,12 @@ const AuthForgotPassword = () => {
                 </Grid>
               )}
               <Grid item xs={12} sx={{ mb: -2 }}>
-                <Typography variant="caption">Do not forgot to check SPAM box.</Typography>
+                <Typography variant="caption">{intl.formatMessage({ id: 'do-not-forgot-to-check-spam-box' })}</Typography>
               </Grid>
               <Grid item xs={12}>
                 <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Send Password Reset Email
+                  <Button disableElevation disabled={isLoading} fullWidth size="large" type="submit" variant="contained" color="primary">
+                    {intl.formatMessage({ id: 'send-password-reset-email' })}
                   </Button>
                 </AnimateButton>
               </Grid>

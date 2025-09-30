@@ -11,19 +11,19 @@ import { useIntl } from 'react-intl'; // Import useIntl
 // project import
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
-import { IndeterminateCheckbox } from 'components/third-party/react-table';
 
 // API hooks
 import useAuth from 'hooks/useAuth';
 import useConsorcio from 'hooks/useConsorcio';
 
 // assets
-import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useGetProveedores } from 'services/api/proveedoresapi';
 import { Proveedor } from 'types/proveedor';
 import ProveedoresList from 'sections/proveedores/proveedores/ProveedoresList';
-import AlertProductDelete from 'sections/apps/invoice/AlertProductDelete';
 import ProveedorModal from 'sections/proveedores/proveedores/ProveedorModal';
+import ViewDrawer from 'components/drawers/ViewDrawer';
+import AlertProveedorDelete from 'sections/proveedores/proveedores/AlertProveedorDelete';
 
 // ==============================|| CUENTAS - ADMIN ||============================== //
 
@@ -35,39 +35,13 @@ const ProveedoresAdmin = () => {
 
   const { data: proveedoresData, isLoading } = useGetProveedores(selectedConsorcio?.id || 0, { enabled: !!user?.id && !!token });
 
-  const [open, setOpen] = useState<boolean>(false);
   const [proveedorModal, setProveedorModal] = useState<boolean>(false);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [selectedProveedor, setSelectedProveedor] = useState<Proveedor | null>(null);
-  const [proveedorDeleteId, setProveedorDeleteId] = useState<any>('');
-
-  const handleClose = () => {
-    setOpen(!open);
-  };
+  const [proveedorToDelete, setProveedorToDelete] = useState<{ id: number; nombre: string } | null>(null);
 
   const columns = useMemo<ColumnDef<Proveedor>[]>(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
-          />
-        )
-      },
       {
         header: 'ID',
         accessorKey: 'id',
@@ -120,20 +94,21 @@ const ProveedoresAdmin = () => {
         },
         disableSortBy: true,
         cell: ({ row }) => {
-          const collapseIcon =
-            row.getCanExpand() && row.getIsExpanded() ? (
-              <PlusOutlined style={{ color: theme.palette.error.main, transform: 'rotate(45deg)' }} />
-            ) : (
-              <EyeOutlined />
-            );
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              <Tooltip title="View">
-                <IconButton color="secondary" onClick={row.getToggleExpandedHandler()}>
-                  {collapseIcon}
+              <Tooltip title="Ver Detalles">
+                <IconButton
+                  color="secondary"
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    e.stopPropagation();
+                    setSelectedProveedor(row.original);
+                    setDrawerOpen(true);
+                  }}
+                >
+                  <EyeOutlined />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Edit">
+              <Tooltip title="Editar">
                 <IconButton
                   color="primary"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
@@ -145,13 +120,12 @@ const ProveedoresAdmin = () => {
                   <EditOutlined />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete">
+              <Tooltip title="Eliminar">
                 <IconButton
                   color="error"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
-                    handleClose();
-                    setProveedorDeleteId(row.original);
+                    setProveedorToDelete({ id: row.original.id, nombre: row.original.nombre });
                   }}
                 >
                   <DeleteOutlined />
@@ -175,14 +149,43 @@ const ProveedoresAdmin = () => {
           data: proveedoresData || [],
           columns,
           initialColumnVisibility: { id: false },
+          showSelection: false,
           modalToggler: () => {
             setProveedorModal(true);
             setSelectedProveedor(null);
           }
         }}
       />
-      <AlertProductDelete title={String(proveedorDeleteId.id)} open={open} handleClose={handleClose} />
+      {proveedorToDelete && (
+        <AlertProveedorDelete
+          id={proveedorToDelete.id}
+          title={proveedorToDelete.nombre}
+          open={!!proveedorToDelete}
+          handleClose={() => setProveedorToDelete(null)}
+        />
+      )}
       <ProveedorModal open={proveedorModal} modalToggler={setProveedorModal} proveedor={selectedProveedor} />
+      {selectedProveedor && (
+        <ViewDrawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          title="Detalles del Proveedor"
+          items={[
+            { label: 'Nombre', value: selectedProveedor.nombre }, // Fila 1, 1 columna
+            { label: 'Servicio', value: selectedProveedor.servicio }, // Fila 2, 1 columna
+            [
+              { label: 'Tipo Identificación', value: selectedProveedor.tipo_identificacion }, // Fila 3, columna 1
+              { label: 'Identificación', value: selectedProveedor.identificacion || '-' } // Fila 3, columna 2
+            ],
+            { label: 'CBU/Alias', value: selectedProveedor.CBU || '-' }, // Fila 4, 1 columna
+            { label: 'Cuenta Asociada', value: selectedProveedor.cuenta?.descripcion || 'Ninguna' },
+            {
+              label: 'Rubros',
+              value: selectedProveedor.Rubros?.map((r) => r.rubro) || []
+            }
+          ]}
+        />
+      )}
     </>
   );
 };

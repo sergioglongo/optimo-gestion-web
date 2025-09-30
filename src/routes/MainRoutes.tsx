@@ -124,8 +124,14 @@ const ProveedoresPage = Loadable(lazy(() => import('pages/proveedores/proveedore
 const PersonasPage = Loadable(lazy(() => import('pages/consorcios/personasAdmin')));
 const PagosProveedoresPage = Loadable(lazy(() => import('pages/proveedores/proveedoresPagosAdmin')));
 const UnidadOperativaPage = Loadable(lazy(() => import('pages/consorcios/unidadOperativaAdmin'))); // New import for UnidadOperativaAdmin
+const TipoUnidadesPage = Loadable(lazy(() => import('pages/consorcios/tiposUnidadOperativaAdmin'))); // New import for UnidadOperativaAdmin
 const RubrosPage = Loadable(lazy(() => import('pages/consorcios/rubrosAdmin'))); // New import for UnidadOperativaAdmin
-const GastosPage = Loadable(lazy(() => import('pages/movimientos/gastosAdmin'))); // New import for UnidadOperativaAdmin
+const GastosPage = Loadable(lazy(() => import('pages/movimientos/gastos/gastosAdmin'))); // New import for UnidadOperativaAdmin
+const TransaccionesPage = Loadable(lazy(() => import('pages/movimientos/transacciones/TransaccionesAdmin'))); // New import for UnidadOperativaAdmin
+const LiquidacionesPage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionesAdmin'))); // New import for UnidadOperativaAdmin
+const LiquidacionNuevaPage = Loadable(lazy(() => import('sections/expensas/liquidaciones/nueva/LiquidacionNueva')));
+const LiquidacionDetallePage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionDetalle')));
+const CobranzasPage = Loadable(lazy(() => import('pages/expensas/cobranzas/CobranzasAdmin')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -530,6 +536,10 @@ const MainRoutes = {
               element: <UnidadOperativaPage />
             },
             {
+              path: 'tipo-unidades',
+              element: <TipoUnidadesPage />
+            },
+            {
               path: 'rubros',
               element: <RubrosPage />
             }
@@ -539,8 +549,20 @@ const MainRoutes = {
           path: 'expensas',
           children: [
             {
-              path: 'expensas',
-              element: <ProveedoresPage />
+              path: 'liquidaciones',
+              element: <LiquidacionesPage />
+            },
+            {
+              path: 'liquidaciones/nueva',
+              element: <LiquidacionNuevaPage />
+            },
+            {
+              path: 'liquidaciones/details/:id',
+              element: <LiquidacionDetallePage />
+            },
+            {
+              path: 'cobranzas',
+              element: <CobranzasPage />
             }
           ]
         },
@@ -563,6 +585,10 @@ const MainRoutes = {
             {
               path: 'gastos',
               element: <GastosPage />
+            },
+            {
+              path: 'transacciones',
+              element: <TransaccionesPage />
             }
           ]
         },
@@ -616,7 +642,7 @@ const MainRoutes = {
           element: <AuthForgotPassword />
         },
         {
-          path: 'reset-password',
+          path: 'reset-password/:token',
           element: <AuthResetPassword />
         },
         {

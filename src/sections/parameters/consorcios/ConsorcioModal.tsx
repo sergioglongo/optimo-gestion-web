@@ -29,7 +29,12 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
 
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().max(255).required('El nombre es requerido'),
-    direccion: Yup.string().max(255).required('La dirección es requerida'),
+    domicilio: Yup.object().shape({
+      direccion: Yup.string().max(255).required('La dirección es requerida'),
+      localidad: Yup.string().nullable(),
+      provincia: Yup.string().nullable(),
+      codigo_postal: Yup.string().nullable()
+    }),
     condicion_fiscal: Yup.string().nullable(),
     identificacion: Yup.string().nullable(),
     notas: Yup.string().nullable(),
@@ -37,18 +42,31 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
     tipo_interes: Yup.string().nullable(),
     modalidad: Yup.string().nullable(),
     vencimiento1: Yup.number().nullable().min(1, 'Debe ser un número positivo').max(31, 'Debe ser un día del mes'),
+    vencimiento1valor: Yup.number().nullable().min(0, 'Debe ser un número positivo'),
     vencimiento2: Yup.number().nullable().min(1, 'Debe ser un número positivo').max(31, 'Debe ser un día del mes'),
+    vencimiento2valor: Yup.number().nullable().min(0, 'Debe ser un número positivo'),
+    dia_cierre: Yup.number().required('El día de cierre es requerido').min(1, 'Debe ser un día válido').max(31, 'Debe ser un día válido'),
     identificador1: Yup.string().nullable(),
     identificador2: Yup.string().nullable(),
     identificador3: Yup.string().nullable(),
-    imagen: Yup.string().nullable()
+    imagen: Yup.string().nullable(),
+    prorrateo: Yup.string().oneOf(['auto', 'libre']).required('El tipo de prorrateo es requerido')
   });
 
   const formik = useFormik<Consorcio>({
     initialValues: {
       id: consorcio?.id || 0, // Assuming ID is handled by the backend for new entries
       nombre: consorcio?.nombre || '',
-      direccion: consorcio?.direccion || '',
+      Domicilio:
+        // @ts-ignore
+        consorcio?.domicilio ||
+          consorcio?.Domicilio || {
+            id: 0,
+            direccion: '',
+            localidad: '',
+            provincia: '',
+            codigo_postal: ''
+          },
       condicion_fiscal: consorcio?.condicion_fiscal || null,
       identificacion: consorcio?.identificacion || null,
       notas: consorcio?.notas || null,
@@ -56,11 +74,17 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
       tipo_interes: consorcio?.tipo_interes || null,
       modalidad: consorcio?.modalidad || null,
       vencimiento1: consorcio?.vencimiento1 || null,
+      vencimiento1valor: consorcio?.vencimiento1valor ?? 0,
       vencimiento2: consorcio?.vencimiento2 || null,
-      identificador1: consorcio?.identificador1 || null,
-      identificador2: consorcio?.identificador2 || null,
-      identificador3: consorcio?.identificador3 || null,
-      imagen: consorcio?.imagen || null
+      vencimiento2valor: consorcio?.vencimiento2valor ?? 0,
+      dia_cierre: consorcio?.dia_cierre || 25,
+      ultimo_periodo_liquidado: consorcio?.ultimo_periodo_liquidado || null,
+      identificador1: consorcio?.identificador1 || '',
+      identificador2: consorcio?.identificador2 || '',
+      identificador3: consorcio?.identificador3 || '',
+      imagen: consorcio?.imagen || null,
+      prorrateo: consorcio?.prorrateo || 'auto',
+      activo: consorcio?.activo || true
     },
     enableReinitialize: true, // Add this line
     validationSchema,

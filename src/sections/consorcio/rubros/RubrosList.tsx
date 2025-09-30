@@ -1,7 +1,7 @@
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 
 // project-import
-import TablaAdmin from 'components/TablaAdmin';
+import TablaAdmin from 'components/tables/TablaAdmin';
 
 // types
 import { Rubro } from 'types/rubro';

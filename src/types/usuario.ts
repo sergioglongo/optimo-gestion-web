@@ -15,4 +15,5 @@ export interface Usuario {
   usuario?: string | null;
   rol: RolUsuario;
   persona_id?: number | null; // Nullable as it might not be set initially
+  activo: boolean;
 }

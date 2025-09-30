@@ -7,9 +7,9 @@ import { RootState } from 'store';
 
 const CuentaForm = () => {
   const theme = useTheme();
-  const { errors, touched, getFieldProps } = useFormikContext<Cuenta>();
+  const { errors, touched, getFieldProps, values } = useFormikContext<Cuenta>();
   const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
-
+  const isCreating = !values.id;
   return (
     <Grid container spacing={3}>
       {selectedConsorcio && (
@@ -30,7 +30,7 @@ const CuentaForm = () => {
           helperText={touched.descripcion && errors.descripcion}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} sm={isCreating ? 6 : 12}>
         <TextField
           select
           fullWidth
@@ -45,6 +45,23 @@ const CuentaForm = () => {
           <MenuItem value="otro">Otro</MenuItem>
         </TextField>
       </Grid>
+      {isCreating && (
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label="Balance Inicial"
+            type="number"
+            {...getFieldProps('balance')}
+            error={Boolean(touched.balance && errors.balance)}
+            helperText={touched.balance && errors.balance}
+            inputProps={{ step: '0.01' }}
+            sx={{
+              '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button': { display: 'none' },
+              '& input[type=number]': { MozAppearance: 'textfield' }
+            }}
+          />
+        </Grid>
+      )}
     </Grid>
   );
 };

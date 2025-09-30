@@ -1,9 +1,25 @@
-import { Persona } from "./persona";
+import { Persona } from './persona';
 
 /**
- * Tipos de enumeración para el tipo de unidad operativa.
+ * Interfaz que representa la estructura de un Tipo de Prorrateo.
+ * Mapeada desde la tabla `tipos_prorrateo`.
  */
-export type TipoUnidadOperativa = 'departamento' | 'casa' | 'duplex' | 'local' | 'cochera' | 'baulera';
+export interface TipoProrrateo {
+  id: number;
+  nombre: string;
+  indice: number;
+  consorcio_id: number;
+}
+
+/**
+ * Interfaz que representa la estructura de un Tipo de Unidad Operativa.
+ */
+export interface TipoUnidadOperativa {
+  id: number;
+  nombre: string;
+  indice: number;
+  consorcio_id: number;
+}
 
 /**
  * Tipos de enumeración para a quién liquidar.
@@ -17,12 +33,13 @@ export interface UnidadOperativa {
   id: number;
   consorcio_id: number;
   etiqueta?: string | null;
-  tipo: TipoUnidadOperativa;
   identificador1?: string | null;
   identificador2?: string | null;
   identificador3?: string | null;
   liquidar_a: LiquidarA;
   prorrateo: number;
+  prorrateo_automatico: boolean;
+  tipo_unidad_operativa_id?: number | null;
   Intereses: boolean;
   alquilada: boolean;
   notas?: string | null;
@@ -45,4 +62,6 @@ export interface PersonaUnidad {
   persona_id: number;
   unidad_operativa_id: number;
   tipo: TipoPersonaUnidad;
+  Persona?: Persona;
+  UnidadOperativa?: UnidadOperativa;
 }

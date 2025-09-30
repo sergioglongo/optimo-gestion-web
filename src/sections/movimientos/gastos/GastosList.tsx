@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 // project-import
-import TablaAdmin from 'components/TablaAdmin';
+import TablaAdmin from 'components/tables/TablaAdmin';
 
 // types
 import { Gasto } from 'types/gasto';

@@ -17,14 +17,14 @@ const PersonaForm = () => {
   const { data: localidades, isLoading: isLoadingLocalidades } = useGetLocalidades(selectedProvinciaId, { enabled: !!selectedProvinciaId });
 
   useEffect(() => {
-    if (provincias && values.provincia) {
-      const initialProvincia = provincias.find((p) => p.nombre === values.provincia);
+    if (provincias && values.Domicilio && values.Domicilio.provincia) {
+      const initialProvincia = provincias.find((p) => p.nombre === values.Domicilio!.provincia);
       if (initialProvincia) {
         setSelectedProvinciaId(initialProvincia.id);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provincias, values.provincia]);
+  }, [provincias, values.Domicilio?.provincia, values.id]); // Se ejecuta cuando las provincias cargan, la provincia o el id de la persona cambia
 
   return (
     <Grid container spacing={3}>
@@ -60,9 +60,9 @@ const PersonaForm = () => {
           select
           fullWidth
           label="Tipo de Persona"
-          {...getFieldProps('tipo')}
-          error={Boolean(getIn(touched, 'tipo') && getIn(errors, 'tipo'))}
-          helperText={getIn(touched, 'tipo') && getIn(errors, 'tipo')}
+          {...getFieldProps('tipo_persona')}
+          error={Boolean(getIn(touched, 'tipo_persona') && getIn(errors, 'tipo_persona'))}
+          helperText={getIn(touched, 'tipo_persona') && getIn(errors, 'tipo_persona')}
         >
           {TipoPersonaOptions.map((option) => (
             <MenuItem key={option} value={option}>
@@ -105,10 +105,10 @@ const PersonaForm = () => {
         <TextField
           fullWidth
           label="Domicilio"
-          {...getFieldProps('domicilio')}
-          value={values.domicilio || ''}
-          error={Boolean(getIn(touched, 'domicilio') && getIn(errors, 'domicilio'))}
-          helperText={getIn(touched, 'domicilio') && getIn(errors, 'domicilio')}
+          {...getFieldProps('Domicilio.direccion')}
+          value={values.Domicilio?.direccion || ''}
+          error={Boolean(getIn(touched, 'Domicilio.direccion') && getIn(errors, 'Domicilio.direccion'))}
+          helperText={getIn(touched, 'Domicilio.direccion') && getIn(errors, 'Domicilio.direccion')}
         />
       </Grid>
       <Grid item xs={12} sm={6}>
@@ -116,16 +116,16 @@ const PersonaForm = () => {
           id="provincia-autocomplete"
           options={provincias || []}
           getOptionLabel={(option) => option.nombre}
-          value={provincias?.find((p) => p.nombre === values.provincia) || null}
+          value={provincias?.find((p) => p.nombre === values.Domicilio?.provincia) || null}
           onChange={(event, newValue) => {
             if (newValue) {
               setSelectedProvinciaId(newValue.id);
-              setFieldValue('provincia', newValue.nombre);
-              setFieldValue('localidad', ''); // Reset localidad on provincia change
+              setFieldValue('Domicilio.provincia', newValue.nombre);
+              setFieldValue('Domicilio.localidad', ''); // Reset localidad on provincia change
             } else {
               setSelectedProvinciaId('');
-              setFieldValue('provincia', '');
-              setFieldValue('localidad', '');
+              setFieldValue('Domicilio.provincia', '');
+              setFieldValue('Domicilio.localidad', '');
             }
           }}
           loading={isLoadingProvincias}
@@ -133,8 +133,8 @@ const PersonaForm = () => {
             <TextField
               {...params}
               label="Provincia"
-              error={Boolean(getIn(touched, 'provincia') && getIn(errors, 'provincia'))}
-              helperText={getIn(touched, 'provincia') && getIn(errors, 'provincia')}
+              error={Boolean(getIn(touched, 'Domicilio.provincia') && getIn(errors, 'Domicilio.provincia'))}
+              helperText={getIn(touched, 'Domicilio.provincia') && getIn(errors, 'Domicilio.provincia')}
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (
@@ -153,9 +153,9 @@ const PersonaForm = () => {
           id="localidad-autocomplete"
           options={localidades || []}
           getOptionLabel={(option) => option.nombre}
-          value={localidades?.find((l) => l.nombre === values.localidad) || null}
+          value={localidades?.find((l) => l.nombre === values.Domicilio?.localidad) || null}
           onChange={(event, newValue) => {
-            setFieldValue('localidad', newValue ? newValue.nombre : '');
+            setFieldValue('Domicilio.localidad', newValue ? newValue.nombre : '');
           }}
           loading={isLoadingLocalidades}
           disabled={!selectedProvinciaId || isLoadingLocalidades}
@@ -163,8 +163,8 @@ const PersonaForm = () => {
             <TextField
               {...params}
               label="Localidad"
-              error={Boolean(getIn(touched, 'localidad') && getIn(errors, 'localidad'))}
-              helperText={getIn(touched, 'localidad') && getIn(errors, 'localidad')}
+              error={Boolean(getIn(touched, 'Domicilio.localidad') && getIn(errors, 'Domicilio.localidad'))}
+              helperText={getIn(touched, 'Domicilio.localidad') && getIn(errors, 'Domicilio.localidad')}
             />
           )}
         />

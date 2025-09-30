@@ -16,7 +16,10 @@ import {
   DollarOutlined,
   DashboardOutlined, // Added DashboardOutlined
   ApartmentOutlined,
-  DatabaseOutlined
+  DatabaseOutlined,
+  BookOutlined,
+  UsergroupDeleteOutlined,
+  ProfileOutlined
 } from '@ant-design/icons';
 
 // type
@@ -38,7 +41,8 @@ const icons = {
   DatabaseOutlined,
   ApartmentOutlined,
   ToolOutlined,
-  DollarOutlined // Added DashboardOutlined
+  DollarOutlined,
+  BookOutlined
 };
 
 // ==============================|| MENU ITEMS - APPLICATIONS ||============================== //
@@ -47,28 +51,28 @@ const expensasColapsable: NavItemType = {
   id: 'expensas-collapse',
   title: <FormattedMessage id="Fees" />,
   type: 'collapse',
-  icon: icons.ToolOutlined, // Using AppstoreAddOutlined as the main icon
+  icon: icons.BookOutlined, // Using AppstoreAddOutlined as the main icon
   children: [
     {
       id: 'expensas',
       title: <FormattedMessage id="Statement" />,
       type: 'item',
       url: '/expensas/liquidaciones',
-      icon: ToolOutlined
+      icon: BookOutlined
     },
     {
       id: 'cobranzas',
       title: <FormattedMessage id="Incomes" />,
       type: 'item',
       url: '/expensas/cobranzas',
-      icon: DollarOutlined
+      icon: ProfileOutlined
     },
     {
       id: 'Deudores',
       title: <FormattedMessage id="overdue-list" />,
       type: 'item',
       url: '/expensas/deudores',
-      icon: DollarOutlined
+      icon: UsergroupDeleteOutlined
     }
   ]
 };

@@ -8,8 +8,6 @@ import ProveedorForm from './ProveedorForm';
 import { useCreateProveedor, useUpdateProveedor } from 'services/api/proveedoresapi';
 import useConsorcio from 'hooks/useConsorcio';
 
-type ProveedorCreateData = Omit<Proveedor, 'id'>;
-
 // ==============================|| PROVEEDOR MODAL ||============================== //
 
 interface ProveedorModalProps {
@@ -28,20 +26,35 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().max(255).required('El nombre es requerido'),
     servicio: Yup.string().max(255).required('El servicio es requerido'),
-    identificacion: Yup.string().nullable(),
+    identificacion: Yup.string().nullable().max(50, 'La identificación es muy larga'),
     CBU: Yup.string().nullable(),
-    cuenta_id: Yup.number().nullable()
+    cuenta_id: Yup.number().nullable(),
+    Domicilio: Yup.object().shape({
+      direccion: Yup.string().max(255, 'La dirección es muy larga').nullable(),
+      localidad: Yup.string().nullable(),
+      provincia: Yup.string().nullable()
+    })
   });
 
-  const formik = useFormik<ProveedorCreateData>({
+  const formik = useFormik<Proveedor>({
     initialValues: {
+      id: proveedor?.id || 0,
       nombre: proveedor?.nombre || '',
       servicio: proveedor?.servicio || '',
       consorcio_id: selectedConsorcio?.id || 0,
       tipo_identificacion: proveedor?.tipo_identificacion || 'cuit',
       identificacion: proveedor?.identificacion || null,
+      Domicilio: isCreating
+        ? {
+            // id: 0, // No se envía el id al crear un nuevo domicilio
+            direccion: '',
+            provincia: selectedConsorcio?.Domicilio?.provincia || '',
+            localidad: selectedConsorcio?.Domicilio?.localidad || ''
+          }
+        : proveedor?.Domicilio || null,
       CBU: proveedor?.CBU || null,
-      cuenta_id: proveedor?.cuenta_id || null
+      cuenta_id: proveedor?.cuenta_id || null,
+      activo: proveedor?.activo ?? true
     },
     enableReinitialize: true,
     validationSchema,
@@ -52,9 +65,11 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
         }
 
         if (isCreating) {
-          await createProveedorMutation.mutateAsync({ proveedorData: values, consorcio_id: selectedConsorcio.id });
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { id, ...proveedorData } = values;
+          await createProveedorMutation.mutateAsync({ proveedorData, consorcio_id: values.consorcio_id });
         } else {
-          await updateProveedorMutation.mutateAsync({ proveedorId: proveedor!.id, proveedorData: values });
+          await updateProveedorMutation.mutateAsync({ proveedorId: proveedor!.id, proveedorData: values }); // proveedorId is already in values.id
         }
         resetForm();
         modalToggler(false);

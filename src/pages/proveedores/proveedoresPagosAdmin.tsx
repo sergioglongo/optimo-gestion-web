@@ -12,6 +12,7 @@ import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
 import PagosProveedoresList from 'sections/proveedores/pagos/PagosProveedoresList';
 import PagoProveedorModal from 'sections/proveedores/pagos/PagoProveedorModal';
+import ViewDrawer from 'components/drawers/ViewDrawer';
 import AlertPagoProveedorDelete from 'sections/proveedores/pagos/AlertPagoProveedorDelete';
 
 // API hooks
@@ -20,11 +21,9 @@ import { useGetPagosProveedores } from 'services/api/pagoProveedorapi';
 
 // types
 import { PagoProveedor, TipoPagoProveedor } from 'types/pagoProveedor';
-import { Proveedor } from 'types/proveedor';
-import { Cuenta } from 'types/cuenta';
 
 // assets
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 
 // ==============================|| PAGOS PROVEEDORES - ADMIN ||============================== //
 
@@ -37,12 +36,16 @@ const PagosProveedoresAdmin = () => {
   const [pagoModal, setPagoModal] = useState<boolean>(false);
   const [selectedPago, setSelectedPago] = useState<PagoProveedor | null>(null);
   const [pagoDelete, setPagoDelete] = useState<{ id: number; fecha: string; monto: number } | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const columns = useMemo<ColumnDef<PagoProveedor>[]>(
     () => [
       {
         header: 'ID',
-        accessorKey: 'id'
+        accessorKey: 'id',
+        meta: {
+          className: 'd-none' // Hide the column visually
+        }
       },
       {
         header: 'Fecha',
@@ -51,13 +54,13 @@ const PagosProveedoresAdmin = () => {
       },
       {
         header: 'Proveedor',
-        accessorKey: 'Proveedor', // Assuming backend sends nested object
-        cell: ({ getValue }) => <Typography>{getValue<Proveedor>()?.nombre || '-'}</Typography>
+        accessorKey: 'Proveedor.nombre',
+        cell: ({ row }) => <Typography>{row.original.Proveedor?.nombre || '-'}</Typography>
       },
       {
         header: 'Cuenta',
-        accessorKey: 'Cuenta', // Assuming backend sends nested object
-        cell: ({ getValue }) => <Typography>{getValue<Cuenta>()?.descripcion || '-'}</Typography>
+        accessorKey: 'cuenta.descripcion',
+        cell: ({ row }) => <Typography>{row.original.cuenta?.descripcion || '-'}</Typography>
       },
       {
         header: 'Monto',
@@ -65,7 +68,7 @@ const PagosProveedoresAdmin = () => {
         cell: ({ getValue }) => <Typography>${Number(getValue()).toLocaleString('es-AR')}</Typography>
       },
       {
-        header: 'Tipo',
+        header: 'Tipo de Pago',
         accessorKey: 'tipo_pago',
         cell: ({ getValue }) => {
           const tipo = getValue() as TipoPagoProveedor;
@@ -84,6 +87,18 @@ const PagosProveedoresAdmin = () => {
         disableSortBy: true,
         cell: ({ row }) => (
           <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
+            <Tooltip title="Ver Detalles">
+              <IconButton
+                color="secondary"
+                onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                  e.stopPropagation();
+                  setSelectedPago(row.original);
+                  setDrawerOpen(true);
+                }}
+              >
+                <EyeOutlined />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Editar">
               <IconButton
                 color="primary"
@@ -125,10 +140,34 @@ const PagosProveedoresAdmin = () => {
           setPagoModal(true);
           setSelectedPago(null);
         }}
-        initialColumnVisibility={{ id: false }}
       />
       <AlertPagoProveedorDelete pago={pagoDelete} open={!!pagoDelete} handleClose={() => setPagoDelete(null)} />
       <PagoProveedorModal open={pagoModal} modalToggler={setPagoModal} pago={selectedPago} />
+      {selectedPago && (
+        <ViewDrawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          title="Detalles del Pago"
+          items={[
+            [
+              { label: 'Fecha de Pago', value: new Date(selectedPago.fecha).toLocaleDateString() },
+              { label: 'Fecha del Gasto', value: selectedPago.Gasto ? new Date(selectedPago.Gasto.fecha).toLocaleDateString() : '-' }
+            ],
+            { label: 'Proveedor', value: selectedPago.Proveedor?.nombre || '-' },
+            { label: 'Gasto Asociado', value: selectedPago.Gasto?.descripcion || '-' },
+            { label: 'Cuenta de Pago', value: selectedPago.cuenta?.descripcion || '-' },
+            [
+              { label: 'Monto Pagado', value: `$${Number(selectedPago.monto).toLocaleString('es-AR')}` },
+              { label: 'Tipo de Pago', value: selectedPago.tipo_pago }
+            ],
+            {
+              label: 'Monto del Gasto',
+              value: selectedPago.Gasto ? `$${Number(selectedPago.Gasto.monto).toLocaleString('es-AR')}` : '-'
+            },
+            { label: 'Comentario', value: selectedPago.comentario || '-' }
+          ]}
+        />
+      )}
     </>
   );
 };

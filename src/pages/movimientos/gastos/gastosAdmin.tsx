@@ -11,10 +11,11 @@ import { useIntl } from 'react-intl';
 // project import
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
-import GastosModal from './GastosModal';
-import AlertGastoDelete from './AlertGastoDelete';
-import GastoAsignacionModal from './GastoAsignacionModal';
-import GastosList from './GastosList';
+import GastosModal from 'sections/movimientos/gastos/GastosModal';
+import AlertGastoDelete from 'sections/movimientos/gastos/AlertGastoDelete';
+import GastoAsignacionModal from 'sections/movimientos/gastos/GastoAsignacionModal';
+import GastosList from 'sections/movimientos/gastos/GastosList';
+import GastoDetalleDrawer from 'sections/movimientos/gastos/GastosDetalleDrawer';
 
 // API hooks
 import useAuth from 'hooks/useAuth';
@@ -24,9 +25,10 @@ import { useGetGastos } from 'services/api/gastosapi';
 // types
 import { Gasto, GastoEstado, GastoTipo } from 'types/gasto';
 import { UnidadOperativa } from 'types/unidadOperativa';
+import { truncateString } from 'utils/textFormat';
 
 // assets
-import { EditOutlined, DeleteOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, UsergroupAddOutlined, EyeOutlined } from '@ant-design/icons';
 
 // ==============================|| GASTOS - ADMIN ||============================== //
 
@@ -41,6 +43,7 @@ const GastosAdmin = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [gastoModal, setGastoModal] = useState<boolean>(false);
   const [selectedGasto, setSelectedGasto] = useState<Gasto | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [asignacionModalOpen, setAsignacionModalOpen] = useState<boolean>(false);
 
   const [gastoDelete, setGastoDelete] = useState<{ id: number; descripcion: string } | null>(null);
@@ -64,13 +67,23 @@ const GastosAdmin = () => {
         cell: ({ getValue }) => <Typography>{new Date(getValue() as string).toLocaleDateString()}</Typography>
       },
       {
-        header: 'Descripción',
-        accessorKey: 'descripcion'
+        header: 'Proveedor',
+        accessorKey: 'Proveedor',
+        cell: ({ row }) => {
+          return <Typography>{row.original.Proveedor?.nombre || '-'}</Typography>;
+        }
       },
       {
-        header: 'Monto',
-        accessorKey: 'monto',
-        cell: ({ getValue }) => <Typography>${Number(getValue()).toLocaleString('es-AR')}</Typography>
+        header: 'Descripción',
+        accessorKey: 'descripcion',
+        cell: ({ getValue }) => {
+          const description = getValue() as string;
+          return (
+            <Tooltip title={description} placement="top">
+              <Typography>{truncateString(description, 30)}</Typography>
+            </Tooltip>
+          );
+        }
       },
       {
         header: 'Tipo',
@@ -101,6 +114,16 @@ const GastosAdmin = () => {
         }
       },
       {
+        header: 'Monto',
+        accessorKey: 'monto',
+        cell: ({ getValue }) => <Typography>${Number(getValue()).toLocaleString('es-AR')}</Typography>
+      },
+      {
+        header: 'Saldado',
+        accessorKey: 'saldado',
+        cell: ({ getValue }) => <Typography>${Number(getValue()).toLocaleString('es-AR')}</Typography>
+      },
+      {
         header: intl.formatMessage({ id: 'table.actions' }),
         meta: {
           className: 'cell-center'
@@ -110,6 +133,18 @@ const GastosAdmin = () => {
           const isLiquidado = !!row.original.liquidacion_id;
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
+              <Tooltip title="Ver Detalles">
+                <IconButton
+                  color="secondary"
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    e.stopPropagation();
+                    setSelectedGasto(row.original);
+                    setDrawerOpen(true);
+                  }}
+                >
+                  <EyeOutlined />
+                </IconButton>
+              </Tooltip>
               <Tooltip title={isLiquidado ? 'El gasto ya fue liquidado' : 'Editar'}>
                 <span>
                   <IconButton
@@ -190,6 +225,7 @@ const GastosAdmin = () => {
       />
       <GastosModal open={gastoModal} modalToggler={setGastoModal} gasto={selectedGasto} />
       <GastoAsignacionModal open={asignacionModalOpen} modalToggler={setAsignacionModalOpen} gasto={selectedGasto} />
+      <GastoDetalleDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} gasto={selectedGasto} />
     </>
   );
 };

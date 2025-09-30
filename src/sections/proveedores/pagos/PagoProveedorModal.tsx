@@ -10,6 +10,7 @@ import PagoProveedorForm from './PagoProveedorForm';
 import { useCreatePagoProveedor, useUpdatePagoProveedor } from 'services/api/pagoProveedorapi';
 import { useGetGastos } from 'services/api/gastosapi';
 import useConsorcio from 'hooks/useConsorcio';
+import useAuth from 'hooks/useAuth';
 
 // Helper function to get today's date as YYYY-MM-DD string, avoiding timezone issues from toISOString()
 const getTodayDateString = () => {
@@ -31,6 +32,7 @@ interface PagoProveedorModalProps {
 const PagoProveedorModal = ({ open, modalToggler, pago }: PagoProveedorModalProps) => {
   const isCreating = !pago;
   const { selectedConsorcio } = useConsorcio();
+  const { user } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const createPagoMutation = useCreatePagoProveedor();
@@ -60,6 +62,17 @@ const PagoProveedorModal = ({ open, modalToggler, pago }: PagoProveedorModalProp
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
+        if (!user?.id) {
+          enqueueSnackbar('No se pudo obtener la información del usuario. Por favor, inicie sesión nuevamente.', {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setSubmitting(false);
+          return;
+        }
         const todayString = getTodayDateString();
         if (values.fecha > todayString) {
           enqueueSnackbar('La fecha de pago no puede ser futura.', {
@@ -92,9 +105,9 @@ const PagoProveedorModal = ({ open, modalToggler, pago }: PagoProveedorModalProp
         }
 
         if (isCreating) {
-          await createPagoMutation.mutateAsync(values as PagoProveedorCreateData);
+          await createPagoMutation.mutateAsync({ pagoData: values as PagoProveedorCreateData, usuario_id: user.id });
         } else {
-          await updatePagoMutation.mutateAsync({ pagoId: pago!.id, pagoData: values });
+          await updatePagoMutation.mutateAsync({ pagoId: pago!.id, pagoData: values, usuario_id: user.id });
         }
         resetForm();
         modalToggler(false);

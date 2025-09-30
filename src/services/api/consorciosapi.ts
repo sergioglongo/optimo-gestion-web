@@ -49,14 +49,18 @@ export const fetchConsorciosByUser = async (usuario_id: string | number) => {
 export const createConsorcio = async (consorcioData: ConsorcioCreateData, imageFile?: File) => {
   const formData = new FormData();
 
-  for (const key in consorcioData) {
-    // If an imageFile is provided, do not send the 'imagen' field from consorcioData
-    if (key === 'imagen' && imageFile) {
-      continue;
+  Object.entries(consorcioData).forEach(([key, value]) => {
+    if (key === 'imagen' && imageFile) return;
+
+    if (value === null || value === undefined) return;
+
+    if (key === 'domicilio' && typeof value === 'object') {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      // @ts-ignore
+      formData.append(key, value);
     }
-    // @ts-ignore
-    formData.append(key, consorcioData[key]);
-  }
+  });
 
   if (imageFile) {
     console.log('Appending imageFile in createConsorcio:', imageFile);
@@ -74,14 +78,23 @@ export const createConsorcio = async (consorcioData: ConsorcioCreateData, imageF
 export const updateConsorcio = async (consorcioId: number, consorcioData: Consorcio, imageFile?: File) => {
   const formData = new FormData();
 
-  for (const key in consorcioData) {
-    // If an imageFile is provided, do not send the 'imagen' field from consorcioData
-    if (key === 'imagen' && imageFile) {
-      continue;
+  Object.entries(consorcioData).forEach(([key, value]) => {
+    if (key === 'imagen' && imageFile) return;
+
+    if (value === null || value === undefined) {
+      // For updates, we might want to send null to clear a value.
+      // The backend should handle "null" string if necessary.
+      // Let's stick to not appending null/undefined for now.
+      return;
     }
-    // @ts-ignore
-    formData.append(key, consorcioData[key]);
-  }
+
+    if (key === 'domicilio' && typeof value === 'object') {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      // @ts-ignore
+      formData.append(key, value);
+    }
+  });
 
   if (imageFile) {
     console.log('Appending imageFile in updateConsorcio:', imageFile);

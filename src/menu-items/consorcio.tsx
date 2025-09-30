@@ -12,7 +12,7 @@ import {
   AppstoreAddOutlined,
   PlusOutlined,
   LinkOutlined,
-  DollarOutlined,
+  BankOutlined,
   TeamOutlined,
   HomeOutlined,
   DashboardOutlined, // Added DashboardOutlined
@@ -54,7 +54,7 @@ const consorcioColapsable: NavItemType = {
       title: <FormattedMessage id="Cuentas" />,
       type: 'item',
       url: '/consorcio/cuentas',
-      icon: DollarOutlined
+      icon: BankOutlined
     },
     {
       id: 'personas',
@@ -68,6 +68,13 @@ const consorcioColapsable: NavItemType = {
       title: <FormattedMessage id="unidades-operativas" />,
       type: 'item',
       url: '/consorcio/unidades', // Corrected URL to match MainRoutes
+      icon: HomeOutlined
+    },
+    {
+      id: 'tipounidades',
+      title: <FormattedMessage id="operative-units-types" />,
+      type: 'item',
+      url: '/consorcio/tipo-unidades', // Corrected URL to match MainRoutes
       icon: HomeOutlined
     },
     {

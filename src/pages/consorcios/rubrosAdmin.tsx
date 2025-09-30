@@ -11,7 +11,6 @@ import { useIntl } from 'react-intl';
 // project import
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
-import { IndeterminateCheckbox } from 'components/third-party/react-table';
 import RubrosModal from 'sections/consorcio/rubros/RubrosModal';
 import AlertRubroDelete from 'sections/consorcio/rubros/AlertRubroDelete';
 
@@ -46,28 +45,6 @@ const RubrosAdmin = () => {
 
   const columns = useMemo<ColumnDef<Rubro>[]>(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
-          />
-        )
-      },
       {
         header: 'ID',
         accessorKey: 'id',
@@ -155,6 +132,7 @@ const RubrosAdmin = () => {
           data: rubrosData || [],
           columns,
           initialSorting: [{ id: 'orden', desc: false }],
+          showSelection: true,
           initialColumnVisibility: { id: false },
           modalToggler: () => {
             setRubroModal(true);

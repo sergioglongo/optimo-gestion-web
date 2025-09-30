@@ -31,19 +31,56 @@ export interface FetchGastosFilters {
   consorcio_id: string | number;
   liquidacion_id?: number;
   proveedor_id?: number;
-  adeudada?: boolean;
+  adeudada?: boolean; // Gastos impagos o con deuda
+  no_asignado?: boolean; // Gastos que aún no tienen liquidacion_id
 }
 
 // Query keys
 export const gastoQueryKeys = {
   all: ['gastos'] as const,
   lists: () => [...gastoQueryKeys.all, 'list'] as const,
-  list: (filters: FetchGastosFilters) => [...gastoQueryKeys.lists(), filters] as const
+  list: (filters: FetchGastosFilters) => [...gastoQueryKeys.lists(), filters] as const,
+  byLiquidacion: (liquidacionId: number | string) => [...gastoQueryKeys.all, 'byLiquidacion', liquidacionId] as const,
+  liquidacionGastos: (filters: FetchLiquidacionGastosFilters) => [...gastoQueryKeys.all, 'liquidacion', filters] as const
 };
 
 // API functions
 export const fetchGastos = async (filters: FetchGastosFilters) => {
   const { data } = await apiClient.post<ApiResponse>('/gastos/getall', filters);
+  if (data.success) {
+    return data.result || [];
+  } else {
+    throw new Error(data.message);
+  }
+};
+
+export interface FetchLiquidacionGastosFilters {
+  consorcio_id: string | number;
+  periodo?: string | null;
+  sin_liquidar?: boolean;
+}
+
+/**
+ * Fetch all gastos for a liquidacion
+ * @param filters
+ */
+export const getLiquidacionGastos = async (filters: FetchLiquidacionGastosFilters) => {
+  const { data } = await apiClient.post<ApiResponse>('/gastos/liquidacion', filters);
+  if (data.success) {
+    return data.result || [];
+  } else {
+    throw new Error(data.message);
+  }
+};
+
+/**
+ * Fetch all gastos for a specific liquidacion
+ * @param liquidacionId
+ */
+export const fetchGastosByLiquidacion = async (liquidacionId: number | string) => {
+  // Asumimos que la API responde en /api/gastos?liquidacion_id=X
+  // y que la respuesta tiene el formato { success: true, result: Gasto[] }
+  const { data } = await apiClient.get<ApiResponse>('/gastos', { params: { liquidacion_id: liquidacionId } });
   if (data.success) {
     return data.result || [];
   } else {
@@ -84,6 +121,22 @@ export function useGetGastos(filters: FetchGastosFilters, options?: { enabled?: 
     queryKey: gastoQueryKeys.list(filters),
     queryFn: () => fetchGastos(filters),
     enabled: !!filters.consorcio_id && (options?.enabled ?? true)
+  });
+}
+
+export function useGetLiquidacionGastos(filters: FetchLiquidacionGastosFilters, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: gastoQueryKeys.liquidacionGastos(filters),
+    queryFn: () => getLiquidacionGastos(filters),
+    enabled: !!filters.consorcio_id && (options?.enabled ?? true)
+  });
+}
+
+export function useGetGastosByLiquidacion(liquidacionId: number | string, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: gastoQueryKeys.byLiquidacion(liquidacionId),
+    queryFn: () => fetchGastosByLiquidacion(liquidacionId),
+    enabled: !!liquidacionId && (options?.enabled ?? true)
   });
 }
 

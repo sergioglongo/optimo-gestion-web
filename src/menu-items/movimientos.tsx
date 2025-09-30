@@ -16,7 +16,9 @@ import {
   DollarOutlined,
   DashboardOutlined, // Added DashboardOutlined
   ApartmentOutlined,
-  DatabaseOutlined
+  DatabaseOutlined,
+  MenuUnfoldOutlined,
+  SplitCellsOutlined
 } from '@ant-design/icons';
 
 // type
@@ -37,7 +39,7 @@ const icons = {
   DashboardOutlined,
   DatabaseOutlined,
   ApartmentOutlined,
-  ToolOutlined,
+  MenuUnfoldOutlined,
   DollarOutlined // Added DashboardOutlined
 };
 
@@ -47,21 +49,21 @@ const movimientosColapsable: NavItemType = {
   id: 'movimientos-collapse',
   title: <FormattedMessage id="Transactions" />,
   type: 'collapse',
-  icon: icons.ToolOutlined, // Using AppstoreAddOutlined as the main icon
+  icon: icons.MenuUnfoldOutlined, // Using AppstoreAddOutlined as the main icon
   children: [
     {
-      id: 'movimientos',
+      id: 'gastos',
       title: <FormattedMessage id="Expenses" />,
       type: 'item',
       url: '/movimientos/gastos',
       icon: ToolOutlined
     },
     {
-      id: 'conciliacion',
-      title: <FormattedMessage id="Reconciliation" />,
+      id: 'transacciones',
+      title: <FormattedMessage id="transaction" />,
       type: 'item',
-      url: '/movimientos/conciliacion',
-      icon: DollarOutlined
+      url: '/movimientos/transacciones',
+      icon: SplitCellsOutlined
     }
   ]
 };

@@ -1,6 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'store';
-import { setConsorcios, selectConsorcio, clearConsorcios } from 'store/slices/consorcio';
+import {
+  setConsorcios,
+  selectConsorcio,
+  clearConsorcios,
+  setSelectedConsorcio as setSelectedConsorcioAction
+} from 'store/slices/consorcio';
 import { Consorcio } from 'types/consorcio';
 
 const useConsorcio = () => {
@@ -12,7 +17,8 @@ const useConsorcio = () => {
     selectedConsorcio,
     setConsorcios: (consorcios: Consorcio[]) => dispatch(setConsorcios(consorcios)),
     selectConsorcio: (consorcioId: string | number) => dispatch(selectConsorcio(consorcioId)),
-    clearConsorcios: () => dispatch(clearConsorcios())
+    clearConsorcios: () => dispatch(clearConsorcios()),
+    setSelectedConsorcio: (consorcio: Consorcio) => dispatch(setSelectedConsorcioAction(consorcio))
   };
 };
 

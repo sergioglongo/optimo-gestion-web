@@ -3,8 +3,7 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 
 // project import
-import { Persona, PersonaUsuario, TipoIdentificacionPersona } from 'types/persona'; // Import PersonaUsuario
-import { RolUsuario } from 'types/usuario'; // Import Usuario, RolUsuario, and RolUsuarioOptions
+import { Persona, PersonaUsuario } from 'types/persona'; // Import PersonaUsuario
 import Modal from 'components/Modal/ModalBasico';
 import PersonaForm from './PersonaForm';
 import { useCreatePersona, useUpdatePersona } from 'services/api/personasapi'; // Assuming new API hooks
@@ -18,21 +17,6 @@ interface PersonasModalProps {
   persona: Persona | null;
 }
 
-// Define a combined type for Formik values
-type FormValues = Omit<Persona, 'id' | 'consorcio_id' | 'Usuario' | 'rol'> & {
-  id?: number;
-  consorcio_id: number | null;
-  tipo_identificacion: TipoIdentificacionPersona | '';
-  identificacion: string;
-  domicilio: string;
-  localidad: string;
-  provincia: string;
-  telefono: string;
-  email: string;
-  usuario: string;
-  rol: RolUsuario;
-};
-
 const PersonasModal = ({ open, modalToggler, persona }: PersonasModalProps) => {
   const isCreating = !persona;
   const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
@@ -43,37 +27,47 @@ const PersonasModal = ({ open, modalToggler, persona }: PersonasModalProps) => {
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().max(255).required('El nombre es requerido'),
     apellido: Yup.string().max(255).required('El apellido es requerido'),
-    tipo: Yup.string().oneOf(['persona fisica', 'persona juridica']).required('El tipo es requerido'),
+    tipo_persona: Yup.string().oneOf(['persona fisica', 'persona juridica']).required('El tipo es requerido'),
     tipo_identificacion: Yup.string().nullable(),
-    identificacion: Yup.string().nullable(),
-    domicilio: Yup.string().nullable(),
-    localidad: Yup.string().nullable(),
-    provincia: Yup.string().nullable(),
+    identificacion: Yup.string().nullable().max(50, 'La identificación es muy larga'),
+    Domicilio: Yup.object().shape({
+      direccion: Yup.string().max(255, 'La dirección es muy larga').nullable(),
+      localidad: Yup.string().nullable(),
+      provincia: Yup.string().nullable()
+    }),
     telefono: Yup.string().nullable(),
     email: Yup.string().email('Debe ser un email válido').required('El email es requerido'),
     usuario: Yup.string().nullable(),
     rol: Yup.string().oneOf(['administrador', 'usuario', 'visitante']).required('El rol es requerido')
   });
 
-  const formik = useFormik<FormValues>({
-    initialValues: {
-      id: persona?.id,
-      nombre: persona?.nombre || '',
-      apellido: persona?.apellido || '',
-      tipo: persona?.tipo || 'persona fisica',
-      consorcio_id: selectedConsorcio?.id || null,
-      tipo_identificacion: persona?.tipo_identificacion || 'documento',
-      identificacion: persona?.identificacion || '',
-      domicilio: persona?.domicilio || '',
-      localidad: persona?.localidad || '',
-      provincia: persona?.provincia || '',
-      telefono: persona?.telefono || '',
-      email: persona?.Usuario?.email || '',
-      usuario: persona?.Usuario?.usuario || '',
-      rol: 'usuario'
-    },
-    enableReinitialize: true,
+  const initialValues: PersonaUsuario = {
+    id: persona?.id,
+    nombre: persona?.nombre || '',
+    apellido: persona?.apellido || '',
+    tipo_persona: persona?.tipo_persona || 'persona fisica',
+    consorcio_id: persona?.consorcio_id || selectedConsorcio?.id || 0,
+    tipo_identificacion: persona?.tipo_identificacion || 'documento',
+    identificacion: persona?.identificacion || '',
+    Domicilio: isCreating
+      ? {
+          // id: 0, // No se envía el id al crear un nuevo domicilio
+          direccion: selectedConsorcio?.Domicilio?.direccion || '',
+          provincia: selectedConsorcio?.Domicilio?.provincia || '',
+          localidad: selectedConsorcio?.Domicilio?.localidad || ''
+        }
+      : persona?.Domicilio || null,
+    telefono: persona?.telefono || '',
+    email: persona?.Usuario?.email || '',
+    usuario: persona?.Usuario?.usuario || '',
+    activa: persona?.activa ?? true,
+    rol: 'usuario'
+  };
+
+  const formik = useFormik<PersonaUsuario>({
+    initialValues: initialValues,
     validationSchema,
+    enableReinitialize: true,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         if (!selectedConsorcio?.id) {

@@ -11,7 +11,6 @@ import { useIntl } from 'react-intl'; // Import useIntl
 // project import
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
-import { IndeterminateCheckbox } from 'components/third-party/react-table';
 import CuentasModal from 'sections/consorcio/cuentas/CuentasModal';
 import AlertCuentaDelete from 'sections/consorcio/cuentas/AlertCuentaDelete';
 
@@ -20,7 +19,7 @@ import useAuth from 'hooks/useAuth';
 import useConsorcio from 'hooks/useConsorcio';
 
 // assets
-import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useGetCuentas } from 'services/api/cuentasapi';
 import CuentasList from 'sections/consorcio/cuentas/CuentasList';
 import { Cuenta, TipoCuenta } from 'types/cuenta';
@@ -46,28 +45,6 @@ const CuentasAdmin = () => {
 
   const columns = useMemo<ColumnDef<Cuenta>[]>(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
-          />
-        )
-      },
       {
         header: 'ID',
         accessorKey: 'id',
@@ -104,25 +81,22 @@ const CuentasAdmin = () => {
         }
       },
       {
+        header: 'Balance',
+        accessorKey: 'balance',
+        cell: ({ getValue }) => {
+          const balance = Number(getValue());
+          return <Typography color={balance < 0 ? 'error' : 'inherit'}>${balance.toLocaleString('es-AR')}</Typography>;
+        }
+      },
+      {
         header: intl.formatMessage({ id: 'table.actions' }), // Translated 'Actions'
         meta: {
           className: 'cell-center'
         },
         disableSortBy: true,
         cell: ({ row }) => {
-          const collapseIcon =
-            row.getCanExpand() && row.getIsExpanded() ? (
-              <PlusOutlined style={{ color: theme.palette.error.main, transform: 'rotate(45deg)' }} />
-            ) : (
-              <EyeOutlined />
-            );
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              <Tooltip title="View">
-                <IconButton color="secondary" onClick={row.getToggleExpandedHandler()}>
-                  {collapseIcon}
-                </IconButton>
-              </Tooltip>
               <Tooltip title="Edit">
                 <IconButton
                   color="primary"
@@ -164,6 +138,7 @@ const CuentasAdmin = () => {
         {...{
           data: cuentasData || [],
           columns,
+          showSelection: true,
           initialColumnVisibility: { id: false },
           modalToggler: () => {
             setCuentaModal(true);
