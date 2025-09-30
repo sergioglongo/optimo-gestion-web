@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 // material-ui
 import { Select, MenuItem, SelectChangeEvent, Stack } from '@mui/material'; // Import Stack
 import { useTheme } from '@mui/material/styles'; // Import useTheme
@@ -16,6 +17,13 @@ const ConsorciosSelect = () => {
   const dispatch = useAppDispatch();
   const theme = useTheme(); // Get theme object
   const { consorciosList: consorcios, selectedConsorcio } = useAppSelector((state: RootState) => state.consorcio);
+
+  useEffect(() => {
+    // Si hay exactamente un consorcio y no está seleccionado, selecciónalo automáticamente.
+    if (consorcios.length === 1 && selectedConsorcio?.id !== consorcios[0].id) {
+      dispatch(selectConsorcio(String(consorcios[0].id)));
+    }
+  }, [consorcios, selectedConsorcio, dispatch]);
 
   const handleConsorcioChange = (event: SelectChangeEvent<string>) => {
     const consorcioId = event.target.value as string;

@@ -46,7 +46,7 @@ export const fetchConsorciosByUser = async (usuario_id: string | number) => {
   }
 };
 
-export const createConsorcio = async (consorcioData: ConsorcioCreateData, imageFile?: File) => {
+export const createConsorcio = async (consorcioData: ConsorcioCreateData, imageFile: File | undefined, usuario_id: string | number) => {
   const formData = new FormData();
 
   Object.entries(consorcioData).forEach(([key, value]) => {
@@ -54,7 +54,7 @@ export const createConsorcio = async (consorcioData: ConsorcioCreateData, imageF
 
     if (value === null || value === undefined) return;
 
-    if (key === 'domicilio' && typeof value === 'object') {
+    if (key.toLowerCase() === 'domicilio' && typeof value === 'object') {
       formData.append(key, JSON.stringify(value));
     } else {
       // @ts-ignore
@@ -66,6 +66,8 @@ export const createConsorcio = async (consorcioData: ConsorcioCreateData, imageF
     console.log('Appending imageFile in createConsorcio:', imageFile);
     formData.append('image', imageFile);
   }
+
+  formData.append('usuario_id', String(usuario_id));
 
   const { data } = await apiClient.post<ConsorcioApiResponse>('/consorcios/', formData);
   if (data.success) {
@@ -88,7 +90,7 @@ export const updateConsorcio = async (consorcioId: number, consorcioData: Consor
       return;
     }
 
-    if (key === 'domicilio' && typeof value === 'object') {
+    if (key.toLowerCase() === 'domicilio' && typeof value === 'object') {
       formData.append(key, JSON.stringify(value));
     } else {
       // @ts-ignore
@@ -135,7 +137,7 @@ export function useCreateConsorcio() {
       consorcioData: ConsorcioCreateData;
       imageFile?: File;
       usuario_id: string | number;
-    }) => createConsorcio(consorcioData, imageFile),
+    }) => createConsorcio(consorcioData, imageFile, usuario_id),
     onSuccess: async (data, variables) => {
       queryClient.invalidateQueries({ queryKey: consorcioQueryKeys.lists() });
       // Fetch the updated list of consorcios using the provided usuario_id
