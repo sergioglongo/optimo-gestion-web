@@ -1,19 +1,7 @@
 import { useMemo, useState } from 'react';
 
 // material-ui
-import {
-  Box,
-  Button,
-  Divider,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography
-} from '@mui/material';
+import { Box, Button, Divider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 
 // third-party
 import {
@@ -33,7 +21,7 @@ import { LabelKeyObject } from 'react-csv/lib/core';
 // project-import
 import ScrollX from 'components/ScrollX';
 import MainCard from 'components/MainCard';
-import EmptyReactTable from 'pages/tables/react-table/empty';
+import EmptyTable from './EmptyTable'; // Importar el nuevo componente
 
 import {
   CSVExport,
@@ -149,7 +137,11 @@ function TablaAdmin<T extends object>({
         </Box>
       )}
       <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" sx={{ padding: 2.5 }}>
-        <DebouncedInput value={globalFilter ?? ''} onFilterChange={(value) => setGlobalFilter(String(value))} placeholder={searchPlaceholder} />
+        <DebouncedInput
+          value={globalFilter ?? ''}
+          onFilterChange={(value) => setGlobalFilter(String(value))}
+          placeholder={searchPlaceholder}
+        />
 
         <Stack direction="row" alignItems="center" spacing={2}>
           <SelectColumnSorting {...{ getState: table.getState, getAllColumns: table.getAllColumns, setSorting }} />
@@ -161,29 +153,29 @@ function TablaAdmin<T extends object>({
           <CSVExport {...{ data: table.getSelectedRowModel().flatRows.map((row) => row.original), headers, filename: csvFilename }} />
         </Stack>
       </Stack>
-      {data.length > 0 ? (
-        <ScrollX>
-          {showSelection && <RowSelection selected={Object.keys(rowSelection).length} />}
-          <TableContainer>
-            <Table>
-              <TableHead>
-                {table.getHeaderGroups().map((headerGroup: HeaderGroup<any>) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableCell key={header.id} {...header.column.columnDef.meta} onClick={header.column.getToggleSortingHandler()}>
-                        {header.isPlaceholder ? null : (
-                          <Stack direction="row" spacing={1} alignItems="center">
-                            <Box>{flexRender(header.column.columnDef.header, header.getContext())}</Box>
-                            {header.column.getCanSort() && <HeaderSort column={header.column} />}
-                          </Stack>
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHead>
-              <TableBody>
-                {table.getRowModel().rows.map((row) => (
+      <ScrollX>
+        {showSelection && <RowSelection selected={Object.keys(rowSelection).length} />}
+        <TableContainer>
+          <Table>
+            <TableHead>
+              {table.getHeaderGroups().map((headerGroup: HeaderGroup<any>) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableCell key={header.id} {...header.column.columnDef.meta} onClick={header.column.getToggleSortingHandler()}>
+                      {header.isPlaceholder ? null : (
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <Box>{flexRender(header.column.columnDef.header, header.getContext())}</Box>
+                          {header.column.getCanSort() && <HeaderSort column={header.column} />}
+                        </Stack>
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHead>
+            <TableBody>
+              {table.getRowModel().rows.length > 0 ? (
+                table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} {...cell.column.columnDef.meta}>
@@ -191,18 +183,25 @@ function TablaAdmin<T extends object>({
                       </TableCell>
                     ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Divider />
-          <Box sx={{ p: 2 }}>
-            <TablePagination {...{ setPageSize: table.setPageSize, setPageIndex: table.setPageIndex, getState: table.getState, getPageCount: table.getPageCount }} />
-          </Box>
-        </ScrollX>
-      ) : (
-        <EmptyReactTable />
-      )}
+                ))
+              ) : (
+                <EmptyTable colSpan={table.getAllColumns().length} />
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Divider />
+        <Box sx={{ p: 2 }}>
+          <TablePagination
+            {...{
+              setPageSize: table.setPageSize,
+              setPageIndex: table.setPageIndex,
+              getState: table.getState,
+              getPageCount: table.getPageCount
+            }}
+          />
+        </Box>
+      </ScrollX>
     </MainCard>
   );
 }
