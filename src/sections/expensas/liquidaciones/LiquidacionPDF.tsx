@@ -136,16 +136,13 @@ const LiquidacionPDF = ({ liquidacion }: Props) => (
         <Text style={styles.subtitle}>Detalle de Gastos</Text>
         <View style={styles.table}>
           <View style={styles.tableRow}>
-            <View style={{ ...styles.tableColHeader, width: '40%' }}>
+            <View style={{ ...styles.tableColHeader, flex: 1 }}>
               <Text style={styles.tableCellHeader}>Descripción</Text>
             </View>
-            <View style={styles.tableColHeader}>
+            <View style={{ ...styles.tableColHeader, width: 70 }}>
               <Text style={styles.tableCellHeader}>Tipo</Text>
             </View>
-            <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>Estado</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, textAlign: 'right' }}>
+            <View style={{ ...styles.tableColHeader, width: 120, textAlign: 'right' }}>
               <Text style={styles.tableCellHeader}>Monto</Text>
             </View>
           </View>
@@ -158,18 +155,15 @@ const LiquidacionPDF = ({ liquidacion }: Props) => (
                 </View>
                 {rubroGroup.gastos.map((gasto: Gasto) => (
                   <View style={styles.tableRow} key={gasto.id}>
-                    <View style={styles.tableColDescription}>
+                    <View style={{ ...styles.tableColDescription, flex: 1 }}>
                       <Text style={styles.tableCell}>
                         {gasto.Proveedor?.nombre ? `${gasto.Proveedor.nombre} - ${gasto.descripcion}` : gasto.descripcion}
                       </Text>
                     </View>
-                    <View style={styles.tableCol}>
+                    <View style={{ ...styles.tableCol, width: 70 }}>
                       <Text style={styles.tableCell}>{gasto.tipo_gasto}</Text>
                     </View>
-                    <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{gasto.estado}</Text>
-                    </View>
-                    <View style={{ ...styles.tableCol, textAlign: 'right' }}>
+                    <View style={{ ...styles.tableCol, width: 120, textAlign: 'right' }}>
                       <Text style={styles.tableCell}>{`$${Number(gasto.monto).toLocaleString('es-AR')}`}</Text>
                     </View>
                   </View>

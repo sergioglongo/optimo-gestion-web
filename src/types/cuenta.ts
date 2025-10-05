@@ -15,4 +15,6 @@ export interface Cuenta {
   descripcion: string;
   balance: number;
   activa: boolean;
+  pagos: boolean;
+  cobranzas: boolean;
 }

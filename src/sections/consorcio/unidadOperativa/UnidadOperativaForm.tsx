@@ -1,9 +1,22 @@
-import { Grid, TextField, MenuItem, Typography, Box, Switch, FormControlLabel, InputAdornment, Tooltip } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  MenuItem,
+  Typography,
+  Box,
+  Switch,
+  FormControlLabel,
+  InputAdornment,
+  Tooltip,
+  Autocomplete,
+  CircularProgress
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useFormikContext } from 'formik';
 import { UnidadOperativa, LiquidarA, TipoUnidadOperativa } from 'types/unidadOperativa'; // Assuming new types
 import { useState, useEffect } from 'react';
 import useConsorcio from 'hooks/useConsorcio';
+import { useGetCuentas } from 'services/api/cuentasapi';
 
 interface UnidadOperativaFormProps {
   tiposUnidadOperativa: TipoUnidadOperativa[];
@@ -15,6 +28,8 @@ const UnidadOperativaForm = ({ tiposUnidadOperativa }: UnidadOperativaFormProps)
   const { selectedConsorcio } = useConsorcio();
 
   const [isEtiquetaManual, setIsEtiquetaManual] = useState(false);
+
+  const { data: cuentas, isLoading: isLoadingCuentas } = useGetCuentas(selectedConsorcio?.id || 0, { enabled: !!selectedConsorcio });
 
   useEffect(() => {
     if (!isEtiquetaManual) {
@@ -239,6 +254,35 @@ const UnidadOperativaForm = ({ tiposUnidadOperativa }: UnidadOperativaFormProps)
             />
           </Grid>
         </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Autocomplete
+          id="cuenta-id-autocomplete"
+          options={cuentas || []}
+          getOptionLabel={(option) => `${option.descripcion} (${option.tipo})`}
+          value={cuentas?.find((c: any) => c.id === values.cuenta_id) || null}
+          onChange={(event, newValue) => {
+            setFieldValue('cuenta_id', newValue ? newValue.id : null);
+          }}
+          loading={isLoadingCuentas}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Cuenta Contable (Opcional)"
+              error={Boolean(touched.cuenta_id && errors.cuenta_id)}
+              helperText={touched.cuenta_id && errors.cuenta_id}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {isLoadingCuentas ? <CircularProgress color="inherit" size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                )
+              }}
+            />
+          )}
+        />
       </Grid>
       {/* --- Bloque de Notas --- */}
       <Grid item xs={12} md={6}>

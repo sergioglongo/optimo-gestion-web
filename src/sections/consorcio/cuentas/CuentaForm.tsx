@@ -1,14 +1,13 @@
-import { Grid, TextField, MenuItem, Typography, Box } from '@mui/material';
+import { Grid, TextField, MenuItem, Typography, Box, FormControlLabel, Switch, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useFormikContext } from 'formik';
 import { Cuenta } from 'types/cuenta';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store';
+import useConsorcio from 'hooks/useConsorcio';
 
 const CuentaForm = () => {
   const theme = useTheme();
-  const { errors, touched, getFieldProps, values } = useFormikContext<Cuenta>();
-  const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
+  const { errors, touched, getFieldProps, values, setFieldValue } = useFormikContext<Cuenta>();
+  const { selectedConsorcio } = useConsorcio();
   const isCreating = !values.id;
   return (
     <Grid container spacing={3}>
@@ -62,6 +61,40 @@ const CuentaForm = () => {
           />
         </Grid>
       )}
+      <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <FormControlLabel
+          control={
+            <Tooltip title={values.pagos ? 'Habilitada para registrar pagos' : 'Deshabilitada para registrar pagos'}>
+              <Switch
+                checked={values.pagos}
+                onChange={(event) => setFieldValue('pagos', event.target.checked)}
+                name="pagos"
+                color="primary"
+              />
+            </Tooltip>
+          }
+          label="Para Pagos"
+          labelPlacement="top"
+          sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', lineHeight: 0.1 } }}
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <FormControlLabel
+          control={
+            <Tooltip title={values.cobranzas ? 'Habilitada para registrar cobranzas' : 'Deshabilitada para registrar cobranzas'}>
+              <Switch
+                checked={values.cobranzas}
+                onChange={(event) => setFieldValue('cobranzas', event.target.checked)}
+                name="cobranzas"
+                color="primary"
+              />
+            </Tooltip>
+          }
+          label="Para Cobranzas"
+          labelPlacement="top"
+          sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', lineHeight: 0.1 } }}
+        />
+      </Grid>
     </Grid>
   );
 };

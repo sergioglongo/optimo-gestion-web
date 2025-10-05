@@ -15,6 +15,7 @@ import GastosModal from 'sections/movimientos/gastos/GastosModal';
 import AlertGastoDelete from 'sections/movimientos/gastos/AlertGastoDelete';
 import GastoAsignacionModal from 'sections/movimientos/gastos/GastoAsignacionModal';
 import GastosList from 'sections/movimientos/gastos/GastosList';
+import PagoGastoModal from 'sections/movimientos/gastos/PagoGastoModal';
 import GastoDetalleDrawer from 'sections/movimientos/gastos/GastosDetalleDrawer';
 
 // API hooks
@@ -28,7 +29,7 @@ import { UnidadOperativa } from 'types/unidadOperativa';
 import { truncateString } from 'utils/textFormat';
 
 // assets
-import { EditOutlined, DeleteOutlined, UsergroupAddOutlined, EyeOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, UsergroupAddOutlined, EyeOutlined, DollarCircleOutlined } from '@ant-design/icons';
 
 // ==============================|| GASTOS - ADMIN ||============================== //
 
@@ -45,6 +46,7 @@ const GastosAdmin = () => {
   const [selectedGasto, setSelectedGasto] = useState<Gasto | null>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [asignacionModalOpen, setAsignacionModalOpen] = useState<boolean>(false);
+  const [pagoModalOpen, setPagoModalOpen] = useState<boolean>(false);
 
   const [gastoDelete, setGastoDelete] = useState<{ id: number; descripcion: string } | null>(null);
 
@@ -130,7 +132,8 @@ const GastosAdmin = () => {
         },
         disableSortBy: true,
         cell: ({ row }) => {
-          const isLiquidado = !!row.original.liquidacion_id;
+          const isLiquidado = !!row.original.LiquidacionGastos && row.original.LiquidacionGastos.length > 0;
+          const isPagado = row.original.estado === 'pagado';
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
               <Tooltip title="Ver Detalles">
@@ -190,6 +193,21 @@ const GastosAdmin = () => {
                   </IconButton>
                 </span>
               </Tooltip>
+              <Tooltip title={isPagado ? 'El gasto ya fue saldado' : 'Registrar Pago'}>
+                <span>
+                  <IconButton
+                    color="success"
+                    disabled={isPagado}
+                    onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                      e.stopPropagation();
+                      setSelectedGasto(row.original);
+                      setPagoModalOpen(true);
+                    }}
+                  >
+                    <DollarCircleOutlined />
+                  </IconButton>
+                </span>
+              </Tooltip>
             </Stack>
           );
         }
@@ -225,6 +243,7 @@ const GastosAdmin = () => {
       />
       <GastosModal open={gastoModal} modalToggler={setGastoModal} gasto={selectedGasto} />
       <GastoAsignacionModal open={asignacionModalOpen} modalToggler={setAsignacionModalOpen} gasto={selectedGasto} />
+      <PagoGastoModal open={pagoModalOpen} modalToggler={setPagoModalOpen} gasto={selectedGasto} />
       <GastoDetalleDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} gasto={selectedGasto} />
     </>
   );

@@ -32,7 +32,8 @@ const LiquidacionModal = ({ open, modalToggler, liquidacion }: LiquidacionModalP
     segundo_vencimiento_recargo: Yup.number().min(0)
   });
 
-  const formik = useFormik<Omit<Liquidacion, 'saldo'>>({ // 'id' is now included as optional
+  const formik = useFormik<Omit<Liquidacion, 'saldo'>>({
+    // 'id' is now included as optional
     initialValues: {
       periodo: liquidacion?.periodo || '',
       fecha_emision: liquidacion?.fecha_emision || new Date().toISOString().split('T')[0],

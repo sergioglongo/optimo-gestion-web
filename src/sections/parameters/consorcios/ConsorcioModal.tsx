@@ -58,7 +58,6 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
       id: consorcio?.id || 0, // Assuming ID is handled by the backend for new entries
       nombre: consorcio?.nombre || '',
       Domicilio: consorcio?.Domicilio || {
-        id: 0,
         direccion: '',
         localidad: '',
         provincia: ''
@@ -90,7 +89,7 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
         const { Domicilio, ...rest } = values;
         const apiData = {
           ...rest,
-          domicilio: Domicilio
+          Domicilio
         };
 
         if (isCreating) {

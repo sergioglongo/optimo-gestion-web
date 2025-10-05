@@ -1,3 +1,4 @@
+import { LiquidacionGasto } from './liquidacion';
 import { Proveedor } from './proveedor';
 import { Rubro } from './rubro';
 import { UnidadOperativa } from './unidadOperativa';
@@ -12,6 +13,7 @@ export interface Gasto {
   descripcion: string;
   monto: number;
   saldado?: number | null;
+  monto_expensa?: number | null;
   deuda?: number | null;
   fecha: string; // Format: YYYY-MM-DD
   proveedor_id: number | null;
@@ -21,8 +23,8 @@ export interface Gasto {
   fecha_carga: string | null; // Format: YYYY-MM-DD
   tipo_gasto: GastoTipo;
   periodo_aplica: string | null; // Format: YYYY-MM-DD
-  liquidacion_id?: number | null;
   unidad_asignada?: UnidadOperativa;
+  LiquidacionGastos?: LiquidacionGasto[];
 }
 
 export type GastoCreateData = Omit<Gasto, 'id'>;
@@ -39,3 +41,13 @@ export interface GastoAsignacion {
 }
 
 export type GastoAsignacionCreateData = Omit<GastoAsignacion, 'id'>;
+
+export interface GastoPagoCreateData {
+  gasto_id: number;
+  proveedor_id: number;
+  cuenta_id: number;
+  monto: number;
+  fecha: string; // YYYY-MM-DD
+  tipo_pago: 'parcial' | 'total';
+  comentario?: string | null;
+}

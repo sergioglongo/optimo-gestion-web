@@ -22,7 +22,7 @@ import { useGetTransacciones } from 'services/api/transaccionapi';
 
 // types
 import { Transaccion, EstadoTransaccion } from 'types/transaccion';
-import { Cuenta } from 'types/cuenta';
+// import { Cuenta } from 'types/cuenta';
 
 // assets
 import { EditOutlined, EyeOutlined, LinkOutlined } from '@ant-design/icons';
@@ -62,8 +62,10 @@ const TransaccionesAdmin = () => {
       },
       {
         header: 'Cuenta',
-        accessorKey: 'cuenta', // Assuming backend sends nested object
-        cell: ({ getValue }) => <Typography>{getValue<Cuenta>()?.descripcion || '-'}</Typography>
+        id: 'cuenta',
+        accessorFn: (row) => row.cuenta?.id,
+        // Mostramos la descripción en la celda, pero el filtrado usará el ID.
+        cell: ({ row }) => <Typography>{row.original.cuenta?.descripcion || '-'}</Typography>
       },
       {
         header: 'Tipo',
