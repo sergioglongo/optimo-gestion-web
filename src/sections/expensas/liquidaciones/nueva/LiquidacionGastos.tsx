@@ -58,7 +58,7 @@ const LiquidacionGastos = ({ onAddSinPeriodo }: Props) => {
   };
 
   const totalGastos = useMemo(() => {
-    return values.gastos?.reduce((sum, gasto) => sum + Number(gasto.saldado || 0), 0) || 0;
+    return values.gastos?.reduce((sum, gasto) => sum + Number(gasto.monto_expensa || 0), 0) || 0;
   }, [values.gastos]);
 
   useEffect(() => {
@@ -112,6 +112,14 @@ const LiquidacionGastos = ({ onAddSinPeriodo }: Props) => {
       {
         header: 'Saldado',
         accessorKey: 'saldado',
+        cell: ({ getValue }) => `$${Number(getValue() || 0).toLocaleString('es-AR')}`,
+        meta: {
+          className: 'cell-right'
+        }
+      },
+      {
+        header: 'Monto Expensa',
+        accessorKey: 'monto_expensa',
         cell: ({ getValue }) => `$${Number(getValue() || 0).toLocaleString('es-AR')}`,
         meta: {
           className: 'cell-right'

@@ -1,4 +1,5 @@
 import { Cuenta } from './cuenta';
+import { LiquidacionUnidad } from './liquidacion';
 import { Persona } from './persona';
 
 /**
@@ -23,7 +24,7 @@ export interface PagoLiquidacionUnidad {
   // Relaciones (si se incluyen en las respuestas de la API)
   cuenta?: Cuenta;
   persona?: Persona;
-  // liquidacionUnidad?: LiquidacionUnidad; // Asumiendo que existe un tipo LiquidacionUnidad
+  liquidacionUnidad?: LiquidacionUnidad; // Asumiendo que existe un tipo LiquidacionUnidad
 }
 
 export type PagoLiquidacionUnidadCreateData = Omit<PagoLiquidacionUnidad, 'id'>;

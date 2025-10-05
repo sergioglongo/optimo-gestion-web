@@ -1,5 +1,6 @@
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 // material-ui
@@ -28,6 +29,7 @@ interface UnidadOperativaModalProps {
 const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa, tiposUnidadOperativa }: UnidadOperativaModalProps) => {
   const isCreating = !unidadOperativa;
   const { selectedConsorcio } = useConsorcio();
+  const queryClient = useQueryClient();
   const [isPersonaFormOpen, setPersonaFormOpen] = useState(false);
 
   const createUnidadOperativaMutation = useCreateUnidadOperativa();
@@ -44,7 +46,8 @@ const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa, tiposUnidad
     prorrateo_automatico: Yup.boolean().required('El campo prorrateo automático es requerido'),
     Intereses: Yup.boolean().required('El campo Intereses es requerido'),
     alquilada: Yup.boolean().required('El campo alquilada es requerido'),
-    notas: Yup.string().nullable()
+    notas: Yup.string().nullable(),
+    cuenta_id: Yup.number().nullable()
   });
 
   const formik = useFormik<Omit<UnidadOperativa, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
@@ -61,6 +64,7 @@ const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa, tiposUnidad
       Intereses: unidadOperativa?.Intereses || true,
       alquilada: unidadOperativa?.alquilada || false,
       notas: unidadOperativa?.notas || null,
+      cuenta_id: unidadOperativa?.cuenta_id || null,
       consorcio_id: selectedConsorcio?.id || null
     },
     enableReinitialize: true,
@@ -79,6 +83,7 @@ const UnidadOperativaModal = ({ open, modalToggler, unidadOperativa, tiposUnidad
         } else {
           await updateUnidadOperativaMutation.mutateAsync({ unidadOperativaId: unidadOperativa!.id, unidadOperativaData: finalValues });
         }
+        queryClient.invalidateQueries({ queryKey: ['unidadesOperativas'] });
         resetForm();
         modalToggler(false);
       } catch (error) {

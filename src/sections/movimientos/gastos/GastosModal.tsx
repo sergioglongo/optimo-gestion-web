@@ -56,7 +56,6 @@ const GastosModal = ({ open, modalToggler, gasto }: GastosModalProps) => {
       estado: gasto?.estado || 'impago',
       periodo_aplica: gasto?.periodo_aplica ? gasto.periodo_aplica.split('T')[0] : getNextMonthFirstDay(),
       fecha_carga: new Date().toISOString().split('T')[0],
-      liquidacion_id: gasto?.liquidacion_id || null,
       id: gasto?.id || 0 // Explicitly include id
     },
     enableReinitialize: true,

@@ -1,3 +1,4 @@
+import { Cuenta } from './cuenta';
 import { Persona } from './persona';
 
 /**
@@ -43,6 +44,8 @@ export interface UnidadOperativa {
   Intereses: boolean;
   alquilada: boolean;
   notas?: string | null;
+  cuenta_id?: number | null;
+  cuenta?: Cuenta;
   propietario?: Persona | null;
   inquilino?: Persona | null;
   habitantes?: Persona[] | null;

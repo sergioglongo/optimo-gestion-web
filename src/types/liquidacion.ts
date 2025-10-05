@@ -47,7 +47,7 @@ export interface LiquidacionGasto {
 /**
  * Tipos de enumeración para el estado de una liquidación de unidad.
  */
-export type LiquidacionUnidadEstado = 'pendiente' | 'pagada' | 'vencida';
+export type LiquidacionUnidadEstado = 'pendiente' | 'adeuda' | 'pagada' | 'vencida';
 
 /**
  * Interfaz que representa la liquidación para una unidad operativa específica.
@@ -57,7 +57,9 @@ export interface LiquidacionUnidad {
   id: number;
   liquidacion_id: number;
   unidad_operativa_id: number;
+  monto: number;
   prorrateo: number;
+  saldado?: number; // Monto ya pagado de esta liquidación
   estado: LiquidacionUnidadEstado;
   fecha: string; // Format: YYYY-MM-DD
   interes: number;

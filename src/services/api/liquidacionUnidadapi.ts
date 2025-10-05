@@ -34,8 +34,13 @@ export const useGetLiquidacionUnidades = (
  * @param id
  */
 const getLiquidacionUnidadById = async (id: number | string): Promise<LiquidacionUnidad> => {
-  const { data } = await apiClient.get(`/liquidaciones-unidades/${id}`);
-  return data;
+  const { data } = await apiClient.get<{ success: boolean; result: LiquidacionUnidad; message?: string }>(`/liquidaciones-unidades/${id}`);
+  if (data.success) {
+    return data.result;
+  } else {
+    // Lanza un error si la API indica que la operación no fue exitosa.
+    throw new Error(data.message || 'Error al obtener la liquidación de la unidad.');
+  }
 };
 
 export const useGetLiquidacionUnidadById = (

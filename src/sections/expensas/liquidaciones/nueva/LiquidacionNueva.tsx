@@ -183,7 +183,7 @@ const LiquidacionNueva = () => {
         // Extract liquidacion data and gasto IDs
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, gastos, ...liquidacionDataForCreate } = values;
-        const gastosPayload = gastos.map((g) => ({ id: g.id, monto: g.saldado || 0, estado: g.estado }));
+        const gastosPayload = gastos.map((g) => ({ id: g.id, monto: g.monto_expensa || 0, estado: g.estado }));
         const finalLiquidacionData = { ...liquidacionDataForCreate, saldo: values.total };
 
         await createLiquidacionMutation.mutateAsync({

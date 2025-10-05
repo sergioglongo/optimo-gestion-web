@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from 'services/api/apiClient';
 
 // types
-import { Gasto, GastoAsignacion, GastoAsignacionCreateData, GastoCreateData } from 'types/gasto';
+import { Gasto, GastoAsignacion, GastoAsignacionCreateData, GastoCreateData, GastoPagoCreateData } from 'types/gasto';
 
 // API response types
 interface ApiSuccessResponse {
@@ -181,6 +181,12 @@ export interface FetchGastoAsignacionesFilters {
   unidad_operativa_id?: number;
 }
 
+export interface GastoAsignacionBulkData {
+  gasto_id: number;
+  consorcio_id: number;
+  unidades_ids: number[];
+}
+
 export const fetchGastoAsignaciones = async (filters: FetchGastoAsignacionesFilters) => {
   const { data } = await apiClient.get<GastoAsignacionesApiResponse>('/gasto-asignaciones', { params: filters });
   if (data.success) {
@@ -192,6 +198,31 @@ export const fetchGastoAsignaciones = async (filters: FetchGastoAsignacionesFilt
 
 export const createGastoAsignacion = async (gastoAsignacionData: GastoAsignacionCreateData) => {
   const { data } = await apiClient.post<GastoAsignacionApiResponse>('/gasto-asignaciones', gastoAsignacionData);
+  if (data.success) {
+    return data.result;
+  } else {
+    throw new Error(data.message);
+  }
+};
+
+/**
+ * Asigna un gasto a múltiples unidades operativas.
+ * Crea nuevas asignaciones y/o actualiza las existentes para un gasto determinado.
+ * @param data - Contiene el gasto_id, consorcio_id y un array de unidades_ids.
+ */
+export const assignGastoToUnidades = async (data: GastoAsignacionBulkData) => {
+  // Asumimos un nuevo endpoint en el backend que maneja esta lógica de asignación en lote.
+  const { data: responseData } = await apiClient.post<GastoAsignacionesApiResponse>('/gasto-asignaciones/createUpdateBulk', data);
+  if (responseData.success) {
+    return responseData.result || [];
+  } else {
+    throw new Error(responseData.message);
+  }
+};
+
+export const createGastoPago = async ({ pagoData, usuario_id }: { pagoData: GastoPagoCreateData; usuario_id: number }) => {
+  const payload = { ...pagoData, usuario_id };
+  const { data } = await apiClient.post<GastoApiResponse>('/gastos/pagar', payload);
   if (data.success) {
     return data.result;
   } else {
@@ -223,6 +254,29 @@ export function useCreateGastoAsignacion() {
     mutationFn: (gastoAsignacionData: GastoAsignacionCreateData) => createGastoAsignacion(gastoAsignacionData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: gastoAsignacionQueryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: gastoQueryKeys.lists() });
+    }
+  });
+}
+
+export function useAssignGastoToUnidades() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: GastoAsignacionBulkData) => assignGastoToUnidades(data),
+    onSuccess: (data, variables) => {
+      // Invalida las queries de asignaciones y de gastos para refrescar los datos.
+      queryClient.invalidateQueries({ queryKey: gastoAsignacionQueryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: gastoQueryKeys.lists() });
+    }
+  });
+}
+
+export function useCreateGastoPago() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { pagoData: GastoPagoCreateData; usuario_id: number }) => createGastoPago(data),
+    onSuccess: () => {
+      // Invalida la lista de gastos para que se actualice el estado y el monto saldado.
       queryClient.invalidateQueries({ queryKey: gastoQueryKeys.lists() });
     }
   });

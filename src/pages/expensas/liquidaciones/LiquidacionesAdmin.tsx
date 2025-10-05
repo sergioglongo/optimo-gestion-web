@@ -2,16 +2,16 @@ import { useMemo, useState, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // material-ui
-import { Chip, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Chip, Grid, Stack, Tooltip, Typography } from '@mui/material';
 
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
 import { useIntl } from 'react-intl';
+import { useQueryClient } from '@tanstack/react-query';
 
 // project import
 import IconButton from 'components/@extended/IconButton';
-import EmptyReactTable from 'pages/tables/react-table/empty';
-import LiquidacionesList from 'sections/expensas/liquidaciones/LiquidacionesList';
+import TablaAdminCollapse from 'components/tables/TablaAdminCollapse';
 import ConfirmationDialog from 'components/Modal/ConfirmationDialog';
 import LiquidacionModal from 'sections/expensas/liquidaciones/LiquidacionModal';
 import AlertLiquidacionDelete from 'sections/expensas/liquidaciones/AlertLiquidacionDelete';
@@ -33,13 +33,49 @@ import { openSnackbar } from 'api/snackbar';
 
 // ==============================|| LIQUIDACIONES - ADMIN ||============================== //
 
+const LiquidacionSubComponent = ({ data }: { data: Liquidacion }) => (
+  <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
+    <Grid container spacing={2}>
+      <Grid item xs={12} sm={4}>
+        <Stack spacing={0.5}>
+          <Typography variant="caption" color="textSecondary">
+            Saldo
+          </Typography>
+          <Typography variant="body2">${Number(data.saldo || 0).toLocaleString('es-AR')}</Typography>
+        </Stack>
+      </Grid>
+      <Grid item xs={12} sm={4}>
+        <Stack spacing={0.5}>
+          <Typography variant="caption" color="textSecondary">
+            1er Vencimiento
+          </Typography>
+          <Typography variant="body2">{`Día: ${data.primer_vencimiento ?? '-'} / Recargo: ${
+            data.primer_vencimiento_recargo ?? 0
+          }%`}</Typography>
+        </Stack>
+      </Grid>
+      <Grid item xs={12} sm={4}>
+        <Stack spacing={0.5}>
+          <Typography variant="caption" color="textSecondary">
+            2do Vencimiento
+          </Typography>
+          <Typography variant="body2">{`Día: ${data.segundo_vencimiento ?? '-'} / Recargo: ${
+            data.segundo_vencimiento_recargo ?? 0
+          }%`}</Typography>
+        </Stack>
+      </Grid>
+    </Grid>
+  </Box>
+);
+
 const LiquidacionesAdmin = () => {
   const { selectedConsorcio } = useConsorcio();
   const intl = useIntl();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // Asumiendo que el hook recibe el ID del consorcio
-  const { data: liquidacionesData = [], isLoading } = useGetLiquidaciones(selectedConsorcio?.id || 0, { enabled: !!selectedConsorcio?.id });
+  const { data: liquidacionesData = [] } = useGetLiquidaciones(selectedConsorcio?.id || 0, { enabled: !!selectedConsorcio?.id });
   const { data: activeUnidadesData } = useGetUnidadesOperativas(
     { consorcio_id: selectedConsorcio?.id || 0, activas: true },
     { enabled: !!selectedConsorcio?.id }
@@ -56,13 +92,6 @@ const LiquidacionesAdmin = () => {
   const columns = useMemo<ColumnDef<Liquidacion>[]>(
     () => [
       {
-        header: 'Nro',
-        accessorKey: 'id',
-        meta: {
-          className: 'd-none' // Ocultar columna visualmente
-        }
-      },
-      {
         header: 'Período',
         accessorKey: 'periodo',
         cell: ({ getValue }) => <Typography>{periodoFormat(getValue() as string)}</Typography>
@@ -71,16 +100,6 @@ const LiquidacionesAdmin = () => {
         header: 'Fecha Emisión',
         accessorKey: 'fecha_emision',
         cell: ({ getValue }) => <Typography>{toLocaleDateFormat(getValue() as string)}</Typography>
-      },
-      {
-        header: '1er Venc',
-        accessorKey: 'primer_vencimiento',
-        cell: ({ getValue }) => <Typography>{getValue() as string}</Typography>
-      },
-      {
-        header: '2do Venc',
-        accessorKey: 'segundo_vencimiento',
-        cell: ({ getValue }) => <Typography>{getValue() as string}</Typography>
       },
       {
         header: 'Total',
@@ -177,6 +196,8 @@ const LiquidacionesAdmin = () => {
         variant: 'alert',
         alert: { color: 'success' }
       } as SnackbarProps);
+      // Invalidar la consulta de liquidaciones para refrescar la tabla
+      queryClient.invalidateQueries({ queryKey: ['liquidaciones', 'list', { consorcio_id: selectedConsorcio?.id }] });
     } catch (error: any) {
       openSnackbar({
         open: true,
@@ -189,18 +210,23 @@ const LiquidacionesAdmin = () => {
     }
   };
 
-  if (isLoading) return <EmptyReactTable />;
-
   return (
     <>
-      <LiquidacionesList
-        data={liquidacionesData}
-        columns={columns}
-        // Navega a la página de creación
-        modalToggler={() => navigate('/expensas/liquidaciones/nueva', { replace: true })}
-        isAddDisabled={hasBorrador}
-        addDisabledTooltip="Ya existe una liquidación en estado borrador. Por favor, finalícela o elimínela para crear una nueva."
-      />
+      <Tooltip
+        title={hasBorrador ? 'Ya existe una liquidación en estado borrador. Por favor, finalícela o elimínela para crear una nueva.' : ''}
+      >
+        <div>
+          <TablaAdminCollapse
+            data={liquidacionesData}
+            columns={columns}
+            onAdd={() => navigate('/expensas/liquidaciones/nueva', { replace: true })}
+            addLabel="Nueva Liquidación"
+            title="Gestiona las Liquidaciones del consorcio"
+            isAddDisabled={hasBorrador}
+            renderSubComponent={(row) => <LiquidacionSubComponent data={row} />}
+          />
+        </div>
+      </Tooltip>
       <ConfirmationDialog
         open={!!liquidacionToGenerate}
         onClose={() => setLiquidacionToGenerate(null)}

@@ -1,4 +1,8 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
+
+// material-ui
+// import { SxProps, Theme } from '@mui/material/styles';
+import { Box, Button, Divider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 
 // third-party
 import {
@@ -11,17 +15,16 @@ import {
   getFilteredRowModel,
   useReactTable,
   SortingState,
-  ColumnFiltersState
+  ColumnFiltersState,
+  getExpandedRowModel
 } from '@tanstack/react-table';
 import { LabelKeyObject } from 'react-csv/lib/core';
-
-// material-ui
-import { Box, Button, Divider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 
 // project-import
 import ScrollX from 'components/ScrollX';
 import MainCard from 'components/MainCard';
-import EmptyTable from './EmptyTable'; // Importar el nuevo componente
+import EmptyTable from './EmptyTable';
+import IconButton from 'components/@extended/IconButton';
 
 import {
   CSVExport,
@@ -32,56 +35,41 @@ import {
   SelectColumnSorting,
   TablePagination
 } from 'components/third-party/react-table';
-import TablaAdminFilters from './TablaAdminFilters';
 
 // assets
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 
-// types
-export interface SelectFilter {
-  options: { label: string; value: any }[];
-  placeholder?: string;
-}
-
-export interface SelectFilters {
-  [columnId: string]: SelectFilter;
-}
-
-interface TablaAdminProps<T extends object> {
+interface TablaAdminCollapseProps<T extends object> {
   data: T[];
   columns: ColumnDef<T>[];
   onAdd?: () => void;
   addLabel?: string;
   csvFilename?: string;
   searchPlaceholder?: string;
-  renderExpandedRow?: (row: any) => React.ReactNode;
+  renderSubComponent: (row: T) => React.ReactNode;
   title?: string;
   initialColumnVisibility?: Record<string, boolean>;
   showSelection?: boolean;
   initialSorting?: SortingState;
-  isAddDisabled?: boolean; // Nueva prop
-  selectFilters?: SelectFilters;
-  showColumnSorting?: boolean;
-  showCsvExport?: boolean;
+  isAddDisabled?: boolean;
+  expanderColor?: 'inherit' | 'primary' | 'secondary' | 'default' | 'error' | 'info' | 'success' | 'warning';
 }
 
-function TablaAdmin<T extends object>({
+function TablaAdminCollapse<T extends object>({
   data,
   columns,
   onAdd,
   addLabel = 'Nuevo',
   csvFilename = 'data.csv',
   searchPlaceholder = 'Buscar...',
-  renderExpandedRow,
+  renderSubComponent,
   title,
   initialColumnVisibility,
   showSelection = false,
   initialSorting = [],
   isAddDisabled = false,
-  selectFilters,
-  showColumnSorting = true,
-  showCsvExport = true
-}: TablaAdminProps<T>): JSX.Element {
+  expanderColor = 'secondary'
+}: TablaAdminCollapseProps<T>): JSX.Element {
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -114,8 +102,35 @@ function TablaAdmin<T extends object>({
           }
         ]
       : [];
-    return [...selectionColumn, ...columns];
-  }, [columns, showSelection]);
+
+    const expanderColumn: ColumnDef<T>[] = [
+      {
+        id: 'expander',
+        header: () => null,
+        cell: ({ row }) =>
+          row.getCanExpand() ? (
+            <IconButton
+              color={expanderColor}
+              size="small"
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation?.();
+                row.getToggleExpandedHandler()();
+              }}
+            >
+              {row.getIsExpanded() ? <UpOutlined /> : <DownOutlined />}
+            </IconButton>
+          ) : null,
+        meta: {
+          sx: {
+            width: '40px', // Ancho fijo y pequeño
+            p: 0.5 // Padding reducido
+          }
+        }
+      }
+    ];
+
+    return [...selectionColumn, ...columns, ...expanderColumn];
+  }, [columns, showSelection, expanderColor]);
 
   const table = useReactTable({
     data,
@@ -127,7 +142,8 @@ function TablaAdmin<T extends object>({
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
-    getRowCanExpand: () => !!renderExpandedRow,
+    getRowCanExpand: () => true,
+    getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getCoreRowModel: getCoreRowModel(),
@@ -161,16 +177,13 @@ function TablaAdmin<T extends object>({
         />
 
         <Stack direction="row" alignItems="center" spacing={2}>
-          <TablaAdminFilters table={table} selectFilters={selectFilters} />
-          {showColumnSorting && <SelectColumnSorting {...{ getState: table.getState, getAllColumns: table.getAllColumns, setSorting }} />}
+          <SelectColumnSorting {...{ getState: table.getState, getAllColumns: table.getAllColumns, setSorting }} />
           {onAdd && (
             <Button variant="contained" startIcon={<PlusOutlined />} onClick={onAdd} disabled={isAddDisabled}>
               {addLabel}
             </Button>
           )}
-          {showCsvExport && (
-            <CSVExport {...{ data: table.getSelectedRowModel().flatRows.map((row) => row.original), headers, filename: csvFilename }} />
-          )}
+          <CSVExport {...{ data: table.getSelectedRowModel().flatRows.map((row) => row.original), headers, filename: csvFilename }} />
         </Stack>
       </Stack>
       <ScrollX>
@@ -196,13 +209,20 @@ function TablaAdmin<T extends object>({
             <TableBody>
               {table.getRowModel().rows.length > 0 ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} {...cell.column.columnDef.meta}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
+                  <Fragment key={row.id}>
+                    <TableRow onClick={() => row.getToggleExpandedHandler()()} sx={{ cursor: 'pointer' }}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id} {...cell.column.columnDef.meta}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    {row.getIsExpanded() && (
+                      <TableRow sx={{ '&:hover': { bgcolor: 'transparent !important' } }}>
+                        <TableCell colSpan={row.getVisibleCells().length}>{renderSubComponent(row.original as T)}</TableCell>
+                      </TableRow>
+                    )}
+                  </Fragment>
                 ))
               ) : (
                 <EmptyTable colSpan={table.getAllColumns().length} />
@@ -226,4 +246,4 @@ function TablaAdmin<T extends object>({
   );
 }
 
-export default TablaAdmin;
+export default TablaAdminCollapse;
