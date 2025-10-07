@@ -35,9 +35,13 @@ import {
   SelectColumnSorting,
   TablePagination
 } from 'components/third-party/react-table';
+import TablaAdminFilters from './TablaAdminFilters';
 
 // assets
 import { PlusOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
+
+// types
+import { SelectFilters } from './TablaAdmin';
 
 interface TablaAdminCollapseProps<T extends object> {
   data: T[];
@@ -53,6 +57,9 @@ interface TablaAdminCollapseProps<T extends object> {
   initialSorting?: SortingState;
   isAddDisabled?: boolean;
   expanderColor?: 'inherit' | 'primary' | 'secondary' | 'default' | 'error' | 'info' | 'success' | 'warning';
+  selectFilters?: SelectFilters;
+  showColumnSorting?: boolean;
+  showCsvExport?: boolean;
 }
 
 function TablaAdminCollapse<T extends object>({
@@ -68,7 +75,10 @@ function TablaAdminCollapse<T extends object>({
   showSelection = false,
   initialSorting = [],
   isAddDisabled = false,
-  expanderColor = 'secondary'
+  expanderColor = 'secondary',
+  selectFilters,
+  showColumnSorting = true,
+  showCsvExport = true
 }: TablaAdminCollapseProps<T>): JSX.Element {
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -177,13 +187,16 @@ function TablaAdminCollapse<T extends object>({
         />
 
         <Stack direction="row" alignItems="center" spacing={2}>
-          <SelectColumnSorting {...{ getState: table.getState, getAllColumns: table.getAllColumns, setSorting }} />
+          <TablaAdminFilters table={table} selectFilters={selectFilters} />
+          {showColumnSorting && <SelectColumnSorting {...{ getState: table.getState, getAllColumns: table.getAllColumns, setSorting }} />}
           {onAdd && (
             <Button variant="contained" startIcon={<PlusOutlined />} onClick={onAdd} disabled={isAddDisabled}>
               {addLabel}
             </Button>
           )}
-          <CSVExport {...{ data: table.getSelectedRowModel().flatRows.map((row) => row.original), headers, filename: csvFilename }} />
+          {showCsvExport && (
+            <CSVExport {...{ data: table.getSelectedRowModel().flatRows.map((row) => row.original), headers, filename: csvFilename }} />
+          )}
         </Stack>
       </Stack>
       <ScrollX>

@@ -59,8 +59,15 @@ const PagosProveedoresAdmin = () => {
       },
       {
         header: 'Cuenta',
-        accessorKey: 'cuenta.descripcion',
-        cell: ({ row }) => <Typography>{row.original.cuenta?.descripcion || '-'}</Typography>
+        accessorFn: (row) => row.cuenta?.descripcion || '', // Para que la búsqueda global funcione con el nombre.
+        id: 'cuenta', // Para que el filtro desplegable sepa a qué columna aplicarse.
+        cell: ({ getValue }) => <Typography>{(getValue() as string) || '-'}</Typography>,
+        // Función de filtro personalizada:
+        // Compara el ID de la cuenta seleccionada en el filtro con el ID de la cuenta en la fila.
+        filterFn: (row, columnId, filterValue) => {
+          // filterValue es el ID de la cuenta que viene del filtro desplegable.
+          return row.original.cuenta?.id === filterValue;
+        }
       },
       {
         header: 'Monto',

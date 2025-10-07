@@ -70,10 +70,8 @@ const GastosAdmin = () => {
       },
       {
         header: 'Proveedor',
-        accessorKey: 'Proveedor',
-        cell: ({ row }) => {
-          return <Typography>{row.original.Proveedor?.nombre || '-'}</Typography>;
-        }
+        accessorFn: (row) => row.Proveedor?.nombre || '-',
+        cell: ({ getValue }) => <Typography>{getValue() as string}</Typography>
       },
       {
         header: 'Descripción',

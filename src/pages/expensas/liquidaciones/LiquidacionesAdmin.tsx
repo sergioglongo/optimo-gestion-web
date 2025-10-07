@@ -75,7 +75,10 @@ const LiquidacionesAdmin = () => {
   const queryClient = useQueryClient();
 
   // Asumiendo que el hook recibe el ID del consorcio
-  const { data: liquidacionesData = [] } = useGetLiquidaciones(selectedConsorcio?.id || 0, { enabled: !!selectedConsorcio?.id });
+  const { data: liquidacionesData = [] } = useGetLiquidaciones(
+    { consorcio_id: selectedConsorcio?.id || 0 },
+    { enabled: !!selectedConsorcio?.id }
+  );
   const { data: activeUnidadesData } = useGetUnidadesOperativas(
     { consorcio_id: selectedConsorcio?.id || 0, activas: true },
     { enabled: !!selectedConsorcio?.id }

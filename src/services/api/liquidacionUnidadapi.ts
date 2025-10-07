@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { apiClient } from 'services/api/apiClient';
-import { LiquidacionUnidad, LiquidacionUnidadCreateData } from 'types/liquidacion';
+import { LiquidacionUnidad, LiquidacionUnidadCreateData, LiquidacionUnidadDeudores, LiquidacionUnidadEstado } from 'types/liquidacion';
 
 // ==============================|| API - LIQUIDACIONES UNIDADES ||============================== //
 
@@ -8,15 +8,34 @@ export interface FetchLiquidacionUnidadesFilters {
   liquidacion_id?: number | string;
   unidad_operativa_id?: number | string;
   persona_id?: number | string;
+  consorcio_id: number | undefined;
+  estado?: LiquidacionUnidadEstado;
+  liquidacion_actual?: boolean;
 }
+
+interface ApiSuccessResponse {
+  success: true;
+  result: LiquidacionUnidad[];
+  count: number;
+}
+
+interface ApiErrorResponse {
+  success: false;
+  message: string;
+}
+
+type ApiResponse = ApiSuccessResponse | ApiErrorResponse;
 
 /**
  * Fetch liquidaciones de unidades based on filters
  * @param filters
  */
 const getLiquidacionUnidades = async (filters: FetchLiquidacionUnidadesFilters): Promise<LiquidacionUnidad[]> => {
-  const { data } = await apiClient.post<LiquidacionUnidad[]>('/liquidaciones-unidades/getall', filters);
-  return data;
+  const { data } = await apiClient.post<ApiResponse>('/liquidaciones-unidades/getall', filters);
+  if (data.success) {
+    return data.result || [];
+  }
+  throw new Error(data.message || 'Error al obtener las liquidaciones de las unidades.');
 };
 
 export const useGetLiquidacionUnidades = (
@@ -70,6 +89,41 @@ export const useCreateLiquidacionUnidad = (options?: UseMutationOptions<Liquidac
       queryClient.invalidateQueries(['liquidacionUnidades', { liquidacion_id: data.liquidacion_id }]);
       options?.onSuccess?.(data, variables, context);
     }
+  });
+};
+
+/**
+ * Fetch all deudores for a given consorcio
+ * @param consorcio_id
+ */
+const getAllDeudores = async (consorcio_id: number | string): Promise<LiquidacionUnidadDeudores[]> => {
+  const { data } = await apiClient.post<ApiResponse>('/liquidaciones-unidades/get-all-deudores', { consorcio_id });
+  if (data.success) {
+    return (data.result as unknown as LiquidacionUnidadDeudores[]) || [];
+  }
+  throw new Error(data.message || 'Error al obtener los deudores.');
+};
+
+export const useGetAllDeudores = (options?: UseMutationOptions<LiquidacionUnidadDeudores[], Error, number | string>) => {
+  const queryClient = useQueryClient();
+  return useMutation<LiquidacionUnidadDeudores[], Error, number | string>(getAllDeudores, {
+    ...options,
+    onSuccess: (data, consorcio_id, context) => {
+      // Invalida y vuelve a buscar la query de deudores para ese consorcio_id
+      queryClient.invalidateQueries(['deudores', { consorcio_id }]);
+      queryClient.setQueryData(['deudores', { consorcio_id }], data);
+      options?.onSuccess?.(data, consorcio_id, context);
+    }
+  });
+};
+
+export const useGetDeudoresQuery = (
+  consorcio_id: number | string | undefined,
+  options?: Omit<UseQueryOptions<LiquidacionUnidadDeudores[]>, 'queryKey' | 'queryFn'>
+) => {
+  return useQuery<LiquidacionUnidadDeudores[]>(['deudores', { consorcio_id }], () => getAllDeudores(consorcio_id!), {
+    enabled: !!consorcio_id,
+    ...options
   });
 };
 

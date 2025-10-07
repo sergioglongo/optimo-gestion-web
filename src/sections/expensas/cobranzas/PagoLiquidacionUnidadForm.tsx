@@ -77,10 +77,10 @@ const PagoLiquidacionUnidadForm = ({
     if (!isNaN(montoIngresado) && montoIngresado > 0) {
       // Redondear a 2 decimales para evitar problemas de precisión con punto flotante
       const montoIngresadoRounded = Math.round(montoIngresado * 100) / 100;
-      const montoTotalRounded = Math.round(montoTotalAdeudado * 100) / 100;
+      const montoRestanteRounded = Math.round(montoRestante * 100) / 100;
 
-      // Si el monto ingresado es igual al monto total de la expensa, es un pago total.
-      if (montoIngresadoRounded === montoTotalRounded) {
+      // Si el monto ingresado es igual al monto restante adeudado, es un pago total.
+      if (montoIngresadoRounded === montoRestanteRounded) {
         newTipoPago = 'total';
       } else {
         newTipoPago = 'parcial';
@@ -90,7 +90,7 @@ const PagoLiquidacionUnidadForm = ({
     if (values.tipo_pago !== newTipoPago) {
       setFieldValue('tipo_pago', newTipoPago);
     }
-  }, [values.monto, values.tipo_pago, montoTotalAdeudado, setFieldValue]);
+  }, [values.monto, values.tipo_pago, montoRestante, setFieldValue]);
 
   const handleDateChange = (days: number) => {
     const currentDateStr = values.fecha;
@@ -131,7 +131,8 @@ const PagoLiquidacionUnidadForm = ({
               Pagando Expensa Nro: {liquidacionUnidad.id} (Unidad: {liquidacionUnidad.UnidadOperativa?.etiqueta})
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              Monto Original: ${Number(liquidacionUnidad.monto).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              Monto Original: $
+              {Number(liquidacionUnidad.monto).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </Typography>
             {interesCalculado > 0 && (
               <Typography variant="body1" color="error.main">
@@ -143,7 +144,9 @@ const PagoLiquidacionUnidadForm = ({
             <Typography variant="caption" display="block">
               Monto Total
             </Typography>
-            <Typography variant="h6">${montoTotalAdeudado.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
+            <Typography variant="h6">
+              ${montoTotalAdeudado.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </Typography>
             <Typography variant="caption" display="block">
               Monto Adeudado
             </Typography>

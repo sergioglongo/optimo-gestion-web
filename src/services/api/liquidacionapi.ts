@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { apiClient } from 'services/api/apiClient';
-import { Liquidacion, LiquidacionCreateData, LiquidacionGasto } from 'types/liquidacion';
+import { Liquidacion, LiquidacionCreateData, LiquidacionEstado, LiquidacionGasto } from 'types/liquidacion';
 
 // API response types
 interface ApiSuccessResponse {
@@ -15,22 +15,27 @@ interface ApiErrorResponse {
 
 type ApiResponse = ApiSuccessResponse | ApiErrorResponse;
 
+export interface FetchLiquidacionesFilters {
+  consorcio_id: number | string;
+  estado?: LiquidacionEstado;
+}
+
 /**
  * Fetch all liquidaciones for a consorcio
- * @param consorcioId
+ * @param filters
  */
-const getLiquidaciones = async (consorcioId: number | string): Promise<Liquidacion[]> => {
+const getLiquidaciones = async (filters: FetchLiquidacionesFilters): Promise<Liquidacion[]> => {
   // Asumimos que getall devuelve un array directamente, sin el wrapper { success, result }
-  const { data } = await apiClient.post<Liquidacion[]>('/liquidaciones/getall', { consorcio_id: consorcioId });
+  const { data } = await apiClient.post<Liquidacion[]>('/liquidaciones/getall', filters);
   return data || [];
 };
 
 export const useGetLiquidaciones = (
-  consorcioId: number | string,
+  filters: FetchLiquidacionesFilters,
   options?: Omit<UseQueryOptions<Liquidacion[]>, 'queryKey' | 'queryFn'>
 ) => {
-  return useQuery<Liquidacion[]>(['liquidaciones', consorcioId], () => getLiquidaciones(consorcioId), {
-    enabled: !!consorcioId,
+  return useQuery<Liquidacion[]>(['liquidaciones', filters], () => getLiquidaciones(filters), {
+    enabled: !!filters.consorcio_id,
     ...options
   });
 };

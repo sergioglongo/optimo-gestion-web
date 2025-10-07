@@ -2,6 +2,8 @@
 
 import { Consorcio } from './consorcio';
 import { Gasto, GastoEstado } from './gasto';
+import { PagoLiquidacionUnidad } from './pagoLiquidacionUnidad';
+import { Persona } from './persona';
 import { UnidadOperativa } from './unidadOperativa';
 
 /**
@@ -9,7 +11,7 @@ import { UnidadOperativa } from './unidadOperativa';
  * mapeada desde la tabla `liquidaciones` de la base de datos.
  */
 
-export type LiquidacionEstado = 'borrador' | 'emitida' | 'cerrada';
+export type LiquidacionEstado = 'borrador' | 'emitida' | 'cerrada' | 'completada';
 
 export interface Liquidacion {
   id: number;
@@ -60,12 +62,57 @@ export interface LiquidacionUnidad {
   monto: number;
   prorrateo: number;
   saldado?: number; // Monto ya pagado de esta liquidación
+  interes_deuda?: number;
   estado: LiquidacionUnidadEstado;
   fecha: string; // Format: YYYY-MM-DD
   interes: number;
   persona_id?: number;
   UnidadOperativa?: UnidadOperativa;
   Liquidacion?: Liquidacion;
+  Pagos: PagoLiquidacionUnidad[];
 }
 
 export type LiquidacionUnidadCreateData = Omit<LiquidacionUnidad, 'id'>;
+
+/**
+ * Interfaz para el objeto Liquidacion anidado dentro de la respuesta de deudores.
+ * Contiene solo un subconjunto de los campos de la interfaz Liquidacion principal.
+ */
+export interface DeudorLiquidacion {
+  periodo: string; // "2025-08-01"
+  primer_vencimiento: number;
+}
+
+/**
+ * Interfaz para los objetos dentro del array LiquidacionUnidads en la respuesta de deudores.
+ * Similar a LiquidacionUnidad pero con campos adicionales y anidados.
+ */
+export interface DeudorLiquidacionUnidad {
+  id: number;
+  liquidacion_id: number;
+  unidad_operativa_id: number;
+  prorrateo: string; // "25.00"
+  monto: string; // "36492.69"
+  monto_final?: number;
+  restante: number;
+  estado: LiquidacionUnidadEstado;
+  fecha: string; // "2025-08-30"
+  interes: string; // "3649.27"
+  interes_deuda?: string; // "3649.27"
+  persona_id: number | null;
+  PagoLiquidacionUnidads: any[]; // Asumiendo que puede contener pagos, se deja como any[] por ahora
+  Liquidacion: DeudorLiquidacion;
+  saldado: number;
+  deuda: number;
+}
+
+/**
+ * Interfaz principal para la estructura de un deudor.
+ * Combina datos de UnidadOperativa con sus liquidaciones adeudadas.
+ */
+export interface LiquidacionUnidadDeudores extends Omit<UnidadOperativa, 'id'> {
+  id: number; // El ID de la UnidadOperativa
+  LiquidacionUnidads: DeudorLiquidacionUnidad[];
+  total_deuda: number;
+  Deudor: Persona | null; // Podría ser un tipo Persona si está definido
+}
