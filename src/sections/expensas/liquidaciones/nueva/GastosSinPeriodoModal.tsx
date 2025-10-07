@@ -140,7 +140,15 @@ const GastosSinPeriodoModal = ({ open, onClose, onAddGastos, gastosActuales }: P
   }, [open]);
 
   return (
-    <Modal open={open} onClose={onClose} onConfirm={handleConfirm} title="Agregar Gastos" isSubmitting={isLoading}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      cancelButtonLabel={'cerrar'}
+      confirmButtonLabel={'Agregar'}
+      onConfirm={handleConfirm}
+      title="Agregar Gastos"
+      isSubmitting={isLoading}
+    >
       <ScrollX>
         <TableContainer>
           <Table>

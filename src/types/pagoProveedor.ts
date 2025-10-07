@@ -8,6 +8,15 @@ import { Proveedor } from './proveedor';
 export type TipoPagoProveedor = 'impago' | 'parcial' | 'total';
 
 /**
+ * Opciones para filtros y selects basados en TipoPagoProveedor.
+ */
+export const TiposPagoProveedorOptions = [
+  { label: 'Impago', value: 'impago' },
+  { label: 'Parcial', value: 'parcial' },
+  { label: 'Total', value: 'total' }
+];
+
+/**
  * Interfaz que representa un pago realizado a un proveedor por un gasto.
  * Mapeada desde la tabla `pagos_proveedores`.
  */

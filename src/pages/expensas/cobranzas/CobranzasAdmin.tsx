@@ -1,27 +1,24 @@
-import { useMemo, useState, useEffect, MouseEvent } from 'react';
+import { useMemo, useState, MouseEvent } from 'react';
 
 // material-ui
-import { Chip, Typography, Autocomplete, TextField, CircularProgress, Grid, Box, Stack, Tooltip } from '@mui/material';
+import { Chip, Typography, Grid, Box, Stack, Tooltip } from '@mui/material';
 
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
 import { useIntl } from 'react-intl';
 
 // project import
+import Loader from 'components/Loader';
 import IconButton from 'components/@extended/IconButton';
 import TablaAdminCollapse from 'components/tables/TablaAdminCollapse';
 import MainCard from 'components/MainCard';
 
 // API hooks
 import useConsorcio from 'hooks/useConsorcio';
-import { useGetLiquidaciones } from 'services/api/liquidacionapi';
 import { useGetLiquidacionUnidades } from 'services/api/liquidacionUnidadapi';
 
 // types
-import { Liquidacion, LiquidacionUnidad, LiquidacionUnidadEstado } from 'types/liquidacion';
-
-// utils
-import { periodoFormat } from 'utils/dateFormat';
+import { LiquidacionUnidad, LiquidacionUnidadEstado } from 'types/liquidacion';
 
 // sections
 import PagoLiquidacionUnidadModal from 'sections/expensas/cobranzas/PagoLiquidacionUnidadModal';
@@ -31,46 +28,71 @@ import { DollarOutlined } from '@ant-design/icons';
 
 // ==============================|| COBRANZAS - ADMIN ||============================== //
 
-const CobranzaSubComponent = ({ data, interes }: { data: LiquidacionUnidad; interes: number }) => {
-  const montoExpensa = Number(data.monto) || 0;
-  const montoTotal = montoExpensa + interes;
+const CobranzaSubComponent = ({ data }: { data: LiquidacionUnidad }) => {
+  const monto = Number(data.monto) || 0;
+  const saldado = Number(data.saldado) || 0;
+  const restante = monto - saldado;
+  const intereses = Number(data.interes_deuda) || 0;
+  const montoAPagar = restante + intereses;
+  const montoFinal = monto + intereses;
 
   return (
     <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={3}>
+        {/* Fila 1 */}
+        <Grid item xs={6} sm={2}>
           <Stack spacing={0.5} alignItems="flex-end">
             <Typography variant="caption" color="textSecondary">
               Expensa
             </Typography>
-            <Typography variant="body2">${montoExpensa.toLocaleString('es-AR')}</Typography>
+            <Typography variant="body2">${monto.toLocaleString('es-AR')}</Typography>
           </Stack>
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={6} sm={2}>
           <Stack spacing={0.5} alignItems="flex-end">
             <Typography variant="caption" color="textSecondary">
-              Prorrateo
+              Saldado
             </Typography>
-            <Typography variant="body2">{Number(data.prorrateo).toFixed(2)}%</Typography>
-          </Stack>
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <Stack spacing={0.5} alignItems="flex-end">
-            <Typography variant="caption" color="textSecondary">
-              Interés
-            </Typography>
-            <Typography variant="body2">
-              ${interes.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <Typography variant="body2" color="success.dark">
+              ${saldado.toLocaleString('es-AR')}
             </Typography>
           </Stack>
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={6} sm={2}>
           <Stack spacing={0.5} alignItems="flex-end">
             <Typography variant="caption" color="textSecondary">
-              Monto Total
+              Restante
             </Typography>
-            <Typography variant="body2">
-              ${montoTotal.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <Typography variant="body2">${restante.toLocaleString('es-AR')}</Typography>
+          </Stack>
+        </Grid>
+
+        {/* Fila 2 */}
+        <Grid item xs={6} sm={2}>
+          <Stack spacing={0.5} alignItems="flex-end">
+            <Typography variant="caption" color="textSecondary">
+              Intereses
+            </Typography>
+            <Typography variant="body2">${intereses.toLocaleString('es-AR')}</Typography>
+          </Stack>
+        </Grid>
+        <Grid item xs={6} sm={2}>
+          <Stack spacing={0.5} alignItems="flex-end">
+            <Typography variant="caption" color="textSecondary">
+              Monto a Pagar
+            </Typography>
+            <Typography variant="body2" fontWeight="bold">
+              ${montoAPagar.toLocaleString('es-AR')}
+            </Typography>
+          </Stack>
+        </Grid>
+        <Grid item xs={6} sm={2}>
+          <Stack spacing={0.5} alignItems="flex-end">
+            <Typography variant="caption" color="textSecondary">
+              Monto Final
+            </Typography>
+            <Typography variant="body2" fontWeight="bold">
+              ${montoFinal.toLocaleString('es-AR')}
             </Typography>
           </Stack>
         </Grid>
@@ -83,56 +105,16 @@ const CobranzasAdmin = () => {
   const { selectedConsorcio } = useConsorcio();
   const intl = useIntl();
 
-  const [selectedLiquidacion, setSelectedLiquidacion] = useState<Liquidacion | null>(null);
   const [pagoModalOpen, setPagoModalOpen] = useState(false);
   const [liquidacionAPagarId, setLiquidacionAPagarId] = useState<number | null>(null);
 
-  const { data: liquidacionesData = [], isLoading: isLoadingLiquidaciones } = useGetLiquidaciones(selectedConsorcio?.id || 0, {
-    enabled: !!selectedConsorcio?.id
-  });
-
-  useEffect(() => {
-    // Si hay liquidaciones y no hay ninguna seleccionada, selecciona la primera por defecto.
-    if (liquidacionesData.length > 0 && !selectedLiquidacion) {
-      setSelectedLiquidacion(liquidacionesData[0]);
-    }
-  }, [liquidacionesData, selectedLiquidacion]);
-
   const { data: cobranzasData = [], isLoading: isLoadingCobranzas } = useGetLiquidacionUnidades(
-    { liquidacion_id: selectedLiquidacion?.id },
+    { consorcio_id: selectedConsorcio?.id, liquidacion_actual: true },
     {
-      enabled: !!selectedLiquidacion?.id
+      // Se activa cuando hay un consorcio seleccionado
+      enabled: !!selectedConsorcio?.id
     }
   );
-
-  // Helper function to calculate interest
-  const calculateInterest = (row: LiquidacionUnidad) => {
-    const liquidacion = row.Liquidacion;
-    if (!liquidacion?.periodo) return 0;
-
-    const montoExpensa = Number(row.monto) || 0;
-    const { primer_vencimiento, primer_vencimiento_recargo, segundo_vencimiento, segundo_vencimiento_recargo, periodo } = liquidacion;
-
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-
-    const [year, month] = periodo.split('-').map(Number);
-
-    let interes = 0;
-
-    if (primer_vencimiento) {
-      const primerVencimientoDate = new Date(Date.UTC(year, month, primer_vencimiento));
-
-      if (today > primerVencimientoDate) {
-        if (segundo_vencimiento && today > new Date(Date.UTC(year, month, segundo_vencimiento))) {
-          interes = montoExpensa * (Number(segundo_vencimiento_recargo) / 100);
-        } else {
-          interes = montoExpensa * (Number(primer_vencimiento_recargo) / 100);
-        }
-      }
-    }
-    return interes;
-  };
 
   const columns = useMemo<ColumnDef<LiquidacionUnidad>[]>(
     () => [
@@ -170,18 +152,15 @@ const CobranzasAdmin = () => {
         }
       },
       {
-        header: 'Monto',
+        header: 'A Pagar',
         cell: ({ row }) => {
-          const liquidacion = row.original.Liquidacion;
-          if (!liquidacion?.periodo) return <Typography>$0.00</Typography>;
+          const monto = Number(row.original.monto) || 0;
+          const saldado = Number(row.original.saldado) || 0;
+          const restante = monto - saldado;
+          const intereses = Number(row.original.interes_deuda) || 0;
+          const montoAPagar = restante + intereses;
 
-          const montoExpensa = Number(row.original.monto) || 0;
-
-          // const { primer_vencimiento, primer_vencimiento_recargo, segundo_vencimiento, segundo_vencimiento_recargo, periodo } = liquidacion;
-
-          const interes = calculateInterest(row.original);
-          const total = montoExpensa + interes;
-          return <Typography>${total.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>;
+          return <Typography>${montoAPagar.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>;
         }
       },
       {
@@ -221,66 +200,44 @@ const CobranzasAdmin = () => {
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [intl, selectedLiquidacion]
+    [intl]
   );
 
-  const isLoading = isLoadingLiquidaciones || (!!selectedLiquidacion && isLoadingCobranzas);
+  const selectFilters = useMemo(() => {
+    return {
+      estado: {
+        placeholder: 'Filtrar por Estado',
+        options: [
+          { label: 'Pendiente', value: 'pendiente' },
+          { label: 'Vencida', value: 'vencida' },
+          { label: 'Pagada', value: 'pagada' },
+          { label: 'Adeuda', value: 'adeuda' }
+        ]
+      }
+    };
+  }, []);
 
   return (
     <>
       <MainCard
         title={
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12}>
               <Typography variant="h5">Administración de Cobranzas</Typography>
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <Autocomplete
-                id="liquidacion-selector"
-                options={liquidacionesData || []}
-                getOptionLabel={(option) =>
-                  `Período: ${periodoFormat(option.periodo)} - ${
-                    option.estado.charAt(0).toUpperCase() + option.estado.slice(1)
-                  } - Total: $${Number(option.total || 0).toLocaleString('es-AR')}`
-                }
-                value={selectedLiquidacion}
-                onChange={(event, newValue) => {
-                  setSelectedLiquidacion(newValue);
-                }}
-                loading={isLoadingLiquidaciones}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Seleccione una Liquidación"
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                        <>
-                          {isLoadingLiquidaciones ? <CircularProgress color="inherit" size={20} /> : null}
-                          {params.InputProps.endAdornment}
-                        </>
-                      )
-                    }}
-                  />
-                )}
-              />
             </Grid>
           </Grid>
         }
         content={false}
       >
-        {!isLoading && selectedLiquidacion && (
+        {isLoadingCobranzas ? (
+          <Loader />
+        ) : (
           <TablaAdminCollapse
             data={cobranzasData}
             columns={columns}
-            renderSubComponent={(row) => <CobranzaSubComponent data={row} interes={calculateInterest(row)} />}
+            renderSubComponent={(row) => <CobranzaSubComponent data={row} />}
+            selectFilters={selectFilters}
           />
-        )}
-
-        {!selectedLiquidacion && !isLoading && (
-          <Box sx={{ p: 4, textAlign: 'center' }}>
-            <Typography variant="h4">Por favor, seleccione una liquidación para ver las cobranzas.</Typography>
-          </Box>
         )}
       </MainCard>
       <PagoLiquidacionUnidadModal

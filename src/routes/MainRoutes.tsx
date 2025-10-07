@@ -132,6 +132,7 @@ const LiquidacionesPage = Loadable(lazy(() => import('pages/expensas/liquidacion
 const LiquidacionNuevaPage = Loadable(lazy(() => import('sections/expensas/liquidaciones/nueva/LiquidacionNueva')));
 const LiquidacionDetallePage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionDetalle')));
 const CobranzasPage = Loadable(lazy(() => import('pages/expensas/cobranzas/CobranzasAdmin')));
+const DeudoresPage = Loadable(lazy(() => import('pages/expensas/deudores/DeudoresAdmin')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -563,6 +564,10 @@ const MainRoutes = {
             {
               path: 'cobranzas',
               element: <CobranzasPage />
+            },
+            {
+              path: 'deudores',
+              element: <DeudoresPage />
             }
           ]
         },

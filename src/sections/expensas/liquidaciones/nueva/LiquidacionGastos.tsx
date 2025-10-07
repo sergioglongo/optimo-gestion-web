@@ -47,11 +47,6 @@ const LiquidacionGastos = ({ onAddSinPeriodo }: Props) => {
     setFieldValue('gastos', newGastos);
   };
 
-  const handleQuitarImpagos = () => {
-    const gastosFiltrados = values.gastos.filter((gasto) => gasto.estado !== 'impago');
-    setFieldValue('gastos', gastosFiltrados);
-  };
-
   const handleQuitarParciales = () => {
     const gastosFiltrados = values.gastos.filter((gasto) => gasto.estado !== 'parcial');
     setFieldValue('gastos', gastosFiltrados);
@@ -171,9 +166,6 @@ const LiquidacionGastos = ({ onAddSinPeriodo }: Props) => {
         </Typography>
         <Button size="small" variant="contained" color="primary" onClick={onAddSinPeriodo}>
           Agregar Gastos
-        </Button>
-        <Button size="small" variant="outlined" color="error" onClick={handleQuitarImpagos}>
-          Quitar Impagos
         </Button>
         <Button size="small" variant="outlined" color="warning" onClick={handleQuitarParciales}>
           Quitar Parciales
