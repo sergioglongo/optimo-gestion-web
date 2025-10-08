@@ -1,21 +1,19 @@
-// material-ui
-// import { useTheme } from '@mui/material/styles';
-// import { useMediaQuery } from '@mui/material';
+import { useState } from 'react';
 
 // project import
 import NavUser from './NavUser';
-// import NavCard from './NavCard';
 import Navigation from './Navigation';
+import NavGroup from './Navigation/NavGroup';
 import SimpleBar from 'components/third-party/SimpleBar';
-// import { useGetMenuMaster } from 'api/menu';
+
+// menu-items
+import { parameters } from 'menu-items';
 
 // ==============================|| DRAWER CONTENT ||============================== //
 
 const DrawerContent = () => {
-  // const theme = useTheme();
-  // const { menuMaster } = useGetMenuMaster();
-  // const drawerOpen = menuMaster.isDashboardDrawerOpened;
-  // const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
+  const [selectedItems, setSelectedItems] = useState<string | undefined>('expensas-collapse');
+  const [selectedLevel, setSelectedLevel] = useState<number>(1);
 
   return (
     <>
@@ -27,9 +25,19 @@ const DrawerContent = () => {
           }
         }}
       >
-        <Navigation />
-        {/* {drawerOpen && !matchDownMD && <NavCard />} */}
+        <Navigation selectedItems={selectedItems} setSelectedItems={setSelectedItems} setSelectedLevel={setSelectedLevel} />
       </SimpleBar>
+      <NavGroup
+        key={parameters.id}
+        item={parameters}
+        setSelectedItems={setSelectedItems}
+        setSelectedLevel={setSelectedLevel}
+        selectedLevel={selectedLevel}
+        selectedItems={selectedItems}
+        lastItem={0}
+        remItems={[]}
+        lastItemId=""
+      />
       <NavUser />
     </>
   );

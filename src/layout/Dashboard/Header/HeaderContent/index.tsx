@@ -7,12 +7,12 @@ import { Box, useMediaQuery } from '@mui/material';
 // project import
 // import Search from './Search';
 // import Message from './Message';
-import Profile from './Profile';
+// import Profile from './Profile';
 import Localization from './Localization';
 import Notification from './Notification';
 // import FullScreen from './FullScreen';
 import Customization from './Customization';
-import MobileSection from './MobileSection';
+// import MobileSection from './MobileSection';
 // import MegaMenuSection from './MegaMenuSection';
 
 import useConfig from 'hooks/useConfig';
@@ -45,8 +45,8 @@ const HeaderContent = () => {
       <Notification />
       {/* <Message /> */}
       {/* {!downLG && <FullScreen />} */}
-      {!downLG && <Profile />}
-      {downLG && <MobileSection />}
+      {/* {!downLG && <Profile />} */}
+      {/* {downLG && <MobileSection />} */}
       <Customization />
     </>
   );

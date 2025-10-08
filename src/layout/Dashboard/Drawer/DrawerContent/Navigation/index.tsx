@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState, Dispatch, SetStateAction } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -20,14 +20,18 @@ import { MenuOrientation } from 'types/config';
 
 // ==============================|| DRAWER CONTENT - NAVIGATION ||============================== //
 
-const Navigation = () => {
+interface NavigationProps {
+  selectedItems: string | undefined;
+  setSelectedItems: Dispatch<SetStateAction<string | undefined>>;
+  setSelectedLevel: Dispatch<SetStateAction<number>>;
+}
+
+const Navigation = ({ selectedItems, setSelectedItems, setSelectedLevel }: NavigationProps) => {
   const theme = useTheme();
   const { menuOrientation } = useConfig();
   const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
-  const [selectedItems, setSelectedItems] = useState<string | undefined>('expensas-collapse');
-  const [selectedLevel, setSelectedLevel] = useState<number>(0);
   const [menuItems, setMenuItems] = useState<{ items: NavItemType[] }>({ items: [] });
 
   // let dashboardMenu = MenuFromAPI();
@@ -86,7 +90,7 @@ const Navigation = () => {
             key={item.id}
             setSelectedItems={setSelectedItems}
             setSelectedLevel={setSelectedLevel}
-            selectedLevel={selectedLevel}
+            selectedLevel={1}
             selectedItems={selectedItems}
             lastItem={lastItem!}
             remItems={remItems}

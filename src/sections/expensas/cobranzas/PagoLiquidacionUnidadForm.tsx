@@ -92,6 +92,33 @@ const PagoLiquidacionUnidadForm = ({
     }
   }, [values.monto, values.tipo_pago, montoRestante, setFieldValue]);
 
+  useEffect(() => {
+    // Calcular el interés que se está pagando con el monto ingresado
+    let interesAPagar = 0;
+    const montoIngresado = parseFloat(values.monto) || 0;
+
+    if (interesCalculado > 0 && montoIngresado > 0) {
+      const montoCapital = montoRestante - interesCalculado;
+
+      if (montoIngresado > montoCapital) {
+        // El pago cubre todo el capital y una parte (o todo) del interés.
+        // El interés pagado es lo que sobra después de cubrir el capital.
+        const excedenteParaInteres = montoIngresado - montoCapital;
+        // No se puede pagar más interés del que se ha calculado.
+        interesAPagar = Math.min(excedenteParaInteres, interesCalculado);
+      } else {
+        // El pago no es suficiente para cubrir ni siquiera el capital,
+        // por lo tanto, no se paga nada de interés.
+        interesAPagar = 0;
+      }
+    }
+    // Asegurarse de que el valor no sea negativo y tenga 2 decimales
+    interesAPagar = Math.max(0, parseFloat(interesAPagar.toFixed(2)));
+
+    // Actualizar el campo 'interes' del formulario
+    setFieldValue('interes', interesAPagar);
+  }, [values.monto, interesCalculado, setFieldValue]);
+
   const handleDateChange = (days: number) => {
     const currentDateStr = values.fecha;
     if (!currentDateStr) return;

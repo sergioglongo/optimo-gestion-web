@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -39,6 +39,9 @@ const CustomAppBar = () => {
   const theme = useTheme();
   const { container } = useConfig();
 
+  const [selectedItems, setSelectedItems] = useState<string | undefined>('home');
+  const [, setSelectedLevel] = useState<number>(1);
+
   return (
     <ElevationScroll>
       <AppBar
@@ -56,7 +59,7 @@ const CustomAppBar = () => {
       >
         <Container maxWidth={container ? 'xl' : false}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Navigation />
+            <Navigation selectedItems={selectedItems} setSelectedItems={setSelectedItems} setSelectedLevel={setSelectedLevel} />
           </Box>
         </Container>
       </AppBar>

@@ -205,5 +205,7 @@
   "poor": "pobre",
   "operative-units-types": "Tipos de Unidades",
   "operatives-units": "unidades operativas",
-  "transaction": "Transacccion"
+  "transaction": "Transacccion",
+  "my-account": "mi cuenta",
+  "logout": "cerrar sesión"
 }

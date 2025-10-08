@@ -205,5 +205,7 @@
   "poor": "poor",
   "operative-units-types": "operative units types",
   "operatives-units": "operatives units",
-  "transaction": "Transaction"
+  "transaction": "Transaction",
+  "my-account": "my account",
+  "logout": "logout"
 }
