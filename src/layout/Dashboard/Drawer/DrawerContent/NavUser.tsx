@@ -13,6 +13,8 @@ import packageJson from '../../../../../package.json'; // Importar package.json
 
 // assets
 import { RightOutlined } from '@ant-design/icons';
+import { useIntl } from 'react-intl';
+import { firstCapitalized } from 'utils/textFormat';
 
 const avatarImage = require.context('assets/images/users', true);
 
@@ -43,6 +45,7 @@ const ExpandMore = styled(IconButton, { shouldForwardProp: (prop) => prop !== 't
 const NavUser = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const intl = useIntl();
 
   const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
 
@@ -115,13 +118,13 @@ const NavUser = () => {
           horizontal: 'right'
         }}
       >
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
-        <MenuItem component={Link} to="/apps/profiles/user/personal" onClick={handleClose}>
-          Profile
-        </MenuItem>
         <MenuItem component={Link} to="/apps/profiles/account/basic" onClick={handleClose}>
-          My account
+          {firstCapitalized(intl.formatMessage({ id: 'my-account' }))}
         </MenuItem>
+        <MenuItem component={Link} to="/apps/profiles/user/personal" onClick={handleClose}>
+          {firstCapitalized(intl.formatMessage({ id: 'profile' }))}
+        </MenuItem>
+        <MenuItem onClick={handleLogout}>{firstCapitalized(intl.formatMessage({ id: 'logout' }))}</MenuItem>
       </Menu>
     </Box>
   );

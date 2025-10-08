@@ -100,7 +100,8 @@ const PagoLiquidacionUnidadModal = ({ open, modalToggler, liquidacionUnidadId }:
       .required('El monto es requerido'),
     fecha: Yup.date().required('La fecha es requerida'),
     tipo_pago: Yup.string().oneOf(['impaga', 'parcial', 'total']).required('El tipo de pago es requerido'),
-    comentario: Yup.string().nullable()
+    comentario: Yup.string().nullable(),
+    interes: Yup.number().min(0).nullable()
   });
 
   const initialValues = useMemo(() => {
@@ -109,6 +110,7 @@ const PagoLiquidacionUnidadModal = ({ open, modalToggler, liquidacionUnidadId }:
       persona_id: null, // Se setea por defecto en el form
       cuenta_id: liquidacionUnidad?.UnidadOperativa?.cuenta_id || null,
       monto: montoRestante > 0 ? montoRestante.toFixed(2) : '',
+      interes: 0, // Se calcula dinámicamente en el formulario
       fecha: getTodayDateString(),
       tipo_pago: 'total',
       comentario: ''

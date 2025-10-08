@@ -16,6 +16,7 @@ export interface PagoLiquidacionUnidad {
   liquidacion_unidad_id: number;
   cuenta_id: number;
   monto: number;
+  interes?: number;
   fecha: string; // Format: YYYY-MM-DD
   tipo_pago: TipoPagoLiquidacionUnidad;
   persona_id: number;
