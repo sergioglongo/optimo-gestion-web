@@ -31,7 +31,7 @@ const NavItem = ({ item, level, isParents = false }: Props) => {
 
   const { isDashboardDrawerOpened: drawerOpen, openedItem: openItem } = useAppSelector((state) => state.menu);
 
-  const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+  const downLG = useMediaQuery(theme.breakpoints.down('md'));
 
   const { menuOrientation } = useConfig();
   let itemTarget: LinkTarget = '_self';

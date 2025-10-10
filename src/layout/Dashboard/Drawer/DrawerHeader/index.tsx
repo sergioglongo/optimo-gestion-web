@@ -18,7 +18,7 @@ interface Props {
 
 const DrawerHeader = ({ open }: Props) => {
   const theme = useTheme();
-  const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+  const downLG = useMediaQuery(theme.breakpoints.down('md'));
 
   const { menuOrientation } = useConfig();
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;

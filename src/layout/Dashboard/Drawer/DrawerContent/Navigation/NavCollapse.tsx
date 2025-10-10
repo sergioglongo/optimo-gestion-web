@@ -93,7 +93,7 @@ const NavCollapse = ({ menu, level, parentId, setSelectedItems, selectedItems, s
   const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
   const dispatch = useAppDispatch();
 
-  const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+  const downLG = useMediaQuery(theme.breakpoints.down('md'));
 
   const { menuOrientation } = useConfig();
   const navigation = useNavigate();

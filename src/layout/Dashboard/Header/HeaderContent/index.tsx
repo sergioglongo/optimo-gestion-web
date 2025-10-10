@@ -27,7 +27,7 @@ import ConsorciosSelect from './ConsorciosSelect';
 const HeaderContent = () => {
   const { i18n, menuOrientation } = useConfig();
 
-  const downLG = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'));
+  const downLG = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const localization = useMemo(() => <Localization />, [i18n]);

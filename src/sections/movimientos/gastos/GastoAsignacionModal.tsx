@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { // MUI components
+import {
+  // MUI components
   Box,
   Typography,
   Grid,

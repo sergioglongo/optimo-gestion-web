@@ -26,8 +26,8 @@ import { MenuOrientation } from 'types/config';
 const DashboardLayout = () => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const matchDownXL = useMediaQuery(theme.breakpoints.down('xl'));
-  const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+  const matchDownXL = useMediaQuery(theme.breakpoints.down('lg'));
+  const downLG = useMediaQuery(theme.breakpoints.down('md'));
 
   const { container, miniDrawer, menuOrientation } = useConfig();
 

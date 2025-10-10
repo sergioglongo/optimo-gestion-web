@@ -84,7 +84,7 @@ const NavGroup = ({ item, lastItem, remItems, lastItemId, setSelectedItems, sele
   const { isDashboardDrawerOpened: drawerOpen, openedHorizontalItem: selectedID } = useAppSelector((state) => state.menu);
   const dispatch = useDispatch();
 
-  const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+  const downLG = useMediaQuery(theme.breakpoints.down('md'));
 
   const [anchorEl, setAnchorEl] = useState<VirtualElement | (() => VirtualElement) | null | undefined>(null);
   const [currentItem, setCurrentItem] = useState(item);

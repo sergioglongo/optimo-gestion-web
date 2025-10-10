@@ -1,6 +1,6 @@
 {
   "name": "optimo-gestion-web",
-  "version": "1.2.9",
+  "version": "1.2.10",
   "private": true,
   "dependencies": {
     "@ant-design/colors": "^7.0.0",
@@ -78,6 +78,7 @@
     "react-dropzone": "^14.2.3",
     "react-fast-marquee": "^1.6.0",
     "react-google-recaptcha": "^3.1.0",
+    "react-icons": "^5.5.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-intersection-observer": "^9.5.2",
     "react-intl": "^6.4.4",

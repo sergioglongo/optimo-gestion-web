@@ -23,7 +23,7 @@ const MainDrawer = ({ window }: Props) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
-  const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
+  const matchDownMD = useMediaQuery(theme.breakpoints.down('md'));
 
   // responsive drawer container
   const container = window !== undefined ? () => window().document.body : undefined;

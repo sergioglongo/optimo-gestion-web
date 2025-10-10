@@ -25,7 +25,7 @@ import { MenuOrientation, ThemeMode } from 'types/config';
 const Header = () => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+  const downLG = useMediaQuery(theme.breakpoints.down('md'));
   const { menuOrientation } = useConfig();
 
   const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
@@ -47,7 +47,7 @@ const Header = () => {
           edge="start"
           color="secondary"
           variant="light"
-          sx={{ color: 'text.primary', bgcolor: drawerOpen ? 'transparent' : iconBackColor, ml: { xs: 0, lg: -3 } }}
+          sx={{ color: 'text.primary', bgcolor: drawerOpen ? 'transparent' : iconBackColor, ml: -3 }}
         >
           {!drawerOpen ? <VerticalLeftOutlined style={{ fontSize: '28px' }} /> : <VerticalRightOutlined style={{ fontSize: '28px' }} />}
         </IconButton>
@@ -66,7 +66,7 @@ const Header = () => {
       zIndex: 1200,
       width: isHorizontal
         ? '100%'
-        : { xs: '100%', lg: drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : `calc(100% - ${MINI_DRAWER_WIDTH}px)` }
+        : { xs: '100%', md: drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : `calc(100% - ${MINI_DRAWER_WIDTH}px)` }
     }
   };
 

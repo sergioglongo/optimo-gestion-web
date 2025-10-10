@@ -20,7 +20,7 @@ import { MenuOrientation, ThemeDirection } from 'types/config';
 const ThemeMenuLayout = () => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+  const downLG = useMediaQuery(theme.breakpoints.down('md'));
 
   const { menuOrientation, onChangeMenuOrientation, onChangeMiniDrawer, onChangeDirection } = useConfig();
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;

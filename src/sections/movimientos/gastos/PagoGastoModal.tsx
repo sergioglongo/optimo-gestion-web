@@ -166,7 +166,9 @@ const PagoGastoModal = ({ open, modalToggler, gasto }: PagoGastoModalProps) => {
                     </Typography>
                   </Box>
                   <Box sx={{ textAlign: { sm: 'right' } }}>
-                    <Typography variant="caption" display="block">Monto Adeudado</Typography>
+                    <Typography variant="caption" display="block">
+                      Monto Adeudado
+                    </Typography>
                     <Typography variant="h5" color="primary.main" sx={{ fontWeight: 'bold' }}>
                       ${montoAdeudado.toLocaleString('es-AR')}
                     </Typography>

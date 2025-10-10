@@ -117,6 +117,7 @@ const PagoLiquidacionUnidadForm = ({
 
     // Actualizar el campo 'interes' del formulario
     setFieldValue('interes', interesAPagar);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values.monto, interesCalculado, setFieldValue]);
 
   const handleDateChange = (days: number) => {
