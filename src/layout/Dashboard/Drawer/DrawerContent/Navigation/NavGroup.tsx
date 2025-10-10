@@ -145,15 +145,7 @@ const NavGroup = ({ item, lastItem, remItems, lastItemId, setSelectedItems, sele
   };
 
   const Icon = currentItem?.icon!;
-  const itemIcon = currentItem?.icon ? (
-    <Icon
-      style={{
-        fontSize: 20,
-        stroke: '1.5',
-        color: selectedID === currentItem.id ? theme.palette.primary.main : theme.palette.secondary.dark
-      }}
-    />
-  ) : null;
+  const itemIcon = currentItem?.icon ? <Icon /> : null;
 
   const navCollapse = item.children?.map((menuItem, index) => {
     switch (menuItem.type) {
@@ -299,8 +291,15 @@ const NavGroup = ({ item, lastItem, remItems, lastItemId, setSelectedItems, sele
             aria-describedby={popperId}
           >
             {itemIcon && (
-              <ListItemIcon sx={{ minWidth: 28 }}>
-                {currentItem.id === lastItemId ? <GroupOutlined style={{ fontSize: 20, stroke: '1.5' }} /> : itemIcon}
+              <ListItemIcon
+                sx={{
+                  minWidth: 36,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: selectedID === currentItem.id ? 'primary.main' : 'secondary.dark'
+                }}
+              >
+                {currentItem.id === lastItemId ? <GroupOutlined style={{ fontSize: 24 }} /> : <Icon style={{ fontSize: 24 }} />}
               </ListItemIcon>
             )}
             <ListItemText

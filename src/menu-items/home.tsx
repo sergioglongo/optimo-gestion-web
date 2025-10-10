@@ -3,16 +3,10 @@
 // third-party
 import { FormattedMessage } from 'react-intl';
 
-// assets
-import { HomeOutlined } from '@ant-design/icons';
-
 // type
 import { NavItemType } from 'types/menu';
-
 // icons
-const icons = {
-  HomeOutlined
-};
+import { FaHome } from 'react-icons/fa';
 
 // ==============================|| MENU ITEMS - SAMPLE PAGE ||============================== //
 
@@ -21,7 +15,7 @@ const home: NavItemType = {
   title: <FormattedMessage id="Home" />,
   type: 'group',
   url: '/home',
-  icon: icons.HomeOutlined
+  icon: FaHome
 };
 
 export default home;

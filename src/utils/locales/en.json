@@ -207,5 +207,21 @@
   "operatives-units": "operatives units",
   "transaction": "Transaction",
   "my-account": "my account",
-  "logout": "logout"
+  "logout": "logout",
+  "functional-units": "Functional Units",
+  "sign up": "sign up",
+  "already-have-an-account": "already have an account?",
+  "first-name": "first name",
+  "last-name": "last name",
+  "company": "company",
+  "create-account": "create account",
+  "first-name-required": "first name is required",
+  "last-name-required": "last name is required",
+  "email-required": "email is required",
+  "email-valid": "email must be valid",
+  "reset-email-sended": "email sended.",
+  "resend-code": "resend code",
+  "continue": "continue",
+  "verification-code": "enter verification code",
+  "send-you-email": "we send you on mail"
 }

@@ -35,7 +35,10 @@ const AuthForgotPassword = () => {
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required')
+          email: Yup.string()
+            .email(firstCapitalized(intl.formatMessage({ id: 'email-valid' })))
+            .max(255)
+            .required(firstCapitalized(intl.formatMessage({ id: 'email-required' })))
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           mutate(
@@ -46,7 +49,7 @@ const AuthForgotPassword = () => {
                 setSubmitting(false);
                 openSnackbar({
                   open: true,
-                  message: 'Se ha enviado un correo para reestablecer la contraseña.',
+                  message: firstCapitalized(intl.formatMessage({ id: 'reset-email-sended' })),
                   variant: 'alert',
                   alert: {
                     color: 'success'

@@ -1,5 +1,5 @@
 import { useEffect, useState, SyntheticEvent } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import {
@@ -8,7 +8,7 @@ import {
   FormControl,
   FormHelperText,
   Grid,
-  Link,
+  // Link,
   InputAdornment,
   InputLabel,
   OutlinedInput,
@@ -34,12 +34,15 @@ import { SnackbarProps } from 'types/snackbar';
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import { useIntl } from 'react-intl';
+import { firstCapitalized } from 'utils/textFormat';
 
 // ============================|| REGISTER ||============================ //
 
 const AuthRegister = () => {
   const scriptedRef = useScriptRef();
   const navigate = useNavigate();
+  const intl = useIntl();
 
   const [level, setLevel] = useState<StringColorProps>();
   const [showPassword, setShowPassword] = useState(false);
@@ -61,7 +64,6 @@ const AuthRegister = () => {
   }, []);
 
   const { mutate, isLoading } = useSignUp();
-
   return (
     <>
       <Formik
@@ -74,10 +76,19 @@ const AuthRegister = () => {
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          firstname: Yup.string().max(255).required('First Name is required'),
-          lastname: Yup.string().max(255).required('Last Name is required'),
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          firstname: Yup.string()
+            .max(255)
+            .required(firstCapitalized(intl.formatMessage({ id: 'first-name-required' }))),
+          lastname: Yup.string()
+            .max(255)
+            .required(firstCapitalized(intl.formatMessage({ id: 'last-name-required' }))),
+          email: Yup.string()
+            .email(firstCapitalized(intl.formatMessage({ id: 'email-valid' })))
+            .max(255)
+            .required(firstCapitalized(intl.formatMessage({ id: 'email-required' }))),
+          password: Yup.string()
+            .max(255)
+            .required(firstCapitalized(intl.formatMessage({ id: 'password-required' })))
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           mutate(
@@ -117,7 +128,7 @@ const AuthRegister = () => {
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="firstname-signup">First Name*</InputLabel>
+                  <InputLabel htmlFor="firstname-signup">{firstCapitalized(intl.formatMessage({ id: 'first-name' }))}*</InputLabel>
                   <OutlinedInput
                     id="firstname-login"
                     type="firstname"
@@ -125,7 +136,7 @@ const AuthRegister = () => {
                     name="firstname"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="John"
+                    placeholder={firstCapitalized(intl.formatMessage({ id: 'first-name' }))}
                     fullWidth
                     error={Boolean(touched.firstname && errors.firstname)}
                   />
@@ -138,7 +149,7 @@ const AuthRegister = () => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="lastname-signup">Last Name*</InputLabel>
+                  <InputLabel htmlFor="lastname-signup">{firstCapitalized(intl.formatMessage({ id: 'last-name' }))}*</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.lastname && errors.lastname)}
@@ -148,7 +159,7 @@ const AuthRegister = () => {
                     name="lastname"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Doe"
+                    placeholder={firstCapitalized(intl.formatMessage({ id: 'last-name' }))}
                     inputProps={{}}
                   />
                 </Stack>
@@ -160,7 +171,7 @@ const AuthRegister = () => {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="company-signup">Company</InputLabel>
+                  <InputLabel htmlFor="company-signup">{firstCapitalized(intl.formatMessage({ id: 'company' }))}</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.company && errors.company)}
@@ -181,7 +192,7 @@ const AuthRegister = () => {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-signup">Email Address*</InputLabel>
+                  <InputLabel htmlFor="email-signup">{firstCapitalized(intl.formatMessage({ id: 'email-address' }))}*</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
@@ -191,7 +202,7 @@ const AuthRegister = () => {
                     name="email"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="demo@company.com"
+                    placeholder={firstCapitalized(intl.formatMessage({ id: 'email-address' }))}
                     inputProps={{}}
                   />
                 </Stack>
@@ -203,7 +214,7 @@ const AuthRegister = () => {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-signup">Password</InputLabel>
+                  <InputLabel htmlFor="password-signup">{firstCapitalized(intl.formatMessage({ id: 'password' }))}</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.password && errors.password)}
@@ -251,7 +262,7 @@ const AuthRegister = () => {
                   </Grid>
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <Typography variant="body2">
                   By Signing up, you agree to our &nbsp;
                   <Link variant="subtitle2" component={RouterLink} to="#">
@@ -262,7 +273,7 @@ const AuthRegister = () => {
                     Privacy Policy
                   </Link>
                 </Typography>
-              </Grid>
+              </Grid> */}
               {errors.submit && (
                 <Grid item xs={12}>
                   <FormHelperText error>{errors.submit}</FormHelperText>
@@ -271,7 +282,7 @@ const AuthRegister = () => {
               <Grid item xs={12}>
                 <AnimateButton>
                   <Button disableElevation disabled={isLoading} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Create Account
+                    {firstCapitalized(intl.formatMessage({ id: 'create-account' }))}
                   </Button>
                 </AnimateButton>
               </Grid>

@@ -1,74 +1,43 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import {
-  BuildOutlined,
-  CalendarOutlined,
-  CustomerServiceOutlined,
-  FileTextOutlined,
-  MessageOutlined,
-  ShoppingCartOutlined,
-  UserOutlined,
-  AppstoreAddOutlined,
-  PlusOutlined,
-  LinkOutlined,
-  BankOutlined,
-  TeamOutlined,
-  HomeOutlined,
-  DashboardOutlined, // Added DashboardOutlined
-  AppstoreOutlined,
-  ApartmentOutlined,
-  DatabaseOutlined
-} from '@ant-design/icons';
+import { HomeOutlined } from '@ant-design/icons';
 
 // type
 import { NavItemType } from 'types/menu';
-
-// icons
-const icons = {
-  BuildOutlined,
-  CalendarOutlined,
-  CustomerServiceOutlined,
-  MessageOutlined,
-  ShoppingCartOutlined,
-  UserOutlined,
-  AppstoreAddOutlined,
-  FileTextOutlined,
-  PlusOutlined,
-  LinkOutlined,
-  DashboardOutlined,
-  DatabaseOutlined,
-  ApartmentOutlined // Added DashboardOutlined
-};
-
+import { FaLandmark } from 'react-icons/fa';
+import { FaRegBuilding } from 'react-icons/fa';
+import { FaUsers } from 'react-icons/fa';
+import { FaCity } from 'react-icons/fa';
+import { FaLayerGroup } from 'react-icons/fa';
 // ==============================|| MENU ITEMS - APPLICATIONS ||============================== //
 
 const consorcioColapsable: NavItemType = {
   id: 'consorcio-collapse',
   title: <FormattedMessage id="Consorcio" />,
   type: 'collapse',
-  icon: icons.DatabaseOutlined, // Using AppstoreAddOutlined as the main icon
+  icon: FaCity, // Using AppstoreAddOutlined as the main icon
   children: [
     {
       id: 'cuentas',
       title: <FormattedMessage id="Cuentas" />,
       type: 'item',
       url: '/consorcio/cuentas',
-      icon: BankOutlined
+      icon: FaLandmark
     },
     {
       id: 'personas',
       title: <FormattedMessage id="Personas" />,
       type: 'item',
       url: '/consorcio/personas',
-      icon: TeamOutlined
+      icon: FaUsers
     },
     {
       id: 'unidades',
-      title: <FormattedMessage id="unidades-operativas" />,
+      title: <FormattedMessage id="functional-units" />,
       type: 'item',
       url: '/consorcio/unidades', // Corrected URL to match MainRoutes
-      icon: HomeOutlined
+      icon: FaRegBuilding
     },
     {
       id: 'tipounidades',
@@ -82,7 +51,7 @@ const consorcioColapsable: NavItemType = {
       title: <FormattedMessage id="Categories" />,
       type: 'item',
       url: '/consorcio/rubros', // Corrected URL to match MainRoutes
-      icon: AppstoreOutlined
+      icon: FaLayerGroup
     }
   ]
 };

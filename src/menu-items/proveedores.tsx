@@ -1,67 +1,30 @@
 import { FormattedMessage } from 'react-intl';
-
-// assets
-import {
-  BuildOutlined,
-  CalendarOutlined,
-  CustomerServiceOutlined,
-  FileTextOutlined,
-  MessageOutlined,
-  ShoppingCartOutlined,
-  UserOutlined,
-  AppstoreAddOutlined,
-  PlusOutlined,
-  LinkOutlined,
-  ToolOutlined,
-  DollarOutlined,
-  DashboardOutlined, // Added DashboardOutlined
-  ApartmentOutlined,
-  DatabaseOutlined
-} from '@ant-design/icons';
+import { FaDolly } from 'react-icons/fa';
 
 // type
 import { NavItemType } from 'types/menu';
-
-// icons
-const icons = {
-  BuildOutlined,
-  CalendarOutlined,
-  CustomerServiceOutlined,
-  MessageOutlined,
-  ShoppingCartOutlined,
-  UserOutlined,
-  AppstoreAddOutlined,
-  FileTextOutlined,
-  PlusOutlined,
-  LinkOutlined,
-  DashboardOutlined,
-  DatabaseOutlined,
-  ApartmentOutlined,
-  ToolOutlined,
-  DollarOutlined // Added DashboardOutlined
-};
-
+import { FaDonate } from 'react-icons/fa';
 // ==============================|| MENU ITEMS - APPLICATIONS ||============================== //
 
 const proveedoresColapsable: NavItemType = {
   id: 'proveedores-collapse',
   title: <FormattedMessage id="Providers" />,
   type: 'collapse',
-  icon: icons.ToolOutlined, // Using AppstoreAddOutlined as the main icon
+  icon: FaDolly, // Using AppstoreAddOutlined as the main icon
   children: [
     {
       id: 'proveedores',
       title: <FormattedMessage id="Providers" />,
       type: 'item',
       url: '/proveedores/listado',
-      icon: ToolOutlined
+      icon: FaDolly
     },
     {
       id: 'pagos',
       title: <FormattedMessage id="Payments" />,
       type: 'item',
       url: '/proveedores/pagos',
-      icon: DollarOutlined
+      icon: FaDonate
     }
   ]
 };

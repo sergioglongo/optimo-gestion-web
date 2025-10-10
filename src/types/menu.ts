@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode, ComponentType } from 'react';
 
 // material-ui
+import { IconType } from 'react-icons';
 import { ChipProps } from '@mui/material';
 
 import { GenericCardProps } from './root';
@@ -31,7 +32,7 @@ export type NavItemType = {
   disabled?: boolean;
   external?: boolean;
   isDropdown?: boolean;
-  icon?: GenericCardProps['iconPrimary'] | string;
+  icon?: GenericCardProps['iconPrimary'] | string | ComponentType<any> | IconType;
   id?: string;
   search?: string;
   target?: boolean;

@@ -7,18 +7,21 @@ import { Grid, Stack, Typography } from '@mui/material';
 import useAuth from 'hooks/useAuth';
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthRegister from 'sections/auth/register/AuthRegister';
+import { firstCapitalized } from 'utils/textFormat';
+import { useIntl } from 'react-intl';
 
 // ================================|| REGISTER ||================================ //
 
 const Register = () => {
   const { isLoggedIn } = useAuth();
+  const intl = useIntl();
 
   return (
     <AuthWrapper>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
-            <Typography variant="h3">Sign up</Typography>
+            <Typography variant="h3">{firstCapitalized(intl.formatMessage({ id: 'sign up' }))}</Typography>
             <Typography
               component={Link}
               to={isLoggedIn ? '/auth/login' : '/login'}
@@ -26,7 +29,7 @@ const Register = () => {
               sx={{ textDecoration: 'none' }}
               color="primary"
             >
-              Already have an account?
+              {firstCapitalized(intl.formatMessage({ id: 'already-have-an-account' }))}
             </Typography>
           </Stack>
         </Grid>
