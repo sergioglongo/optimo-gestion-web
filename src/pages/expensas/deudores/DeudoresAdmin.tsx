@@ -36,7 +36,7 @@ const DeudoresAdmin = () => {
 
   const [pagoModalOpen, setPagoModalOpen] = useState(false);
   const [deudaAPagar, setDeudaAPagar] = useState<DeudorLiquidacionUnidad | null>(null);
-  const [unidadOperativaId, setUnidadOperativaId] = useState<number | null>(null);
+  const [unidadFuncionalId, setunidadFuncionalId] = useState<number | null>(null);
 
   const handleRefresh = () => {
     if (selectedConsorcio?.id) {
@@ -46,7 +46,7 @@ const DeudoresAdmin = () => {
 
   const handleOpenPagoModal = (deuda: DeudorLiquidacionUnidad, idUnidad: number) => {
     setDeudaAPagar(deuda);
-    setUnidadOperativaId(idUnidad);
+    setunidadFuncionalId(idUnidad);
     setPagoModalOpen(true);
   };
 
@@ -107,7 +107,7 @@ const DeudoresAdmin = () => {
       >
         <DeudoresList data={deudoresData} columns={columns} isLoading={isLoading} onPay={handleOpenPagoModal} />
       </MainCard>
-      <DeudorPagoModal open={pagoModalOpen} modalToggler={setPagoModalOpen} deuda={deudaAPagar} unidadOperativaId={unidadOperativaId} />
+      <DeudorPagoModal open={pagoModalOpen} modalToggler={setPagoModalOpen} deuda={deudaAPagar} unidadFuncionalId={unidadFuncionalId} />
     </>
   );
 };

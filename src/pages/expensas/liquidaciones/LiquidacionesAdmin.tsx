@@ -19,7 +19,7 @@ import AlertLiquidacionDelete from 'sections/expensas/liquidaciones/AlertLiquida
 // API hooks
 import useConsorcio from 'hooks/useConsorcio';
 import { useGetLiquidaciones } from 'services/api/liquidacionapi';
-import { useGetUnidadesOperativas } from 'services/api/unidadOperativaapi';
+import { useGetUnidadesFuncionals } from 'services/api/unidadFuncionalapi';
 import { useGenerateLiquidacionesUnidades } from 'services/api/liquidacionUnidadapi';
 
 // types
@@ -79,7 +79,7 @@ const LiquidacionesAdmin = () => {
     { consorcio_id: selectedConsorcio?.id || 0 },
     { enabled: !!selectedConsorcio?.id }
   );
-  const { data: activeUnidadesData } = useGetUnidadesOperativas(
+  const { data: activeUnidadesData } = useGetUnidadesFuncionals(
     { consorcio_id: selectedConsorcio?.id || 0, activas: true },
     { enabled: !!selectedConsorcio?.id }
   );

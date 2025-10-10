@@ -108,7 +108,7 @@ const PagoLiquidacionUnidadModal = ({ open, modalToggler, liquidacionUnidadId }:
     return {
       liquidacion_unidad_id: liquidacionUnidad?.id || null,
       persona_id: null, // Se setea por defecto en el form
-      cuenta_id: liquidacionUnidad?.UnidadOperativa?.cuenta_id || null,
+      cuenta_id: liquidacionUnidad?.unidadFuncional?.cuenta_id || null,
       monto: montoRestante > 0 ? montoRestante.toFixed(2) : '',
       interes: 0, // Se calcula dinámicamente en el formulario
       fecha: getTodayDateString(),

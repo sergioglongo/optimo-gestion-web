@@ -25,7 +25,7 @@ import { useGetGastos } from 'services/api/gastosapi';
 
 // types
 import { Gasto, GastoEstado, GastoTipo } from 'types/gasto';
-import { UnidadOperativa } from 'types/unidadOperativa';
+import { unidadFuncional } from 'types/unidadFuncional';
 import { truncateString } from 'utils/textFormat';
 
 // assets
@@ -97,7 +97,7 @@ const GastosAdmin = () => {
         header: 'Asignado a',
         accessorKey: 'unidad_asignada',
         cell: ({ getValue }) => {
-          const unidad = getValue() as UnidadOperativa | undefined;
+          const unidad = getValue() as unidadFuncional | undefined;
           return <Typography textAlign={'center'}>{unidad ? unidad.etiqueta : 'Consorcio'}</Typography>;
         }
       },

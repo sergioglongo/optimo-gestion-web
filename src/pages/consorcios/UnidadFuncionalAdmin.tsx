@@ -11,10 +11,9 @@ import { useIntl } from 'react-intl'; // Import useIntl
 // project import
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
-import UnidadOperativaModal from 'sections/consorcio/unidadOperativa/UnidadOperativaModal';
-import AlertUnidadOperativaDelete from 'sections/consorcio/unidadOperativa/AlertUnidadOperativaDelete'; // This seems to have a placeholder implementation
-import UnidadDetalleDrawer from 'sections/consorcio/unidadOperativa/UnidadDetalleDrawer';
-import PersonaUnidadModal from 'sections/consorcio/unidadOperativa/PersonaUnidadModal';
+import UnidadFuncionalModal from 'sections/consorcio/unidadFuncional/UnidadFuncionalModal';
+import AlertunidadFuncionalDelete from 'sections/consorcio/unidadFuncional/AlertUnidadFuncionalDelete';
+import UnidadDetalleDrawer from 'sections/consorcio/unidadFuncional/UnidadDetalleDrawer';
 
 // API hooks
 import useAuth from 'hooks/useAuth';
@@ -22,32 +21,33 @@ import useConsorcio from 'hooks/useConsorcio';
 
 // assets
 import { EditOutlined, EyeOutlined, DeleteOutlined, UsergroupAddOutlined } from '@ant-design/icons';
-import { useGetUnidadesOperativas } from 'services/api/unidadOperativaapi'; // Assuming a new API hook
-import { useGetTiposUnidadOperativa } from 'services/api/tipoUnidadOperativaapi';
-import UnidadOperativaList from 'sections/consorcio/unidadOperativa/UnidadOperativaList';
-import { UnidadOperativa, LiquidarA } from 'types/unidadOperativa'; // Using new types
+import { useGetUnidadesFuncionals } from 'services/api/unidadFuncionalapi';
+import { useGetTiposunidadFuncional } from 'services/api/tipoUnidadFuncionalapi'; // Assuming a new API hook
+import UnidadFuncionalList from 'sections/consorcio/unidadFuncional/UnidadFuncionalList';
+import { unidadFuncional, LiquidarA } from 'types/unidadFuncional'; // Using new types
+import PersonaUnidadModal from 'sections/consorcio/unidadFuncional/PersonaUnidadModal';
 
-// ==============================|| UNIDAD OPERATIVA - ADMIN ||============================== //
+// ==============================|| UNIDAD FUNCIONAL - ADMIN ||============================== //
 
-const UnidadOperativaAdmin = () => {
+const UnidadFuncionalAdmin = () => {
   const theme = useTheme();
   const { user, token } = useAuth();
   const { selectedConsorcio } = useConsorcio();
   const intl = useIntl(); // Initialize useIntl
 
-  const { data: unidadesOperativasData, isLoading } = useGetUnidadesOperativas(
+  const { data: unidadesFuncionalsData, isLoading } = useGetUnidadesFuncionals(
     { consorcio_id: selectedConsorcio?.id || 0 },
     {
       enabled: !!user?.id && !!token
     }
   );
 
-  const { data: tiposUnidadOperativaData, isLoading: isLoadingTipos } = useGetTiposUnidadOperativa(selectedConsorcio?.id || 0, {
+  const { data: tiposunidadFuncionalData, isLoading: isLoadingTipos } = useGetTiposunidadFuncional(selectedConsorcio?.id || 0, {
     enabled: !!selectedConsorcio?.id
   });
 
-  const [unidadOperativaModal, setUnidadOperativaModal] = useState<boolean>(false);
-  const [selectedUnidadOperativa, setSelectedUnidadOperativa] = useState<UnidadOperativa | null>(null);
+  const [unidadFuncionalModal, setunidadFuncionalModal] = useState<boolean>(false);
+  const [selectedunidadFuncional, setSelectedunidadFuncional] = useState<unidadFuncional | null>(null);
   const [personaUnidadModalOpen, setPersonaUnidadModalOpen] = useState<boolean>(false);
   const [unidadToDelete, setUnidadToDelete] = useState<{ id: number; etiqueta: string } | null>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -56,19 +56,19 @@ const UnidadOperativaAdmin = () => {
     setUnidadToDelete(null);
   };
 
-  // New function to handle modal close and reset selectedUnidadOperativa
-  const handleUnidadOperativaModalClose = () => {
-    setUnidadOperativaModal(false);
-    setSelectedUnidadOperativa(null);
+  // New function to handle modal close and reset selectedunidadFuncional
+  const handleunidadFuncionalModalClose = () => {
+    setunidadFuncionalModal(false);
+    setSelectedunidadFuncional(null);
   };
 
   // Handler for the new modal
   const handlePersonaUnidadModalClose = () => {
     setPersonaUnidadModalOpen(false);
-    setSelectedUnidadOperativa(null);
+    setSelectedunidadFuncional(null);
   };
 
-  const columns = useMemo<ColumnDef<UnidadOperativa>[]>(
+  const columns = useMemo<ColumnDef<unidadFuncional>[]>(
     () => [
       {
         header: 'ID',
@@ -90,10 +90,10 @@ const UnidadOperativaAdmin = () => {
       },
       {
         header: 'Tipo',
-        accessorKey: 'tipo_unidad_operativa_id',
+        accessorKey: 'tipo_unidad_funcional_id',
         cell: (cell) => {
           const tipoId = cell.getValue() as number;
-          const tipo = tiposUnidadOperativaData?.find((t) => t.id === tipoId);
+          const tipo = tiposunidadFuncionalData?.find((t) => t.id === tipoId);
           const label = tipo ? tipo.nombre : 'No asignado';
           return <Chip label={label} size="small" variant="light" />;
         }
@@ -155,7 +155,7 @@ const UnidadOperativaAdmin = () => {
                   color="secondary"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
-                    setSelectedUnidadOperativa(row.original);
+                    setSelectedunidadFuncional(row.original);
                     setDrawerOpen(true);
                   }}
                 >
@@ -167,8 +167,8 @@ const UnidadOperativaAdmin = () => {
                   color="primary"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
-                    setSelectedUnidadOperativa(row.original);
-                    setUnidadOperativaModal(true);
+                    setSelectedunidadFuncional(row.original);
+                    setunidadFuncionalModal(true);
                   }}
                 >
                   <EditOutlined />
@@ -190,7 +190,7 @@ const UnidadOperativaAdmin = () => {
                   color="success"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
-                    setSelectedUnidadOperativa(row.original);
+                    setSelectedunidadFuncional(row.original);
                     setPersonaUnidadModalOpen(true);
                   }}
                 >
@@ -203,44 +203,44 @@ const UnidadOperativaAdmin = () => {
       }
     ],
     // eslint-disable-next-line
-    [theme, intl, tiposUnidadOperativaData] // Add intl to dependency array
+    [theme, intl, tiposunidadFuncionalData] // Add intl to dependency array
   );
 
   if (isLoading || isLoadingTipos) return <EmptyReactTable />;
 
   return (
     <>
-      <UnidadOperativaList
+      <UnidadFuncionalList
         {...{
-          data: unidadesOperativasData || [],
+          data: unidadesFuncionalsData || [],
           columns,
           initialSorting: [{ id: 'etiqueta', desc: false }],
           initialColumnVisibility: { id: false },
           showSelection: false,
           modalToggler: () => {
-            setUnidadOperativaModal(true);
-            setSelectedUnidadOperativa(null);
+            setunidadFuncionalModal(true);
+            setSelectedunidadFuncional(null);
           }
         }}
       />
       {unidadToDelete && (
-        <AlertUnidadOperativaDelete
+        <AlertunidadFuncionalDelete
           id={unidadToDelete.id}
           title={unidadToDelete.etiqueta}
           open={!!unidadToDelete}
           handleClose={handleCloseDelete}
         />
       )}
-      <UnidadOperativaModal
-        open={unidadOperativaModal}
-        modalToggler={handleUnidadOperativaModalClose}
-        unidadOperativa={selectedUnidadOperativa}
-        tiposUnidadOperativa={tiposUnidadOperativaData || []}
+      <UnidadFuncionalModal
+        open={unidadFuncionalModal}
+        modalToggler={handleunidadFuncionalModalClose}
+        unidadFuncional={selectedunidadFuncional}
+        tiposunidadFuncional={tiposunidadFuncionalData || []}
       />
-      <PersonaUnidadModal open={personaUnidadModalOpen} onClose={handlePersonaUnidadModalClose} unidadOperativa={selectedUnidadOperativa} />
-      <UnidadDetalleDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} unidad={selectedUnidadOperativa} />
+      <PersonaUnidadModal open={personaUnidadModalOpen} onClose={handlePersonaUnidadModalClose} unidadFuncional={selectedunidadFuncional} />
+      <UnidadDetalleDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} unidad={selectedunidadFuncional} />
     </>
   );
 };
 
-export default UnidadOperativaAdmin;
+export default UnidadFuncionalAdmin;

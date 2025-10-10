@@ -1,12 +1,12 @@
 import { Divider, Typography } from '@mui/material';
 import ViewDrawer from 'components/drawers/ViewDrawer';
-import { UnidadOperativa } from 'types/unidadOperativa';
+import { unidadFuncional } from 'types/unidadFuncional';
 import UnidadPersonasAsociadas from './UnidadPersonasAsociadas';
 
 interface UnidadDetalleDrawerProps {
   open: boolean;
   onClose: () => void;
-  unidad: UnidadOperativa | null;
+  unidad: unidadFuncional | null;
 }
 
 const UnidadDetalleDrawer = ({ open, onClose, unidad }: UnidadDetalleDrawerProps) => {

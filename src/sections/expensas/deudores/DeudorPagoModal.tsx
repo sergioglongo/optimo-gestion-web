@@ -29,10 +29,10 @@ interface DeudorPagoModalProps {
   open: boolean;
   modalToggler: (open: boolean) => void;
   deuda: DeudorLiquidacionUnidad | null;
-  unidadOperativaId: number | null;
+  unidadFuncionalId: number | null;
 }
 
-const DeudorPagoModal = ({ open, modalToggler, deuda, unidadOperativaId }: DeudorPagoModalProps) => {
+const DeudorPagoModal = ({ open, modalToggler, deuda, unidadFuncionalId }: DeudorPagoModalProps) => {
   const { user } = useAuth();
   const { selectedConsorcio } = useConsorcio();
   const { enqueueSnackbar } = useSnackbar();
@@ -97,14 +97,14 @@ const DeudorPagoModal = ({ open, modalToggler, deuda, unidadOperativaId }: Deudo
   });
 
   const renderContent = () => {
-    if (!deuda || !unidadOperativaId) {
+    if (!deuda || !unidadFuncionalId) {
       return (
         <Box sx={{ p: 2, textAlign: 'center' }}>
           <Typography color="error">No se pudieron cargar los datos de la deuda.</Typography>
         </Box>
       );
     }
-    return <DeudorPagoForm deuda={deuda} montoRestante={montoRestante} unidadOperativaId={unidadOperativaId} />;
+    return <DeudorPagoForm deuda={deuda} montoRestante={montoRestante} unidadFuncionalId={unidadFuncionalId} />;
   };
 
   return (

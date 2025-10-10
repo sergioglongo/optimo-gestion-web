@@ -3,31 +3,31 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 
 // project import
-import { TipoUnidadOperativa } from 'types/unidadOperativa';
+import { TipounidadFuncional } from 'types/unidadFuncional';
 import Modal from 'components/Modal/ModalBasico';
-import TipoUnidadOperativaForm from './TipoUnidadOperativaForm';
-import { useCreateTipoUnidadOperativa, useUpdateTipoUnidadOperativa } from 'services/api/tipoUnidadOperativaapi';
+import TipounidadFuncionalForm from './TipoUnidadFuncionalForm';
+import { useCreateTipounidadFuncional, useUpdateTipounidadFuncional } from 'services/api/tipoUnidadFuncionalapi';
 import { RootState } from 'store';
-// ==============================|| TIPO UNIDAD OPERATIVA MODAL ||============================== //
-interface TiposUnidadOperativaModalProps {
+// ==============================|| TIPO UNIDAD FUNCIONAL MODAL ||============================== //
+interface TiposunidadFuncionalModalProps {
   open: boolean;
   modalToggler: (open: boolean) => void;
-  tipo: TipoUnidadOperativa | null;
+  tipo: TipounidadFuncional | null;
 }
 
-const TiposUnidadOperativaModal = ({ open, modalToggler, tipo }: TiposUnidadOperativaModalProps) => {
+const TiposunidadFuncionalModal = ({ open, modalToggler, tipo }: TiposunidadFuncionalModalProps) => {
   const isCreating = !tipo;
   const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
 
-  const createTipoMutation = useCreateTipoUnidadOperativa();
-  const updateTipoMutation = useUpdateTipoUnidadOperativa();
+  const createTipoMutation = useCreateTipounidadFuncional();
+  const updateTipoMutation = useUpdateTipounidadFuncional();
 
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().max(255).required('El nombre del tipo es requerido'),
     indice: Yup.number().moreThan(0, 'El índice debe ser mayor que 0').required('El índice es requerido')
   });
 
-  const formik = useFormik<Omit<TipoUnidadOperativa, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
+  const formik = useFormik<Omit<TipounidadFuncional, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
     initialValues: {
       id: tipo?.id,
       nombre: tipo?.nombre || '',
@@ -48,7 +48,7 @@ const TiposUnidadOperativaModal = ({ open, modalToggler, tipo }: TiposUnidadOper
           const { id, ...dataToCreate } = finalValues;
           await createTipoMutation.mutateAsync(dataToCreate);
         } else {
-          await updateTipoMutation.mutateAsync({ tipoUnidadOperativaId: tipo!.id, tipoUnidadOperativaData: finalValues });
+          await updateTipoMutation.mutateAsync({ tipounidadFuncionalId: tipo!.id, tipounidadFuncionalData: finalValues });
         }
         resetForm();
         modalToggler(false);
@@ -77,11 +77,11 @@ const TiposUnidadOperativaModal = ({ open, modalToggler, tipo }: TiposUnidadOper
     >
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate>
-          <TipoUnidadOperativaForm />
+          <TipounidadFuncionalForm />
         </Form>
       </FormikProvider>
     </Modal>
   );
 };
 
-export default TiposUnidadOperativaModal;
+export default TiposunidadFuncionalModal;

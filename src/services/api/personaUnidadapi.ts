@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from 'services/api/apiClient';
 
 // types
-import { PersonaUnidad, TipoPersonaUnidad } from 'types/unidadOperativa';
+import { PersonaUnidad, TipoPersonaUnidad } from 'types/unidadFuncional';
 
 // API response types
 interface ApiSuccessResponse {
@@ -39,7 +39,7 @@ export const personaUnidadQueryKeys = {
 // API functions
 export interface FetchFilters {
   persona_id?: number;
-  unidad_operativa_id?: number;
+  unidad_funcional_id?: number;
   tipo?: TipoPersonaUnidad;
 }
 
@@ -72,8 +72,8 @@ export const deletePersonaUnidad = async (id: number) => {
 
 // React Query hooks
 /**
- * Hook para obtener las asociaciones entre personas y unidades operativas.
- * Permite filtrar por `persona_id`, `unidad_operativa_id` y `tipo`. Los filtros se pueden combinar.
+ * Hook para obtener las asociaciones entre personas y unidades funcionals.
+ * Permite filtrar por `persona_id`, `unidad_funcional_id` y `tipo`. Los filtros se pueden combinar.
  *
  * @example
  * // Obtener todas las unidades asociadas a una persona específica.
@@ -81,16 +81,16 @@ export const deletePersonaUnidad = async (id: number) => {
  * useGetPersonaUnidades({ persona_id: 1 });
  *
  * @example
- * // Obtener todas las personas asociadas a una unidad operativa específica.
- * // GET /api/persona-unidades?unidad_operativa_id=5
- * useGetPersonaUnidades({ unidad_operativa_id: 5 });
+ * // Obtener todas las personas asociadas a una unidad funcional específica.
+ * // GET /api/persona-unidades?unidad_funcional_id=5
+ * useGetPersonaUnidades({ unidad_funcional_id: 5 });
  *
  * @example
  * // Obtener una asociación específica, por ejemplo, para verificar un rol.
- * // GET /api/persona-unidades?persona_id=1&unidad_operativa_id=5&tipo=propietario
- * useGetPersonaUnidades({ persona_id: 1, unidad_operativa_id: 5, tipo: 'propietario' });
+ * // GET /api/persona-unidades?persona_id=1&unidad_funcional_id=5&tipo=propietario
+ * useGetPersonaUnidades({ persona_id: 1, unidad_funcional_id: 5, tipo: 'propietario' });
  *
- * @param filters - Objeto con los filtros a aplicar (`persona_id`, `unidad_operativa_id`, `tipo`).
+ * @param filters - Objeto con los filtros a aplicar (`persona_id`, `unidad_funcional_id`, `tipo`).
  * @param options - Opciones adicionales para el query, como `enabled`.
  */
 export function useGetPersonaUnidades(filters: FetchFilters, options?: { enabled?: boolean }) {

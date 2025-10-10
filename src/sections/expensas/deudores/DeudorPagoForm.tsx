@@ -18,10 +18,10 @@ import { MinusOutlined, PlusOutlined, UserAddOutlined } from '@ant-design/icons'
 interface DeudorPagoFormProps {
   deuda: DeudorLiquidacionUnidad;
   montoRestante: number;
-  unidadOperativaId: number;
+  unidadFuncionalId: number;
 }
 
-const DeudorPagoForm = ({ deuda, montoRestante, unidadOperativaId }: DeudorPagoFormProps) => {
+const DeudorPagoForm = ({ deuda, montoRestante, unidadFuncionalId }: DeudorPagoFormProps) => {
   const { errors, touched, getFieldProps, values, setFieldValue, handleBlur } = useFormikContext<FormikValues>();
   const { selectedConsorcio } = useConsorcio();
   const [personaModalOpen, setPersonaModalOpen] = useState(false);
@@ -29,8 +29,8 @@ const DeudorPagoForm = ({ deuda, montoRestante, unidadOperativaId }: DeudorPagoF
   const { data: cuentas, isLoading: isLoadingCuentas } = useGetCuentas(selectedConsorcio?.id || 0, { enabled: !!selectedConsorcio });
 
   const { data: personaUnidades = [], isLoading: isLoadingPersonas } = useGetPersonaUnidades(
-    { unidad_operativa_id: unidadOperativaId },
-    { enabled: !!unidadOperativaId }
+    { unidad_funcional_id: unidadFuncionalId },
+    { enabled: !!unidadFuncionalId }
   );
 
   const [personasExternas, setPersonasExternas] = useState<Persona[]>([]);

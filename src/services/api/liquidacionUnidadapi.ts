@@ -6,7 +6,7 @@ import { LiquidacionUnidad, LiquidacionUnidadCreateData, LiquidacionUnidadDeudor
 
 export interface FetchLiquidacionUnidadesFilters {
   liquidacion_id?: number | string;
-  unidad_operativa_id?: number | string;
+  unidad_funcional_id?: number | string;
   persona_id?: number | string;
   consorcio_id: number | undefined;
   estado?: LiquidacionUnidadEstado;
@@ -43,7 +43,7 @@ export const useGetLiquidacionUnidades = (
   options?: Omit<UseQueryOptions<LiquidacionUnidad[]>, 'queryKey' | 'queryFn'>
 ) => {
   return useQuery<LiquidacionUnidad[]>(['liquidacionUnidades', filters], () => getLiquidacionUnidades(filters), {
-    enabled: !!(filters.liquidacion_id || filters.unidad_operativa_id || filters.persona_id),
+    enabled: !!(filters.liquidacion_id || filters.unidad_funcional_id || filters.persona_id),
     ...options
   });
 };
