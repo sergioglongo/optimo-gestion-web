@@ -13,18 +13,18 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useFormikContext } from 'formik';
-import { UnidadOperativa, LiquidarA, TipoUnidadOperativa } from 'types/unidadOperativa'; // Assuming new types
+import { unidadFuncional, LiquidarA, TipounidadFuncional } from 'types/unidadFuncional'; // Assuming new types
 import { useState, useEffect } from 'react';
 import useConsorcio from 'hooks/useConsorcio';
 import { useGetCuentas } from 'services/api/cuentasapi';
 
-interface UnidadOperativaFormProps {
-  tiposUnidadOperativa: TipoUnidadOperativa[];
+interface unidadFuncionalFormProps {
+  tiposunidadFuncional: TipounidadFuncional[];
 }
 
-const UnidadOperativaForm = ({ tiposUnidadOperativa }: UnidadOperativaFormProps) => {
+const UnidadFuncionalForm = ({ tiposunidadFuncional }: unidadFuncionalFormProps) => {
   const theme = useTheme();
-  const { errors, touched, getFieldProps, setFieldValue, values } = useFormikContext<UnidadOperativa>();
+  const { errors, touched, getFieldProps, setFieldValue, values } = useFormikContext<unidadFuncional>();
   const { selectedConsorcio } = useConsorcio();
 
   const [isEtiquetaManual, setIsEtiquetaManual] = useState(false);
@@ -53,7 +53,7 @@ const UnidadOperativaForm = ({ tiposUnidadOperativa }: UnidadOperativaFormProps)
       }
     } else if (values.prorrateo_automatico) {
       // Si el prorrateo automático está activado, buscar el índice del tipo de unidad y asignarlo.
-      const tipoSeleccionado = tiposUnidadOperativa.find((tipo) => tipo.id === values.tipo_unidad_operativa_id);
+      const tipoSeleccionado = tiposunidadFuncional.find((tipo) => tipo.id === values.tipo_unidad_funcional_id);
       const nuevoProrrateo = tipoSeleccionado ? tipoSeleccionado.indice : 0;
       if (values.prorrateo !== nuevoProrrateo) {
         setFieldValue('prorrateo', nuevoProrrateo);
@@ -116,13 +116,13 @@ const UnidadOperativaForm = ({ tiposUnidadOperativa }: UnidadOperativaFormProps)
         <TextField
           select
           fullWidth
-          label="Tipo de Unidad Operativa"
-          {...getFieldProps('tipo_unidad_operativa_id')}
-          error={Boolean(touched.tipo_unidad_operativa_id && errors.tipo_unidad_operativa_id)}
-          helperText={touched.tipo_unidad_operativa_id && errors.tipo_unidad_operativa_id}
+          label="Tipo de Unidad Funcional"
+          {...getFieldProps('tipo_unidad_funcional_id')}
+          error={Boolean(touched.tipo_unidad_funcional_id && errors.tipo_unidad_funcional_id)}
+          helperText={touched.tipo_unidad_funcional_id && errors.tipo_unidad_funcional_id}
           InputLabelProps={{ shrink: true }}
         >
-          {tiposUnidadOperativa.map((option) => (
+          {tiposunidadFuncional.map((option) => (
             <MenuItem key={option.id} value={option.id}>
               {option.nombre}
             </MenuItem>
@@ -301,4 +301,4 @@ const UnidadOperativaForm = ({ tiposUnidadOperativa }: UnidadOperativaFormProps)
   );
 };
 
-export default UnidadOperativaForm;
+export default UnidadFuncionalForm;

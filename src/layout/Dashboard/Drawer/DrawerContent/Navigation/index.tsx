@@ -30,7 +30,7 @@ const Navigation = ({ selectedItems, setSelectedItems, setSelectedLevel }: Navig
   const theme = useTheme();
   const { menuOrientation } = useConfig();
   const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
-  const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+  const downLG = useMediaQuery(theme.breakpoints.down('md'));
 
   const [menuItems, setMenuItems] = useState<{ items: NavItemType[] }>({ items: [] });
 

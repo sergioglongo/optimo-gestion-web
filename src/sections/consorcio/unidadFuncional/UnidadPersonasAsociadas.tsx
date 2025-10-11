@@ -2,15 +2,15 @@ import { Box, Chip, CircularProgress, Stack, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import MainCard from 'components/MainCard';
 import { useGetPersonaUnidades } from 'services/api/personaUnidadapi';
-import { TipoPersonaUnidad, UnidadOperativa } from 'types/unidadOperativa';
+import { TipoPersonaUnidad, unidadFuncional } from 'types/unidadFuncional';
 
 interface Props {
-  unidad: UnidadOperativa | null;
+  unidad: unidadFuncional | null;
 }
 
 const UnidadPersonasAsociadas = ({ unidad }: Props) => {
   const theme = useTheme();
-  const { data: personaUnidades, isLoading } = useGetPersonaUnidades({ unidad_operativa_id: unidad?.id }, { enabled: !!unidad?.id });
+  const { data: personaUnidades, isLoading } = useGetPersonaUnidades({ unidad_funcional_id: unidad?.id }, { enabled: !!unidad?.id });
 
   const getColorForTipo = (tipo: TipoPersonaUnidad) => {
     if (tipo === 'propietario') return 'primary';

@@ -1,7 +1,7 @@
 import { LiquidacionGasto } from './liquidacion';
 import { Proveedor } from './proveedor';
 import { Rubro } from './rubro';
-import { UnidadOperativa } from './unidadOperativa';
+import { unidadFuncional } from './unidadFuncional';
 
 export type GastoEstado = 'impago' | 'parcial' | 'pagado';
 export type GastoTipo = 'ordinario' | 'extraordinario';
@@ -23,21 +23,21 @@ export interface Gasto {
   fecha_carga: string | null; // Format: YYYY-MM-DD
   tipo_gasto: GastoTipo;
   periodo_aplica: string | null; // Format: YYYY-MM-DD
-  unidad_asignada?: UnidadOperativa;
+  unidad_asignada?: unidadFuncional;
   LiquidacionGastos?: LiquidacionGasto[];
 }
 
 export type GastoCreateData = Omit<Gasto, 'id'>;
 
 /**
- * Interfaz que representa la asignación de un gasto a una unidad operativa.
+ * Interfaz que representa la asignación de un gasto a una unidad funcional.
  * Mapeada desde la tabla `gastos_asignaciones`.
  */
 export interface GastoAsignacion {
   id: number;
   gasto_id: number;
   consorcio_id: number;
-  unidad_operativa_id: number;
+  unidad_funcional_id: number;
 }
 
 export type GastoAsignacionCreateData = Omit<GastoAsignacion, 'id'>;

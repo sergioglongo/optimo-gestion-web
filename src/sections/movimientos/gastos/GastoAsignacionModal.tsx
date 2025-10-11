@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { // MUI components
+import {
+  // MUI components
   Box,
   Typography,
   Grid,
@@ -18,8 +19,8 @@ import { // MUI components
 import Modal from 'components/Modal/ModalBasico';
 import useConsorcio from 'hooks/useConsorcio';
 import { Gasto } from 'types/gasto';
-import { UnidadOperativa } from 'types/unidadOperativa';
-import { useGetUnidadesOperativas } from 'services/api/unidadOperativaapi';
+import { unidadFuncional } from 'types/unidadFuncional';
+import { useGetUnidadesFuncionals } from 'services/api/unidadFuncionalapi';
 import { useGetGastoAsignaciones, useAssignGastoToUnidades } from 'services/api/gastosapi';
 
 // assets
@@ -33,11 +34,11 @@ interface GastoAsignacionModalProps {
 
 const GastoAsignacionModal = ({ open, modalToggler, gasto }: GastoAsignacionModalProps) => {
   const { selectedConsorcio } = useConsorcio();
-  const [unidadParaAgregar, setUnidadParaAgregar] = useState<UnidadOperativa | null>(null);
-  const [unidadesSeleccionadas, setUnidadesSeleccionadas] = useState<UnidadOperativa[]>([]);
+  const [unidadParaAgregar, setUnidadParaAgregar] = useState<unidadFuncional | null>(null);
+  const [unidadesSeleccionadas, setUnidadesSeleccionadas] = useState<unidadFuncional[]>([]);
 
   // ==============================|| API & STATE ||============================== //
-  const { data: allUnidades = [], isLoading: isLoadingUnidades } = useGetUnidadesOperativas(
+  const { data: allUnidades = [], isLoading: isLoadingUnidades } = useGetUnidadesFuncionals(
     { consorcio_id: selectedConsorcio?.id || 0 },
     {
       enabled: !!selectedConsorcio?.id && open && !!gasto
@@ -53,7 +54,7 @@ const GastoAsignacionModal = ({ open, modalToggler, gasto }: GastoAsignacionModa
 
   useEffect(() => {
     if (existingAssignments.length > 0 && allUnidades.length > 0) {
-      const asignadas = allUnidades.filter((u) => existingAssignments.some((a) => a.unidad_operativa_id === u.id));
+      const asignadas = allUnidades.filter((u) => existingAssignments.some((a) => a.unidad_funcional_id === u.id));
       setUnidadesSeleccionadas(asignadas);
     } else {
       setUnidadesSeleccionadas([]);
@@ -95,7 +96,7 @@ const GastoAsignacionModal = ({ open, modalToggler, gasto }: GastoAsignacionModa
     );
   };
 
-  const getUnidadLabel = (unidad: UnidadOperativa) => {
+  const getUnidadLabel = (unidad: unidadFuncional) => {
     const personName = unidad.inquilino
       ? ` - ${unidad.inquilino.nombre} ${unidad.inquilino.apellido}`
       : unidad.propietario
@@ -140,7 +141,7 @@ const GastoAsignacionModal = ({ open, modalToggler, gasto }: GastoAsignacionModa
             <Grid container spacing={1} alignItems="center" sx={{ mb: 2 }}>
               <Grid item xs>
                 <Autocomplete
-                  id="unidad-operativa-autocomplete"
+                  id="unidad-funcional-autocomplete"
                   options={availableUnidades}
                   getOptionLabel={getUnidadLabel}
                   value={unidadParaAgregar}
@@ -151,7 +152,7 @@ const GastoAsignacionModal = ({ open, modalToggler, gasto }: GastoAsignacionModa
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="Buscar Unidad Operativa"
+                      label="Buscar Unidad Funcional"
                       InputProps={{
                         ...params.InputProps,
                         endAdornment: (

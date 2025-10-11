@@ -257,7 +257,9 @@ const LiquidacionDetalle = () => {
                                     <TableRow key={gasto.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                       <TableCell>
                                         <Tooltip
-                                          title={gasto.Proveedor?.nombre ? `${gasto.Proveedor.nombre} - ${gasto.descripcion}` : gasto.descripcion}
+                                          title={
+                                            gasto.Proveedor?.nombre ? `${gasto.Proveedor.nombre} - ${gasto.descripcion}` : gasto.descripcion
+                                          }
                                           placement="top"
                                         >
                                           <Typography>{truncateString(gasto.descripcion, 30)}</Typography>

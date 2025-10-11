@@ -12,12 +12,15 @@ import AnimateButton from 'components/@extended/AnimateButton';
 
 // types
 import { ThemeMode } from 'types/config';
+import { firstCapitalized } from 'utils/textFormat';
+import { useIntl } from 'react-intl';
 
 // ============================|| STATIC - CODE VERIFICATION ||============================ //
 
 const AuthCodeVerification = () => {
   const theme = useTheme();
   const [otp, setOtp] = useState<string>();
+  const intl = useIntl();
 
   const borderColor = theme.palette.mode === ThemeMode.DARK ? theme.palette.grey[200] : theme.palette.grey[300];
 
@@ -49,7 +52,7 @@ const AuthCodeVerification = () => {
       <Grid item xs={12}>
         <AnimateButton>
           <Button disableElevation fullWidth size="large" type="submit" variant="contained">
-            Continue
+            {firstCapitalized(intl.formatMessage({ id: 'continue' }))}
           </Button>
         </AnimateButton>
       </Grid>
@@ -57,7 +60,7 @@ const AuthCodeVerification = () => {
         <Stack direction="row" justifyContent="space-between" alignItems="baseline">
           <Typography>Did not receive the email? Check your spam filter, or</Typography>
           <Typography variant="body1" sx={{ minWidth: 85, ml: 2, textDecoration: 'none', cursor: 'pointer' }} color="primary">
-            Resend code
+            {firstCapitalized(intl.formatMessage({ id: 'resend-code' }))}
           </Typography>
         </Stack>
       </Grid>

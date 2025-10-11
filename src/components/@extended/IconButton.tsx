@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode, ReactChild, ReactFragment, ReactPortal, Ref } from 'react';
+import { forwardRef, ReactNode, ReactChild, ReactFragment, ReactPortal, Ref, ReactElement } from 'react';
 
 // material-ui
 import MuiIconButton from '@mui/material/IconButton';
@@ -153,7 +153,7 @@ const IconButtonStyle = styled(MuiIconButton, { shouldForwardProp: (prop) => pro
 export interface Props extends IconButtonProps {
   shape?: IconButtonShapeProps;
   variant?: ButtonVariantProps;
-  children: ReactNode;
+  children: ReactNode | ReactElement;
   tooltip?: boolean | ReactChild | ReactFragment | ReactPortal;
 }
 

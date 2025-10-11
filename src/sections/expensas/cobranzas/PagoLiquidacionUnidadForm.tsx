@@ -35,8 +35,8 @@ const PagoLiquidacionUnidadForm = ({
   const { data: cuentas, isLoading: isLoadingCuentas } = useGetCuentas(selectedConsorcio?.id || 0, { enabled: !!selectedConsorcio });
 
   const { data: personaUnidades = [], isLoading: isLoadingPersonas } = useGetPersonaUnidades(
-    { unidad_operativa_id: liquidacionUnidad.unidad_operativa_id },
-    { enabled: !!liquidacionUnidad.unidad_operativa_id }
+    { unidad_funcional_id: liquidacionUnidad.unidad_funcional_id },
+    { enabled: !!liquidacionUnidad.unidad_funcional_id }
   );
 
   const [personasExternas, setPersonasExternas] = useState<Persona[]>([]);
@@ -117,6 +117,7 @@ const PagoLiquidacionUnidadForm = ({
 
     // Actualizar el campo 'interes' del formulario
     setFieldValue('interes', interesAPagar);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values.monto, interesCalculado, setFieldValue]);
 
   const handleDateChange = (days: number) => {
@@ -155,7 +156,7 @@ const PagoLiquidacionUnidadForm = ({
         >
           <Box>
             <Typography variant="h6" sx={{ mb: { xs: 1, sm: 0 } }}>
-              Pagando Expensa Nro: {liquidacionUnidad.id} (Unidad: {liquidacionUnidad.UnidadOperativa?.etiqueta})
+              Pagando Expensa Nro: {liquidacionUnidad.id} (Unidad: {liquidacionUnidad.unidadFuncional?.etiqueta})
             </Typography>
             <Typography variant="body1" color="textSecondary">
               Monto Original: $

@@ -178,7 +178,7 @@ export const gastoAsignacionQueryKeys = {
 // API functions for GastoAsignacion
 export interface FetchGastoAsignacionesFilters {
   gasto_id?: number;
-  unidad_operativa_id?: number;
+  unidad_funcional_id?: number;
 }
 
 export interface GastoAsignacionBulkData {
@@ -206,7 +206,7 @@ export const createGastoAsignacion = async (gastoAsignacionData: GastoAsignacion
 };
 
 /**
- * Asigna un gasto a múltiples unidades operativas.
+ * Asigna un gasto a múltiples unidades funcionals.
  * Crea nuevas asignaciones y/o actualiza las existentes para un gasto determinado.
  * @param data - Contiene el gasto_id, consorcio_id y un array de unidades_ids.
  */

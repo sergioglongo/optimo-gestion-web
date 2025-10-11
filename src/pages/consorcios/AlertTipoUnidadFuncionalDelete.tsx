@@ -1,19 +1,19 @@
-import { useDeleteTipoUnidadOperativa } from 'services/api/tipoUnidadOperativaapi';
+import { useDeleteTipounidadFuncional } from 'services/api/tipoUnidadFuncionalapi';
 
 // material-ui
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-// ==============================|| TIPO UNIDAD OPERATIVA - DELETION ||============================== //
+// ==============================|| TIPO UNIDAD FUNCIONAL - DELETION ||============================== //
 
-interface AlertTipoUnidadOperativaDeleteProps {
+interface AlertTipounidadFuncionalDeleteProps {
   id: number;
   title: string;
   open: boolean;
   handleClose: () => void;
 }
 
-const AlertTipoUnidadOperativaDelete = ({ id, title, open, handleClose }: AlertTipoUnidadOperativaDeleteProps) => {
-  const deleteTipoMutation = useDeleteTipoUnidadOperativa();
+const AlertTipounidadFuncionalDelete = ({ id, title, open, handleClose }: AlertTipounidadFuncionalDeleteProps) => {
+  const deleteTipoMutation = useDeleteTipounidadFuncional();
 
   const handleDelete = async () => {
     try {
@@ -40,4 +40,4 @@ const AlertTipoUnidadOperativaDelete = ({ id, title, open, handleClose }: AlertT
   );
 };
 
-export default AlertTipoUnidadOperativaDelete;
+export default AlertTipounidadFuncionalDelete;

@@ -22,17 +22,17 @@ interface Props {
   data: LiquidacionUnidadDeudores[];
   columns: ColumnDef<LiquidacionUnidadDeudores>[];
   isLoading: boolean;
-  onPay: (deuda: DeudorLiquidacionUnidad, unidadOperativaId: number) => void;
+  onPay: (deuda: DeudorLiquidacionUnidad, unidadFuncionalId: number) => void;
 }
 
 const DeudoresSubComponent = ({
   data,
   onPay,
-  unidadOperativaId
+  unidadFuncionalId
 }: {
   data: DeudorLiquidacionUnidad[];
-  onPay: (deuda: DeudorLiquidacionUnidad, unidadOperativaId: number) => void;
-  unidadOperativaId: number;
+  onPay: (deuda: DeudorLiquidacionUnidad, unidadFuncionalId: number) => void;
+  unidadFuncionalId: number;
 }) => {
   return (
     <Box sx={{ p: 2, bgcolor: '#e3f2fd' }}>
@@ -82,7 +82,7 @@ const DeudoresSubComponent = ({
                   <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
                     <Tooltip title="Registrar Pago">
                       <span>
-                        <IconButton color="success" onClick={() => onPay(liquidacion, unidadOperativaId)}>
+                        <IconButton color="success" onClick={() => onPay(liquidacion, unidadFuncionalId)}>
                           <DollarOutlined />
                         </IconButton>
                       </span>
@@ -109,7 +109,7 @@ function DeudoresList({ data, columns, isLoading, onPay }: Props) {
     <TablaAdminCollapse
       data={data}
       columns={columns}
-      renderSubComponent={(row) => <DeudoresSubComponent data={row.LiquidacionUnidads} onPay={onPay} unidadOperativaId={row.id} />}
+      renderSubComponent={(row) => <DeudoresSubComponent data={row.LiquidacionUnidads} onPay={onPay} unidadFuncionalId={row.id} />}
       csvFilename="lista-deudores.csv"
       searchPlaceholder={`Buscar en ${data.length} deudores...`}
     />

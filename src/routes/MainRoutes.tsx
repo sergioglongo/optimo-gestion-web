@@ -123,13 +123,13 @@ const CuentasPage = Loadable(lazy(() => import('pages/consorcios/cuentasAdmin'))
 const ProveedoresPage = Loadable(lazy(() => import('pages/proveedores/proveedoresAdmin')));
 const PersonasPage = Loadable(lazy(() => import('pages/consorcios/personasAdmin')));
 const PagosProveedoresPage = Loadable(lazy(() => import('pages/proveedores/proveedoresPagosAdmin')));
-const UnidadOperativaPage = Loadable(lazy(() => import('pages/consorcios/unidadOperativaAdmin'))); // New import for UnidadOperativaAdmin
-const TipoUnidadesPage = Loadable(lazy(() => import('pages/consorcios/tiposUnidadOperativaAdmin'))); // New import for UnidadOperativaAdmin
-const RubrosPage = Loadable(lazy(() => import('pages/consorcios/rubrosAdmin'))); // New import for UnidadOperativaAdmin
-const GastosPage = Loadable(lazy(() => import('pages/movimientos/gastos/gastosAdmin'))); // New import for UnidadOperativaAdmin
-const TransaccionesPage = Loadable(lazy(() => import('pages/movimientos/transacciones/TransaccionesAdmin'))); // New import for UnidadOperativaAdmin
-const LiquidacionesPage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionesAdmin'))); // New import for UnidadOperativaAdmin
-const LiquidacionNuevaPage = Loadable(lazy(() => import('sections/expensas/liquidaciones/nueva/LiquidacionNueva')));
+const UnidadFuncionalPage = Loadable(lazy(() => import('pages/consorcios/UnidadFuncionalAdmin'))); // New import for unidadFuncionalAdmin
+const TipoUnidadesPage = Loadable(lazy(() => import('pages/consorcios/TiposUnidadFuncionalAdmin'))); // New import for unidadFuncionalAdmin
+const RubrosPage = Loadable(lazy(() => import('pages/consorcios/rubrosAdmin'))); // New import for unidadFuncionalAdmin
+const GastosPage = Loadable(lazy(() => import('pages/movimientos/gastos/gastosAdmin'))); // New import for unidadFuncionalAdmin
+const TransaccionesPage = Loadable(lazy(() => import('pages/movimientos/transacciones/TransaccionesAdmin'))); // New import for unidadFuncionalAdmin
+const LiquidacionesPage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionesAdmin'))); // New import for unidadFuncionalAdmin
+const LiquidacionNuevaPage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionNueva')));
 const LiquidacionDetallePage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionDetalle')));
 const CobranzasPage = Loadable(lazy(() => import('pages/expensas/cobranzas/CobranzasAdmin')));
 const DeudoresPage = Loadable(lazy(() => import('pages/expensas/deudores/DeudoresAdmin')));
@@ -534,7 +534,7 @@ const MainRoutes = {
             },
             {
               path: 'unidades',
-              element: <UnidadOperativaPage />
+              element: <UnidadFuncionalPage />
             },
             {
               path: 'tipo-unidades',

@@ -1,15 +1,18 @@
 // material-ui
 import { Grid, Stack, Typography } from '@mui/material';
+import { useIntl } from 'react-intl';
 
 // project import
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthCodeVerification from 'sections/auth/auth-forms/AuthCodeVerification';
+import { firstCapitalized } from 'utils/textFormat';
 
 // ================================|| CODE VERIFICATION ||================================ //
 
 const CodeVerification = () => {
   let email = window.localStorage.getItem('email');
   let finalArr: string[] = [];
+  const intl = useIntl();
 
   if (email) {
     let emailSplit = email.split('');
@@ -24,8 +27,8 @@ const CodeVerification = () => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Stack spacing={1}>
-            <Typography variant="h3">Enter Verification Code</Typography>
-            <Typography color="secondary">We send you on mail.</Typography>
+            <Typography variant="h3">{firstCapitalized(intl.formatMessage({ id: 'verification-code' }))}</Typography>
+            <Typography color="secondary">{firstCapitalized(intl.formatMessage({ id: 'send-you-email' }))}</Typography>
           </Stack>
         </Grid>
         <Grid item xs={12}>

@@ -23,7 +23,7 @@ import { MenuOrientation, ThemeDirection } from 'types/config';
 const ThemeLayout = () => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+  const downLG = useMediaQuery(theme.breakpoints.down('md'));
 
   const { isDashboardDrawerOpened: drawerOpen } = useAppSelector((state) => state.menu);
   const { miniDrawer, themeDirection, onChangeDirection, onChangeMiniDrawer, menuOrientation } = useConfig();

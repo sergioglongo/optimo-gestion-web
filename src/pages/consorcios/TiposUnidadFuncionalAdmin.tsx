@@ -11,41 +11,41 @@ import { useIntl } from 'react-intl';
 // project import
 import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
-import TiposUnidadOperativaModal from './TiposUnidadOperativaModal';
-import AlertTipoUnidadOperativaDelete from './AlertTipoUnidadOperativaDelete';
-import TiposUnidadOperativaList from './TiposUnidadOperativaList';
+import TiposunidadFuncionalModal from './TiposUnidadFuncionalModal';
+import AlertTipounidadFuncionalDelete from './AlertTipoUnidadFuncionalDelete';
+import TiposunidadFuncionalList from './TiposUnidadFuncionalList';
 
 // API hooks
 import useAuth from 'hooks/useAuth';
 import useConsorcio from 'hooks/useConsorcio';
-import { useGetTiposUnidadOperativa } from 'services/api/tipoUnidadOperativaapi';
+import { useGetTiposunidadFuncional } from 'services/api/tipoUnidadFuncionalapi';
 
 // assets
 import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 
 // types
-import { TipoUnidadOperativa } from 'types/unidadOperativa';
+import { TipounidadFuncional } from 'types/unidadFuncional';
 
-// ==============================|| TIPOS UNIDAD OPERATIVA - ADMIN ||============================== //
+// ==============================|| TIPOS UNIDAD FUNCIONAL - ADMIN ||============================== //
 
-const TiposUnidadOperativaAdmin = () => {
+const TiposunidadFuncionalAdmin = () => {
   const theme = useTheme();
   const { user, token } = useAuth();
   const { selectedConsorcio } = useConsorcio();
   const intl = useIntl();
 
-  const { data: tiposData, isLoading } = useGetTiposUnidadOperativa(selectedConsorcio?.id || 0, { enabled: !!user?.id && !!token });
+  const { data: tiposData, isLoading } = useGetTiposunidadFuncional(selectedConsorcio?.id || 0, { enabled: !!user?.id && !!token });
 
   const [open, setOpen] = useState<boolean>(false);
   const [tipoModal, setTipoModal] = useState<boolean>(false);
-  const [selectedTipo, setSelectedTipo] = useState<TipoUnidadOperativa | null>(null);
+  const [selectedTipo, setSelectedTipo] = useState<TipounidadFuncional | null>(null);
   const [tipoDeleteId, setTipoDeleteId] = useState<any>('');
 
   const handleClose = () => {
     setOpen(!open);
   };
 
-  const columns = useMemo<ColumnDef<TipoUnidadOperativa>[]>(
+  const columns = useMemo<ColumnDef<TipounidadFuncional>[]>(
     () => [
       {
         header: 'ID',
@@ -129,7 +129,7 @@ const TiposUnidadOperativaAdmin = () => {
 
   return (
     <>
-      <TiposUnidadOperativaList
+      <TiposunidadFuncionalList
         {...{
           data: tiposData || [],
           columns,
@@ -142,10 +142,10 @@ const TiposUnidadOperativaAdmin = () => {
           }
         }}
       />
-      <AlertTipoUnidadOperativaDelete id={tipoDeleteId.id} title={String(tipoDeleteId.nombre)} open={open} handleClose={handleClose} />
-      <TiposUnidadOperativaModal open={tipoModal} modalToggler={setTipoModal} tipo={selectedTipo} />
+      <AlertTipounidadFuncionalDelete id={tipoDeleteId.id} title={String(tipoDeleteId.nombre)} open={open} handleClose={handleClose} />
+      <TiposunidadFuncionalModal open={tipoModal} modalToggler={setTipoModal} tipo={selectedTipo} />
     </>
   );
 };
 
-export default TiposUnidadOperativaAdmin;
+export default TiposunidadFuncionalAdmin;

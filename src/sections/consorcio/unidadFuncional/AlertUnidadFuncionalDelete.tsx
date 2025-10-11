@@ -1,7 +1,7 @@
 import ConfirmationDialog from 'components/Modal/ConfirmationDialog';
-// TODO: Implement and import useDeleteUnidadOperativa from 'services/api/unidadOperativaapi'
+// TODO: Implement and import useDeleteunidadFuncional from 'services/api/unidadFuncionalapi'
 
-// ==============================|| ALERT - UNIDAD OPERATIVA DELETE ||============================== //
+// ==============================|| ALERT - UNIDAD FUNCIONAL DELETE ||============================== //
 
 interface AlertDeleteProps {
   id: string | number;
@@ -10,14 +10,14 @@ interface AlertDeleteProps {
   handleClose: (deleted: boolean) => void;
 }
 
-const AlertUnidadOperativaDelete = ({ id, title, open, handleClose }: AlertDeleteProps) => {
-  // const deleteUnidadOperativaMutation = useDeleteUnidadOperativa();
+const AlertunidadFuncionalDelete = ({ id, title, open, handleClose }: AlertDeleteProps) => {
+  // const deleteunidadFuncionalMutation = useDeleteunidadFuncional();
 
   const handleDelete = async () => {
     if (!id) return;
     try {
-      // await deleteUnidadOperativaMutation.mutateAsync(id);
-      console.log(`(Placeholder) Deleting unidad operativa with id: ${id}`);
+      // await deleteunidadFuncionalMutation.mutateAsync(id);
+      console.log(`(Placeholder) Deleting unidad funcional with id: ${id}`);
       handleClose(true); // Indicate success
     } catch (error) {
       console.error(error);
@@ -31,7 +31,7 @@ const AlertUnidadOperativaDelete = ({ id, title, open, handleClose }: AlertDelet
       onClose={() => handleClose(false)}
       onConfirm={handleDelete}
       title="¿Estás seguro de eliminar?"
-      content={`Estás a punto de eliminar la unidad operativa "${title}". Esta acción es irreversible.`}
+      content={`Estás a punto de eliminar la unidad funcional "${title}". Esta acción es irreversible.`}
       confirmText="Delete"
       cancelText="Cancel"
       confirmColor="error"
@@ -39,4 +39,4 @@ const AlertUnidadOperativaDelete = ({ id, title, open, handleClose }: AlertDelet
   );
 };
 
-export default AlertUnidadOperativaDelete;
+export default AlertunidadFuncionalDelete;

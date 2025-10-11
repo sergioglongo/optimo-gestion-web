@@ -32,7 +32,7 @@ const PersonaUnidadesDrawer = ({ persona }: Props) => {
         {personaUnidades.map((pu, index) => (
           <Chip
             key={pu.id}
-            label={`${pu.UnidadOperativa?.etiqueta || `Unidad ID: ${pu.unidad_operativa_id}`} (${pu.tipo})`}
+            label={`${pu.unidadFuncional?.etiqueta || `Unidad ID: ${pu.unidad_funcional_id}`} (${pu.tipo})`}
             variant="light"
             color={chipColors[index % chipColors.length]}
           />

@@ -84,6 +84,8 @@ const Breadcrumbs = ({
   }
 
   useEffect(() => {
+    setMain(undefined);
+    setItem(undefined);
     navigation?.items?.map((menu: NavItemType) => {
       if (menu.type && menu.type === 'group') {
         if (menu?.url && menu.url === customLocation) {
@@ -95,7 +97,8 @@ const Breadcrumbs = ({
       }
       return false;
     });
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customLocation]);
 
   // set active item state
   const getCollapse = (menu: NavItemType) => {
@@ -260,6 +263,11 @@ const Breadcrumbs = ({
         </MainCard>
       );
     }
+  }
+
+  // Si el breadcrumb no es personalizado y no encontró un item en el menú, no renderizar nada.
+  if (!item && !custom) {
+    return null;
   }
 
   return breadcrumbContent;

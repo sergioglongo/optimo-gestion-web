@@ -124,8 +124,8 @@ const CobranzasAdmin = () => {
       },
       {
         header: 'Unidad',
-        accessorKey: 'UnidadOperativa.etiqueta',
-        cell: ({ row }) => <Typography>{row.original.UnidadOperativa?.etiqueta || '-'}</Typography>
+        accessorKey: 'unidadFuncional.etiqueta',
+        cell: ({ row }) => <Typography>{row.original.unidadFuncional?.etiqueta || '-'}</Typography>
       },
       {
         header: 'Vencimiento',

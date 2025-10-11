@@ -4,7 +4,7 @@ import { Consorcio } from './consorcio';
 import { Gasto, GastoEstado } from './gasto';
 import { PagoLiquidacionUnidad } from './pagoLiquidacionUnidad';
 import { Persona } from './persona';
-import { UnidadOperativa } from './unidadOperativa';
+import { unidadFuncional } from './unidadFuncional';
 
 /**
  * Interfaz que representa la estructura de una Liquidacion,
@@ -52,13 +52,13 @@ export interface LiquidacionGasto {
 export type LiquidacionUnidadEstado = 'pendiente' | 'adeuda' | 'pagada' | 'vencida';
 
 /**
- * Interfaz que representa la liquidación para una unidad operativa específica.
+ * Interfaz que representa la liquidación para una unidad funcional específica.
  * Mapeada desde la tabla `liquidaciones_unidades`.
  */
 export interface LiquidacionUnidad {
   id: number;
   liquidacion_id: number;
-  unidad_operativa_id: number;
+  unidad_funcional_id: number;
   monto: number;
   prorrateo: number;
   saldado?: number; // Monto ya pagado de esta liquidación
@@ -67,7 +67,7 @@ export interface LiquidacionUnidad {
   fecha: string; // Format: YYYY-MM-DD
   interes: number;
   persona_id?: number;
-  UnidadOperativa?: UnidadOperativa;
+  unidadFuncional?: unidadFuncional;
   Liquidacion?: Liquidacion;
   Pagos: PagoLiquidacionUnidad[];
 }
@@ -90,7 +90,7 @@ export interface DeudorLiquidacion {
 export interface DeudorLiquidacionUnidad {
   id: number;
   liquidacion_id: number;
-  unidad_operativa_id: number;
+  unidad_funcional_id: number;
   prorrateo: string; // "25.00"
   monto: string; // "36492.69"
   monto_final?: number;
@@ -108,10 +108,10 @@ export interface DeudorLiquidacionUnidad {
 
 /**
  * Interfaz principal para la estructura de un deudor.
- * Combina datos de UnidadOperativa con sus liquidaciones adeudadas.
+ * Combina datos de unidadFuncional con sus liquidaciones adeudadas.
  */
-export interface LiquidacionUnidadDeudores extends Omit<UnidadOperativa, 'id'> {
-  id: number; // El ID de la UnidadOperativa
+export interface LiquidacionUnidadDeudores extends Omit<unidadFuncional, 'id'> {
+  id: number; // El ID de la unidadFuncional
   LiquidacionUnidads: DeudorLiquidacionUnidad[];
   total_deuda: number;
   Deudor: Persona | null; // Podría ser un tipo Persona si está definido

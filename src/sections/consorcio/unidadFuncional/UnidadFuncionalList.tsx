@@ -4,29 +4,29 @@ import { ColumnDef, SortingState } from '@tanstack/react-table';
 import TablaAdmin from 'components/tables/TablaAdmin';
 
 // types
-import { UnidadOperativa } from 'types/unidadOperativa'; // Assuming new type
+import { unidadFuncional } from 'types/unidadFuncional'; // Assuming new type
 
 interface Props {
-  data: UnidadOperativa[];
-  columns: ColumnDef<UnidadOperativa>[];
+  data: unidadFuncional[];
+  columns: ColumnDef<unidadFuncional>[];
   modalToggler: () => void;
   initialColumnVisibility?: Record<string, boolean>;
   initialSorting?: SortingState;
   showSelection?: boolean;
 }
 
-// ==============================|| UNIDAD OPERATIVA - LIST ||============================== //
+// ==============================|| UNIDAD FUNCIONAL - LIST ||============================== //
 
-function UnidadOperativaList({ data, columns, modalToggler, initialColumnVisibility, initialSorting, showSelection }: Props) {
+function unidadFuncionalList({ data, columns, modalToggler, initialColumnVisibility, initialSorting, showSelection }: Props) {
   return (
     <TablaAdmin
       data={data}
       columns={columns}
       onAdd={modalToggler}
-      addLabel="Nueva Unidad Operativa"
-      csvFilename="unidades-operativas-lista.csv"
-      searchPlaceholder={`Buscar en ${data.length} unidades operativas...`}
-      title="Gestiona las unidades operativas del consorcio"
+      addLabel="Nueva Unidad Funcional"
+      csvFilename="unidades-funcionals-lista.csv"
+      searchPlaceholder={`Buscar en ${data.length} unidades funcionals...`}
+      title="Gestiona las unidades funcionals del consorcio"
       initialColumnVisibility={initialColumnVisibility}
       initialSorting={initialSorting}
       showSelection={showSelection}
@@ -35,4 +35,4 @@ function UnidadOperativaList({ data, columns, modalToggler, initialColumnVisibil
   );
 }
 
-export default UnidadOperativaList;
+export default unidadFuncionalList;

@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 
 // project import
-import { UnidadOperativa, PersonaUnidad, TipoPersonaUnidad } from 'types/unidadOperativa';
+import { unidadFuncional, PersonaUnidad, TipoPersonaUnidad } from 'types/unidadFuncional';
 import { Persona } from 'types/persona';
 import { useGetPersonas } from 'services/api/personasapi';
 import { useGetPersonaUnidades, useCreatePersonaUnidad, useDeletePersonaUnidad } from 'services/api/personaUnidadapi';
@@ -26,11 +26,11 @@ import useConsorcio from 'hooks/useConsorcio';
 import { DeleteOutlined } from '@ant-design/icons';
 
 interface PersonaUnidadFormProps {
-  unidadOperativa: UnidadOperativa;
+  unidadFuncional: unidadFuncional;
   open?: boolean;
 }
 
-const PersonaUnidadForm = ({ unidadOperativa, open = true }: PersonaUnidadFormProps) => {
+const PersonaUnidadForm = ({ unidadFuncional, open = true }: PersonaUnidadFormProps) => {
   const { selectedConsorcio } = useConsorcio();
   const theme = useTheme();
 
@@ -41,8 +41,8 @@ const PersonaUnidadForm = ({ unidadOperativa, open = true }: PersonaUnidadFormPr
   });
 
   const { data: existingAssociations = [], isLoading: isLoadingAssociations } = useGetPersonaUnidades(
-    { unidad_operativa_id: unidadOperativa?.id },
-    { enabled: !!unidadOperativa?.id && open }
+    { unidad_funcional_id: unidadFuncional?.id },
+    { enabled: !!unidadFuncional?.id && open }
   );
 
   const createAssociation = useCreatePersonaUnidad();
@@ -55,12 +55,12 @@ const PersonaUnidadForm = ({ unidadOperativa, open = true }: PersonaUnidadFormPr
   // ==============================|| HANDLERS ||============================== //
 
   const handleAdd = async (persona: Persona | null, tipo: TipoPersonaUnidad) => {
-    if (!persona || !unidadOperativa) return;
+    if (!persona || !unidadFuncional) return;
 
     try {
       await createAssociation.mutateAsync({
         persona_id: persona.id,
-        unidad_operativa_id: unidadOperativa.id,
+        unidad_funcional_id: unidadFuncional.id,
         tipo
       });
 
@@ -191,7 +191,7 @@ const PersonaUnidadForm = ({ unidadOperativa, open = true }: PersonaUnidadFormPr
               {renderAssociationSection('Propietario', 'propietario', selectedPropietario, setSelectedPropietario)}
             </Grid>
           </Box>
-          {unidadOperativa.alquilada && (
+          {unidadFuncional.alquilada && (
             <Box border={1} borderColor="lightgray" borderRadius={1} padding={0} width={'100%'} marginTop={1}>
               <Grid item xs={12}>
                 {renderAssociationSection('Inquilino', 'inquilino', selectedInquilino, setSelectedInquilino)}

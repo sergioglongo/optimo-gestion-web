@@ -13,9 +13,9 @@ export interface TipoProrrateo {
 }
 
 /**
- * Interfaz que representa la estructura de un Tipo de Unidad Operativa.
+ * Interfaz que representa la estructura de un Tipo de Unidad Funcional.
  */
-export interface TipoUnidadOperativa {
+export interface TipounidadFuncional {
   id: number;
   nombre: string;
   indice: number;
@@ -28,9 +28,9 @@ export interface TipoUnidadOperativa {
 export type LiquidarA = 'propietario' | 'inquilino' | 'ambos';
 
 /**
- * Interfaz que representa la estructura de una unidad operativa.
+ * Interfaz que representa la estructura de una unidad funcional.
  */
-export interface UnidadOperativa {
+export interface unidadFuncional {
   id: number;
   consorcio_id: number;
   etiqueta?: string | null;
@@ -40,7 +40,7 @@ export interface UnidadOperativa {
   liquidar_a: LiquidarA;
   prorrateo: number;
   prorrateo_automatico: boolean;
-  tipo_unidad_operativa_id?: number | null;
+  tipo_unidad_funcional_id?: number | null;
   Intereses: boolean;
   alquilada: boolean;
   notas?: string | null;
@@ -57,14 +57,14 @@ export interface UnidadOperativa {
 export type TipoPersonaUnidad = 'propietario' | 'inquilino' | 'habitante';
 
 /**
- * Interfaz que representa la relación entre una persona y una unidad operativa.
+ * Interfaz que representa la relación entre una persona y una unidad funcional.
  * Mapeada desde la tabla `personas_unidades`.
  */
 export interface PersonaUnidad {
   id: number;
   persona_id: number;
-  unidad_operativa_id: number;
+  unidad_funcional_id: number;
   tipo: TipoPersonaUnidad;
   Persona?: Persona;
-  UnidadOperativa?: UnidadOperativa;
+  unidadFuncional?: unidadFuncional;
 }
