@@ -7,7 +7,7 @@ import ComponentsRoutes from './ComponentsRoutes';
 
 // types
 import DashboardLayout from 'layout/Dashboard';
-import DashboardAnalytics from 'pages/dashboard/analytics';
+import HomeDashboard from 'pages/home/home';
 
 // ==============================|| ROUTING RENDER ||============================== //
 
@@ -19,7 +19,7 @@ const router = createBrowserRouter(
       children: [
         {
           index: true,
-          element: <DashboardAnalytics />
+          element: <HomeDashboard />
         }
       ]
     },

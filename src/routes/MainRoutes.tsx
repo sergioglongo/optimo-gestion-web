@@ -129,7 +129,7 @@ const RubrosPage = Loadable(lazy(() => import('pages/consorcios/rubrosAdmin')));
 const GastosPage = Loadable(lazy(() => import('pages/movimientos/gastos/gastosAdmin'))); // New import for unidadFuncionalAdmin
 const TransaccionesPage = Loadable(lazy(() => import('pages/movimientos/transacciones/TransaccionesAdmin'))); // New import for unidadFuncionalAdmin
 const LiquidacionesPage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionesAdmin'))); // New import for unidadFuncionalAdmin
-const LiquidacionNuevaPage = Loadable(lazy(() => import('sections/expensas/liquidaciones/nueva/LiquidacionNueva')));
+const LiquidacionNuevaPage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionNueva')));
 const LiquidacionDetallePage = Loadable(lazy(() => import('pages/expensas/liquidaciones/LiquidacionDetalle')));
 const CobranzasPage = Loadable(lazy(() => import('pages/expensas/cobranzas/CobranzasAdmin')));
 const DeudoresPage = Loadable(lazy(() => import('pages/expensas/deudores/DeudoresAdmin')));

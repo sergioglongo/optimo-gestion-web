@@ -12,7 +12,7 @@ import { FormikProvider, useFormik, Form, useFormikContext } from 'formik';
 // project import
 import MainCard from 'components/MainCard';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
-import LiquidacionForm from './LiquidacionNuevaPrincipal';
+import LiquidacionForm from 'sections/expensas/liquidaciones/nueva/LiquidacionNuevaPrincipal';
 
 import { APP_DEFAULT_PATH } from 'config';
 import { openSnackbar } from 'api/snackbar';
@@ -24,12 +24,12 @@ import { useTheme } from '@mui/material/styles';
 // types
 import { SnackbarProps } from 'types/snackbar';
 import { Liquidacion } from 'types/liquidacion';
-import LiquidacionGastos from './LiquidacionGastos';
+import LiquidacionGastos from 'sections/expensas/liquidaciones/nueva/LiquidacionGastos';
 import { Gasto } from 'types/gasto';
 import { useGetLiquidacionGastos } from 'services/api/gastosapi';
 import { useUpdateConsorcio } from 'services/api/consorciosapi';
 import useAuth from 'hooks/useAuth';
-import GastosSinPeriodoModal from './GastosSinPeriodoModal';
+import GastosSinPeriodoModal from 'sections/expensas/liquidaciones/nueva/GastosSinPeriodoModal';
 
 const validationSchema = yup.object({
   periodo: yup.string().required('El período es requerido'),
@@ -227,7 +227,7 @@ const LiquidacionNueva = () => {
 
   const breadcrumbLinks = [
     { title: 'Home', to: APP_DEFAULT_PATH },
-    { title: 'Liquidaciones', to: '/expensas/liquidaciones', icon: undefined },
+    { title: 'Liquidaciones', to: '/expensas/liquidaciones' },
     { title: 'Nueva Liquidación' }
   ];
 
