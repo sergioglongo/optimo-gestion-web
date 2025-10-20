@@ -1,6 +1,7 @@
 // ==============================|| CONSORCIO - TYPES ||============================== //
 
 import { Domicilio } from './domicilio';
+import { PresetColor } from './config';
 
 /**
  * Tipos de enumeración para la condición fiscal del consorcio.
@@ -57,4 +58,5 @@ export interface Consorcio {
   imagen: string | null;
   prorrateo?: ProrrateoConsorcio | null;
   activo: boolean;
+  theme: PresetColor;
 }

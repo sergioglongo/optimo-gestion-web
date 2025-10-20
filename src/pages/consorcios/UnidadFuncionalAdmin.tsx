@@ -25,6 +25,7 @@ import { useGetUnidadesFuncionals } from 'services/api/unidadFuncionalapi';
 import { useGetTiposunidadFuncional } from 'services/api/tipoUnidadFuncionalapi'; // Assuming a new API hook
 import UnidadFuncionalList from 'sections/consorcio/unidadFuncional/UnidadFuncionalList';
 import { unidadFuncional, LiquidarA } from 'types/unidadFuncional'; // Using new types
+import { SummaryField } from 'components/tables/TablaAdmin';
 import PersonaUnidadModal from 'sections/consorcio/unidadFuncional/PersonaUnidadModal';
 
 // ==============================|| UNIDAD FUNCIONAL - ADMIN ||============================== //
@@ -51,6 +52,7 @@ const UnidadFuncionalAdmin = () => {
   const [personaUnidadModalOpen, setPersonaUnidadModalOpen] = useState<boolean>(false);
   const [unidadToDelete, setUnidadToDelete] = useState<{ id: number; etiqueta: string } | null>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const [summaryData, setSummaryData] = useState<SummaryField[]>([]);
 
   const handleCloseDelete = (deleted: boolean) => {
     setUnidadToDelete(null);
@@ -68,6 +70,42 @@ const UnidadFuncionalAdmin = () => {
     setSelectedunidadFuncional(null);
   };
 
+  const handleFilteredRowsChange = (filteredRows: any[]) => {
+    // 1. Calcular el total de prorrateo
+    const totalProrrateo = filteredRows.reduce((sum, row) => {
+      const prorrateo = parseFloat(row.original.prorrateo);
+      return sum + (isNaN(prorrateo) ? 0 : prorrateo);
+    }, 0);
+
+    const newSummaryData: SummaryField[] = [{ label: 'Total Prorrateo', value: `${totalProrrateo.toFixed(3)}%` }];
+
+    // 2. Contar unidades por tipo
+    if (tiposunidadFuncionalData) {
+      const typeCounts = tiposunidadFuncionalData.reduce(
+        (acc, tipo) => {
+          acc[tipo.id] = { name: tipo.nombre, count: 0 };
+          return acc;
+        },
+        {} as Record<number, { name: string; count: number }>
+      );
+
+      filteredRows.forEach((row) => {
+        const typeId = row.original.tipo_unidad_funcional_id;
+        if (typeId && typeCounts[typeId]) {
+          typeCounts[typeId].count++;
+        }
+      });
+
+      Object.values(typeCounts).forEach((typeInfo) => {
+        if (typeInfo.count > 0) {
+          newSummaryData.push({ label: `${typeInfo.name}`, value: typeInfo.count });
+        }
+      });
+    }
+
+    setSummaryData(newSummaryData);
+  };
+
   const columns = useMemo<ColumnDef<unidadFuncional>[]>(
     () => [
       {
@@ -82,6 +120,7 @@ const UnidadFuncionalAdmin = () => {
       {
         header: 'Unidad',
         accessorKey: 'etiqueta',
+        filterFn: 'includesString',
         cell: ({ getValue }) => (
           <Stack spacing={0}>
             <Typography variant="subtitle1">{getValue() as string}</Typography>
@@ -90,12 +129,16 @@ const UnidadFuncionalAdmin = () => {
       },
       {
         header: 'Tipo',
-        accessorKey: 'tipo_unidad_funcional_id',
-        cell: (cell) => {
-          const tipoId = cell.getValue() as number;
+        id: 'tipo_unidad_funcional_nombre', // Se necesita un ID único cuando se usa accessorFn
+        accessorFn: (row) => {
+          // Esta función devuelve el valor sobre el que se buscará y ordenará
+          const tipoId = row.tipo_unidad_funcional_id;
           const tipo = tiposunidadFuncionalData?.find((t) => t.id === tipoId);
-          const label = tipo ? tipo.nombre : 'No asignado';
-          return <Chip label={label} size="small" variant="light" />;
+          return tipo ? tipo.nombre : 'No asignado';
+        },
+        cell: (cell) => {
+          // La celda ahora solo renderiza el valor que ya es el nombre
+          return <Chip label={cell.getValue() as string} size="small" variant="light" />;
         }
       },
       {
@@ -220,7 +263,11 @@ const UnidadFuncionalAdmin = () => {
           modalToggler: () => {
             setunidadFuncionalModal(true);
             setSelectedunidadFuncional(null);
-          }
+          },
+          onFilteredRowsChange: handleFilteredRowsChange,
+          summaryData: summaryData,
+          tiposunidadFuncional: tiposunidadFuncionalData || [],
+          consorcio: selectedConsorcio
         }}
       />
       {unidadToDelete && (

@@ -1,20 +1,14 @@
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-
-// material-ui
-import { Box, Collapse, Divider, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 // project import
-import { TipounidadFuncional, unidadFuncional } from 'types/unidadFuncional';
+import { TipoUnidadFuncional, unidadFuncional } from 'types/unidadFuncional';
 import Modal from 'components/Modal/ModalBasico';
 import UnidadFuncionalForm from './UnidadFuncionalForm';
 import { useCreateunidadFuncional, useUpdateunidadFuncional } from 'services/api/unidadFuncionalapi';
-import PersonaUnidadForm from './PersonaUnidadForm';
 
 // assets
-import { DownOutlined, UpOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import useConsorcio from 'hooks/useConsorcio';
 
 // ==============================|| UNIDAD FUNCIONAL MODAL ||============================== //
@@ -23,14 +17,13 @@ interface unidadFuncionalModalProps {
   open: boolean;
   modalToggler: (open: boolean) => void;
   unidadFuncional: unidadFuncional | null;
-  tiposunidadFuncional: TipounidadFuncional[];
+  tiposunidadFuncional: TipoUnidadFuncional[];
 }
 
 const UnidadFuncionalModal = ({ open, modalToggler, unidadFuncional, tiposunidadFuncional }: unidadFuncionalModalProps) => {
   const isCreating = !unidadFuncional;
   const { selectedConsorcio } = useConsorcio();
   const queryClient = useQueryClient();
-  const [isPersonaFormOpen, setPersonaFormOpen] = useState(false);
 
   const createunidadFuncionalMutation = useCreateunidadFuncional();
   const updateunidadFuncionalMutation = useUpdateunidadFuncional();
@@ -53,17 +46,17 @@ const UnidadFuncionalModal = ({ open, modalToggler, unidadFuncional, tiposunidad
   const formik = useFormik<Omit<unidadFuncional, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
     initialValues: {
       id: unidadFuncional?.id,
-      etiqueta: unidadFuncional?.etiqueta || null,
+      etiqueta: unidadFuncional?.etiqueta || '',
       tipo_unidad_funcional_id: unidadFuncional?.tipo_unidad_funcional_id || null,
-      identificador1: unidadFuncional?.identificador1 || null,
-      identificador2: unidadFuncional?.identificador2 || null,
-      identificador3: unidadFuncional?.identificador3 || null,
+      identificador1: unidadFuncional?.identificador1 || '',
+      identificador2: unidadFuncional?.identificador2 || '',
+      identificador3: unidadFuncional?.identificador3 || '',
       liquidar_a: unidadFuncional?.liquidar_a || 'propietario',
       prorrateo: unidadFuncional?.prorrateo || 0,
       prorrateo_automatico: unidadFuncional?.prorrateo_automatico ?? true,
       Intereses: unidadFuncional?.Intereses || true,
       alquilada: unidadFuncional?.alquilada || false,
-      notas: unidadFuncional?.notas || null,
+      notas: unidadFuncional?.notas || '',
       cuenta_id: unidadFuncional?.cuenta_id || null,
       consorcio_id: selectedConsorcio?.id || null
     },
@@ -114,26 +107,6 @@ const UnidadFuncionalModal = ({ open, modalToggler, unidadFuncional, tiposunidad
           <UnidadFuncionalForm tiposunidadFuncional={tiposunidadFuncional} />
         </Form>
       </FormikProvider>
-      {unidadFuncional && (
-        <>
-          <Divider sx={{ my: 2 }} />
-          <ListItemButton
-            onClick={() => setPersonaFormOpen(!isPersonaFormOpen)}
-            sx={{ bgcolor: 'primary.lighter', '&:hover': { bgcolor: 'primary.light' }, borderRadius: 1 }}
-          >
-            <ListItemIcon>
-              <UsergroupAddOutlined />
-            </ListItemIcon>
-            <ListItemText primary="Asociar Personas" />
-            {isPersonaFormOpen ? <UpOutlined /> : <DownOutlined />}
-          </ListItemButton>
-          <Collapse in={isPersonaFormOpen} timeout="auto" unmountOnExit>
-            <Box sx={{ pt: 2 }}>
-              <PersonaUnidadForm unidadFuncional={unidadFuncional} open={isPersonaFormOpen} />
-            </Box>
-          </Collapse>
-        </>
-      )}
     </Modal>
   );
 };

@@ -4,12 +4,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from 'services/api/apiClient';
 
 // types
-import { TipounidadFuncional } from 'types/unidadFuncional';
+import { TipoUnidadFuncional } from 'types/unidadFuncional';
 
 // API response types
 interface ApiSuccessResponse {
   success: true;
-  result: TipounidadFuncional[];
+  result: TipoUnidadFuncional[];
   count: number;
 }
 
@@ -22,10 +22,10 @@ type ApiResponse = ApiSuccessResponse | ApiErrorResponse;
 
 interface TipounidadFuncionalApiSuccessResponse {
   success: true;
-  result: TipounidadFuncional;
+  result: TipoUnidadFuncional;
 }
 
-type TipounidadFuncionalCreateData = Omit<TipounidadFuncional, 'id'>;
+type TipounidadFuncionalCreateData = Omit<TipoUnidadFuncional, 'id'>;
 
 type TipounidadFuncionalApiResponse = TipounidadFuncionalApiSuccessResponse | ApiErrorResponse;
 
@@ -55,7 +55,7 @@ export const createTipounidadFuncional = async (tipounidadFuncionalData: Tipouni
   }
 };
 
-export const updateTipounidadFuncional = async (tipounidadFuncionalId: number, tipounidadFuncionalData: Partial<TipounidadFuncional>) => {
+export const updateTipounidadFuncional = async (tipounidadFuncionalId: number, tipounidadFuncionalData: Partial<TipoUnidadFuncional>) => {
   const { data } = await apiClient.put<TipounidadFuncionalApiResponse>(`/unidades/tipos/${tipounidadFuncionalId}`, tipounidadFuncionalData);
   if (data.success) {
     return data.result;
@@ -100,7 +100,7 @@ export function useUpdateTipounidadFuncional() {
       tipounidadFuncionalData
     }: {
       tipounidadFuncionalId: number;
-      tipounidadFuncionalData: Partial<TipounidadFuncional>;
+      tipounidadFuncionalData: Partial<TipoUnidadFuncional>;
     }) => updateTipounidadFuncional(tipounidadFuncionalId, tipounidadFuncionalData),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: tipounidadFuncionalQueryKeys.list({ consorcio_id: data.consorcio_id }) });

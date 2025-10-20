@@ -20,7 +20,7 @@ const SeleccionarPersonaModal = ({ open, onClose, onSelect, excludedIds = [] }: 
     enabled: !!selectedConsorcio?.id && open
   });
 
-  const availablePersonas = allPersonas.filter((p) => !excludedIds.includes(p.id));
+  const availablePersonas = allPersonas.filter((p) => p.id !== undefined && !excludedIds.includes(p.id));
 
   const handleSelect = () => {
     if (selectedPersona) {
@@ -36,7 +36,7 @@ const SeleccionarPersonaModal = ({ open, onClose, onSelect, excludedIds = [] }: 
         <Box sx={{ pt: 2 }}>
           <Autocomplete
             options={availablePersonas}
-            getOptionLabel={(option) => `${option.nombre} ${option.apellido} (${option.identificacion})`}
+            getOptionLabel={(option) => `${option.apellido} ${option.nombre} (${option.identificacion})`}
             value={selectedPersona}
             onChange={(event, newValue) => {
               setSelectedPersona(newValue);

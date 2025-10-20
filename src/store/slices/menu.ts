@@ -1,11 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState = {
   openedItem: 'dashboard',
   openedComponent: 'buttons',
   openedHorizontalItem: null,
   isDashboardDrawerOpened: false,
-  isComponentDrawerOpened: true
+  isComponentDrawerOpened: true,
+  isThemeLoading: false
 };
 
 const menu = createSlice({
@@ -30,10 +31,15 @@ const menu = createSlice({
 
     activeHorizontalItem(state, action) {
       state.openedHorizontalItem = action.payload.openedHorizontalItem;
+    },
+
+    setThemeLoading(state, action: PayloadAction<boolean>) {
+      state.isThemeLoading = action.payload;
     }
   }
 });
 
 export default menu.reducer;
 
-export const { activeItem, activeComponent, openComponentDrawer, openDashboardDrawer, activeHorizontalItem } = menu.actions;
+export const { activeItem, activeComponent, openComponentDrawer, openDashboardDrawer, activeHorizontalItem, setThemeLoading } =
+  menu.actions;

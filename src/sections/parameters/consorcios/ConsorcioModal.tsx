@@ -79,7 +79,8 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
       identificador3: consorcio?.identificador3 || '',
       imagen: consorcio?.imagen || null,
       prorrateo: consorcio?.prorrateo || 'auto',
-      activo: consorcio?.activo || true
+      activo: consorcio?.activo || true,
+      theme: consorcio?.theme || 'default'
     },
     enableReinitialize: true, // Add this line
     validationSchema,

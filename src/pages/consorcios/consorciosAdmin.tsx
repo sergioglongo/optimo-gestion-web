@@ -14,6 +14,7 @@ import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
 import ConsorcioModal from 'sections/parameters/consorcios/ConsorcioModal';
 import AlertConsorcioDelete from 'sections/parameters/consorcios/AlertConsorcioDelete';
+import ConsorcioThemeModal from 'sections/parameters/consorcios/ConsorcioThemeModal'; // Import the new modal
 import Avatar from 'components/@extended/Avatar';
 
 // API hooks
@@ -24,7 +25,7 @@ import useAuth from 'hooks/useAuth';
 import { Consorcio, TipoConsorcio } from 'types/consorcio';
 
 // assets
-import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined, HomeOutlined } from '@ant-design/icons';
+import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined, HomeOutlined, BgColorsOutlined } from '@ant-design/icons';
 
 // ==============================|| CONSORCIOS - ADMIN ||============================== //
 
@@ -38,7 +39,9 @@ const ConsorciosAdmin = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [consorcioModal, setConsorcioModal] = useState<boolean>(false);
   const [selectedConsorcio, setSelectedConsorcio] = useState<Consorcio | null>(null);
+  const [selectedConsorcioForTheme, setSelectedConsorcioForTheme] = useState<Consorcio | null>(null); // State for theme modal
   const [consorcioDeleteId, setConsorcioDeleteId] = useState<any>('');
+  const [themeModalOpen, setThemeModalOpen] = useState<boolean>(false); // State for theme modal visibility
 
   const handleClose = () => {
     setOpen(!open);
@@ -137,6 +140,18 @@ const ConsorciosAdmin = () => {
                   <DeleteOutlined />
                 </IconButton>
               </Tooltip>
+              <Tooltip title="Cambiar Tema">
+                <IconButton
+                  color="info"
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    e.stopPropagation();
+                    setSelectedConsorcioForTheme(row.original);
+                    setThemeModalOpen(true);
+                  }}
+                >
+                  <BgColorsOutlined />
+                </IconButton>
+              </Tooltip>
             </Stack>
           );
         }
@@ -164,6 +179,7 @@ const ConsorciosAdmin = () => {
       />
       <AlertConsorcioDelete id={consorcioDeleteId.id} title={consorcioDeleteId.nombre} open={open} handleClose={handleClose} />
       <ConsorcioModal open={consorcioModal} modalToggler={setConsorcioModal} consorcio={selectedConsorcio} />
+      <ConsorcioThemeModal open={themeModalOpen} onClose={() => setThemeModalOpen(false)} consorcio={selectedConsorcioForTheme} />
     </>
   );
 };

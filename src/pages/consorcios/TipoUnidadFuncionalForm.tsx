@@ -1,13 +1,13 @@
 import { Grid, TextField, Typography, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useFormikContext } from 'formik';
-import { TipounidadFuncional } from 'types/unidadFuncional';
+import { TipoUnidadFuncional } from 'types/unidadFuncional';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store';
 
 const TipounidadFuncionalForm = () => {
   const theme = useTheme();
-  const { errors, touched, getFieldProps } = useFormikContext<TipounidadFuncional>();
+  const { errors, touched, getFieldProps } = useFormikContext<TipoUnidadFuncional>();
   const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
 
   return (

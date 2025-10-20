@@ -26,10 +26,15 @@ const CuentasModal = ({ open, modalToggler, cuenta }: CuentasModalProps) => {
 
   const validationSchema = Yup.object().shape({
     descripcion: Yup.string().max(255).required('La descripción es requerida'),
-    tipo: Yup.string().oneOf(['corriente', 'ahorro', 'caja', 'otro']).required('El tipo es requerido'),
+    tipo: Yup.string().oneOf(['corriente', 'ahorro', 'efectivo', 'virtual', 'otro']).required('El tipo es requerido'),
     balance: Yup.number().min(0, 'El balance inicial no puede ser negativo').required('El balance inicial es requerido'),
     pagos: Yup.boolean().required('Este campo es requerido'),
-    cobranzas: Yup.boolean().required('Este campo es requerido')
+    cobranzas: Yup.boolean().required('Este campo es requerido'),
+    numero: Yup.string().optional().nullable(),
+    cbu: Yup.string().optional().nullable(),
+    alias: Yup.string().optional().nullable(),
+    titular: Yup.string().optional().nullable(),
+    fecha_ultima_conciliacion: Yup.date().nullable().optional()
   });
 
   const formik = useFormik<Omit<Cuenta, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
@@ -41,7 +46,12 @@ const CuentasModal = ({ open, modalToggler, cuenta }: CuentasModalProps) => {
       balance: cuenta?.balance || 0,
       activa: cuenta?.activa ?? true,
       pagos: cuenta?.pagos || false,
-      cobranzas: cuenta?.cobranzas || false
+      cobranzas: cuenta?.cobranzas || false,
+      numero: cuenta?.numero || '',
+      cbu: cuenta?.cbu || '',
+      alias: cuenta?.alias || '',
+      titular: cuenta?.titular || '',
+      fecha_ultima_conciliacion: cuenta?.fecha_ultima_conciliacion || undefined
     },
     enableReinitialize: true,
     validationSchema,

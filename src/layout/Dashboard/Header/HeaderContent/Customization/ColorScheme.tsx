@@ -16,6 +16,8 @@ import colorLayout from 'assets/images/customization/theme-color.svg';
 
 // types
 import { PresetColor, ThemeMode } from 'types/config';
+import { firstCapitalized } from 'utils/textFormat';
+import { useIntl } from 'react-intl';
 
 interface ColorProps {
   id: PresetColor;
@@ -25,12 +27,19 @@ interface ColorProps {
   shadow: string;
 }
 
+interface ColorSchemeProps {
+  value?: PresetColor;
+  onChange?: (color: PresetColor) => void;
+}
+
 // ==============================|| CUSTOMIZATION - COLOR SCHEME ||============================== //
 
-const ColorScheme = () => {
+const ColorScheme = ({ value, onChange }: ColorSchemeProps) => {
   const theme = useTheme();
+  const intl = useIntl();
 
-  const { mode, presetColor, onChangePresetColor } = useConfig();
+  const { mode, presetColor: configPresetColor, onChangePresetColor } = useConfig();
+  const presetColor = value || configPresetColor;
 
   const colors: PalettesProps = mode === ThemeMode.DARK ? presetDarkPalettes : presetPalettes;
   const { blue } = colors;
@@ -39,69 +48,74 @@ const ColorScheme = () => {
       id: 'default',
       primary: blue[5],
       lighter: blue[0],
-      label: 'Default',
+      label: firstCapitalized(intl.formatMessage({ id: 'default' })),
       shadow: `0 0 0 2px ${alpha(blue[5], 0.2)}`
     },
     {
       id: 'theme1',
       primary: mode === ThemeMode.DARK ? '#305bdd' : '#3366FF',
       lighter: mode === ThemeMode.DARK ? '#1c2134' : '#D6E4FF',
-      label: 'Theme 1',
+      label: firstCapitalized(intl.formatMessage({ id: 'theme1' })),
       shadow: `0 0 0 2px ${alpha(mode === ThemeMode.DARK ? '#305bdd' : '#3366FF', 0.2)}`
     },
     {
       id: 'theme2',
       primary: mode === ThemeMode.DARK ? '#655ac8' : '#7265E6',
       lighter: mode === ThemeMode.DARK ? '#222130' : '#EEEDFC',
-      label: 'Theme 2',
+      label: firstCapitalized(intl.formatMessage({ id: 'theme2' })),
       shadow: `0 0 0 2px ${alpha(mode === ThemeMode.DARK ? '#655ac8' : '#7265E6', 0.2)}`
     },
     {
       id: 'theme3',
       primary: mode === ThemeMode.DARK ? '#0a7d3e' : '#068e44',
       lighter: mode === ThemeMode.DARK ? '#1a231f' : '#E6F3EC',
-      label: 'Theme 3',
+      label: firstCapitalized(intl.formatMessage({ id: 'theme3' })),
       shadow: `0 0 0 2px ${alpha(mode === ThemeMode.DARK ? '#0a7d3e' : '#068e44', 0.2)}`
     },
     {
       id: 'theme4',
       primary: mode === ThemeMode.DARK ? '#5d7dcb' : '#3c64d0',
       lighter: mode === ThemeMode.DARK ? '#1d212d' : '#f0f6ff',
-      label: 'Theme 4',
+      label: firstCapitalized(intl.formatMessage({ id: 'theme4' })),
       shadow: `0 0 0 2px ${alpha(mode === ThemeMode.DARK ? '#5d7dcb' : '#3c64d0', 0.2)}`
     },
     {
       id: 'theme5',
       primary: mode === ThemeMode.DARK ? '#d26415' : '#f27013',
       lighter: mode === ThemeMode.DARK ? '#32221a' : '#fff4e6',
-      label: 'Theme 5',
+      label: firstCapitalized(intl.formatMessage({ id: 'theme5' })),
       shadow: `0 0 0 2px ${alpha(mode === ThemeMode.DARK ? '#d26415' : '#f27013', 0.2)}`
     },
     {
       id: 'theme6',
       primary: mode === ThemeMode.DARK ? '#288d99' : '#2aa1af',
       lighter: mode === ThemeMode.DARK ? '#1c2628' : '#e1f0ef',
-      label: 'Theme 6',
+      label: firstCapitalized(intl.formatMessage({ id: 'theme6' })),
       shadow: `0 0 0 2px ${alpha(mode === ThemeMode.DARK ? '#288d99' : '#2aa1af', 0.2)}`
     },
     {
       id: 'theme7',
       primary: mode === ThemeMode.DARK ? '#05934c' : '#00a854',
       lighter: mode === ThemeMode.DARK ? '#1a2721' : '#d1e8d99c',
-      label: 'Theme 7',
+      label: firstCapitalized(intl.formatMessage({ id: 'theme7' })),
       shadow: `0 0 0 2px ${alpha(mode === ThemeMode.DARK ? '#05934c' : '#00a854', 0.2)}`
     },
     {
       id: 'theme8',
       primary: mode === ThemeMode.DARK ? '#058478' : '#009688',
       lighter: mode === ThemeMode.DARK ? '#1a2524' : '#c1d6d066',
-      label: 'Theme 8',
+      label: firstCapitalized(intl.formatMessage({ id: 'theme8' })),
       shadow: `0 0 0 2px ${alpha(mode === ThemeMode.DARK ? '#058478' : '#009688', 0.2)}`
     }
   ];
 
   const handlePresetColorChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onChangePresetColor(event.target.value as PresetColor);
+    const newColor = event.target.value as PresetColor;
+    if (onChange) {
+      onChange(newColor);
+    } else {
+      onChangePresetColor(newColor);
+    }
   };
 
   return (

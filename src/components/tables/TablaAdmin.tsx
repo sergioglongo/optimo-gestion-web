@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 // third-party
 import {
@@ -11,7 +11,8 @@ import {
   getFilteredRowModel,
   useReactTable,
   SortingState,
-  ColumnFiltersState
+  ColumnFiltersState,
+  Row
 } from '@tanstack/react-table';
 import { LabelKeyObject } from 'react-csv/lib/core';
 
@@ -47,6 +48,11 @@ export interface SelectFilters {
   [columnId: string]: SelectFilter;
 }
 
+export interface SummaryField {
+  label: string;
+  value: string | number;
+}
+
 interface TablaAdminProps<T extends object> {
   data: T[];
   columns: ColumnDef<T>[];
@@ -63,6 +69,8 @@ interface TablaAdminProps<T extends object> {
   selectFilters?: SelectFilters;
   showColumnSorting?: boolean;
   showCsvExport?: boolean;
+  onFilteredRowsChange?: (rows: Row<T>[]) => void;
+  summaryData?: SummaryField[];
 }
 
 function TablaAdmin<T extends object>({
@@ -80,7 +88,9 @@ function TablaAdmin<T extends object>({
   isAddDisabled = false,
   selectFilters,
   showColumnSorting = true,
-  showCsvExport = true
+  showCsvExport = true,
+  onFilteredRowsChange,
+  summaryData
 }: TablaAdminProps<T>): JSX.Element {
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -135,6 +145,13 @@ function TablaAdmin<T extends object>({
     debugTable: false
   });
 
+  useEffect(() => {
+    if (onFilteredRowsChange) {
+      onFilteredRowsChange(table.getFilteredRowModel().rows);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columnFilters, globalFilter, data]); // Se ejecuta cuando cambian los filtros o los datos
+
   const headers: LabelKeyObject[] = useMemo(
     () =>
       columns.reduce<LabelKeyObject[]>((acc, col) => {
@@ -153,25 +170,34 @@ function TablaAdmin<T extends object>({
           <Typography variant="h5">{title}</Typography>
         </Box>
       )}
-      <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" sx={{ padding: 2.5 }}>
-        <DebouncedInput
-          value={globalFilter ?? ''}
-          onFilterChange={(value) => setGlobalFilter(String(value))}
-          placeholder={searchPlaceholder}
-        />
-
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <TablaAdminFilters table={table} selectFilters={selectFilters} />
-          {showColumnSorting && <SelectColumnSorting {...{ getState: table.getState, getAllColumns: table.getAllColumns, setSorting }} />}
-          {onAdd && (
-            <Button variant="contained" startIcon={<PlusOutlined />} onClick={onAdd} disabled={isAddDisabled}>
-              {addLabel}
-            </Button>
-          )}
-          {showCsvExport && (
-            <CSVExport {...{ data: table.getSelectedRowModel().flatRows.map((row) => row.original), headers, filename: csvFilename }} />
-          )}
+      <Stack spacing={2} sx={{ p: 2.5 }}>
+        {/* Fila 1: Búsqueda y Botones de Acción */}
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center" justifyContent="space-between">
+          <DebouncedInput
+            value={globalFilter ?? ''}
+            onFilterChange={(value) => setGlobalFilter(String(value))}
+            placeholder={searchPlaceholder}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
+          />
+          <Stack direction="row" spacing={1} sx={{ width: { xs: '100%', sm: 'auto' }, justifyContent: 'flex-end' }}>
+            {showColumnSorting && <SelectColumnSorting {...{ getState: table.getState, getAllColumns: table.getAllColumns, setSorting }} />}
+            {onAdd && (
+              <Button variant="contained" startIcon={<PlusOutlined />} onClick={onAdd} disabled={isAddDisabled}>
+                {addLabel}
+              </Button>
+            )}
+            {showCsvExport && (
+              <CSVExport {...{ data: table.getSelectedRowModel().flatRows.map((row) => row.original), headers, filename: csvFilename }} />
+            )}
+          </Stack>
         </Stack>
+
+        {/* Fila 2: Filtros Desplegables */}
+        {selectFilters && (
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
+            <TablaAdminFilters table={table} selectFilters={selectFilters} />
+          </Stack>
+        )}
       </Stack>
       <ScrollX>
         {showSelection && <RowSelection selected={Object.keys(rowSelection).length} />}
@@ -211,6 +237,31 @@ function TablaAdmin<T extends object>({
           </Table>
         </TableContainer>
         <Divider />
+        {summaryData && summaryData.length > 0 && (
+          <>
+            <Box
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: 2
+              }}
+            >
+              {summaryData.map((field, index) => (
+                <Stack key={index} direction="row" spacing={1} alignItems="center">
+                  <Typography variant="subtitle1">{field.label}:</Typography>
+                  <Typography variant="h6" color="primary">
+                    {typeof field.value === 'number'
+                      ? field.value.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                      : field.value}
+                  </Typography>
+                </Stack>
+              ))}
+            </Box>
+            <Divider />
+          </>
+        )}
         <Box sx={{ p: 2 }}>
           <TablePagination
             {...{

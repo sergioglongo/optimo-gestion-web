@@ -1,5 +1,5 @@
 import { Cuenta } from './cuenta';
-import { Persona } from './persona';
+import { Persona, PersonaTipo } from './persona';
 
 /**
  * Interfaz que representa la estructura de un Tipo de Prorrateo.
@@ -15,7 +15,7 @@ export interface TipoProrrateo {
 /**
  * Interfaz que representa la estructura de un Tipo de Unidad Funcional.
  */
-export interface TipounidadFuncional {
+export interface TipoUnidadFuncional {
   id: number;
   nombre: string;
   indice: number;
@@ -66,5 +66,6 @@ export interface PersonaUnidad {
   unidad_funcional_id: number;
   tipo: TipoPersonaUnidad;
   Persona?: Persona;
-  unidadFuncional?: unidadFuncional;
+  PersonaTipo?: PersonaTipo;
+  UnidadFuncional?: unidadFuncional;
 }

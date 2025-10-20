@@ -24,6 +24,7 @@ function PersonasList({ data, columns, modalToggler, initialColumnVisibility }: 
       addLabel="Nueva Persona"
       csvFilename="personas-lista.csv"
       searchPlaceholder={`Buscar en ${data.length} personas...`}
+      showColumnSorting={false}
       title="Gestiona las personas del consorcio"
       initialColumnVisibility={initialColumnVisibility}
       // renderExpandedRow={(row) => <ExpandingUserDetail data={row.original} />} // Uncomment and implement if needed

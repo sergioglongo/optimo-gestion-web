@@ -73,8 +73,10 @@ const CuentasAdmin = () => {
               return <Chip color="primary" label="Corriente" size="small" variant="light" />;
             case 'ahorro':
               return <Chip color="success" label="Ahorro" size="small" variant="light" />;
-            case 'caja':
-              return <Chip color="info" label="Caja" size="small" variant="light" />;
+            case 'efectivo':
+              return <Chip color="info" label="Efectivo" size="small" variant="light" />;
+            case 'virtual':
+              return <Chip color="warning" label="Virtual" size="small" variant="light" />;
             default:
               return <Chip label={tipo} size="small" variant="light" />;
           }
@@ -85,7 +87,11 @@ const CuentasAdmin = () => {
         accessorKey: 'balance',
         cell: ({ getValue }) => {
           const balance = Number(getValue());
-          return <Typography color={balance < 0 ? 'error' : 'inherit'}>${balance.toLocaleString('es-AR')}</Typography>;
+          return (
+            <Typography color={balance < 0 ? 'error' : 'inherit'}>
+              ${balance.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </Typography>
+          );
         }
       },
       {
@@ -130,6 +136,17 @@ const CuentasAdmin = () => {
     [theme, intl] // Add intl to dependency array
   );
 
+  const summaryData = useMemo(() => {
+    if (!cuentasData || cuentasData.length === 0) return [];
+    const totalBalance = cuentasData.reduce((acc, cuenta) => acc + Number(cuenta.balance), 0);
+    const formattedBalance = totalBalance.toLocaleString('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 2
+    });
+    return [{ label: 'Balance Total', value: formattedBalance }];
+  }, [cuentasData]);
+
   if (isLoading) return <EmptyReactTable />;
 
   return (
@@ -143,7 +160,8 @@ const CuentasAdmin = () => {
           modalToggler: () => {
             setCuentaModal(true);
             setSelectedCuenta(null);
-          }
+          },
+          summaryData
         }}
       />
       <AlertCuentaDelete id={cuentaDeleteId.id} title={String(cuentaDeleteId.descripcion)} open={open} handleClose={handleClose} />

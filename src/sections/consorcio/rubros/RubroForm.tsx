@@ -1,6 +1,7 @@
 import { Grid, TextField, Typography, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useFormikContext } from 'formik';
+import { useEffect, useRef } from 'react';
 import { Rubro } from 'types/rubro';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store';
@@ -9,6 +10,15 @@ const RubroForm = () => {
   const theme = useTheme();
   const { errors, touched, getFieldProps } = useFormikContext<Rubro>();
   const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
+  const rubroRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Enfocar el campo de nombre del rubro al montar el formulario.
+    // El timeout ayuda a asegurar que el campo esté listo para recibir el foco.
+    setTimeout(() => {
+      rubroRef.current?.focus();
+    }, 100);
+  }, []);
 
   return (
     <Grid container spacing={3}>
@@ -24,6 +34,7 @@ const RubroForm = () => {
       <Grid item xs={12} sm={8}>
         <TextField
           fullWidth
+          inputRef={rubroRef}
           label="Nombre del Rubro"
           {...getFieldProps('rubro')}
           error={Boolean(touched.rubro && errors.rubro)}
