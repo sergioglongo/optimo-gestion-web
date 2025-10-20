@@ -38,10 +38,10 @@ const DeudorPagoForm = ({ deuda, montoRestante, unidadFuncionalId }: DeudorPagoF
   const personasPagadoras: Persona[] = useMemo(() => {
     const personasMap = new Map<number, Persona>();
     personaUnidades.forEach((pu) => {
-      if (pu.Persona) personasMap.set(pu.Persona.id, pu.Persona);
+      if (pu.Persona && pu.Persona.id) personasMap.set(pu.Persona.id, pu.Persona);
     });
     personasExternas.forEach((p) => {
-      personasMap.set(p.id, p);
+      if (p.id) personasMap.set(p.id, p);
     });
     return Array.from(personasMap.values());
   }, [personaUnidades, personasExternas]);
@@ -219,7 +219,7 @@ const DeudorPagoForm = ({ deuda, montoRestante, unidadFuncionalId }: DeudorPagoF
       <SeleccionarPersonaModal
         open={personaModalOpen}
         onClose={() => setPersonaModalOpen(false)}
-        excludedIds={personasPagadoras.map((p) => p.id)}
+        excludedIds={personasPagadoras.map((p) => p.id).filter((id): id is number => id !== undefined)}
         onSelect={(persona) => {
           if (!personasPagadoras.some((p) => p.id === persona.id)) {
             setPersonasExternas((prev) => [...prev, persona]);

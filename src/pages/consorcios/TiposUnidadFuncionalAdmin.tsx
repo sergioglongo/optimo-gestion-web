@@ -24,7 +24,7 @@ import { useGetTiposunidadFuncional } from 'services/api/tipoUnidadFuncionalapi'
 import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 
 // types
-import { TipounidadFuncional } from 'types/unidadFuncional';
+import { TipoUnidadFuncional } from 'types/unidadFuncional';
 
 // ==============================|| TIPOS UNIDAD FUNCIONAL - ADMIN ||============================== //
 
@@ -38,14 +38,14 @@ const TiposunidadFuncionalAdmin = () => {
 
   const [open, setOpen] = useState<boolean>(false);
   const [tipoModal, setTipoModal] = useState<boolean>(false);
-  const [selectedTipo, setSelectedTipo] = useState<TipounidadFuncional | null>(null);
+  const [selectedTipo, setSelectedTipo] = useState<TipoUnidadFuncional | null>(null);
   const [tipoDeleteId, setTipoDeleteId] = useState<any>('');
 
   const handleClose = () => {
     setOpen(!open);
   };
 
-  const columns = useMemo<ColumnDef<TipounidadFuncional>[]>(
+  const columns = useMemo<ColumnDef<TipoUnidadFuncional>[]>(
     () => [
       {
         header: 'ID',

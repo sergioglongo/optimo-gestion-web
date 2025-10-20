@@ -4,11 +4,11 @@ import { ColumnDef, SortingState } from '@tanstack/react-table';
 import TablaAdmin from 'components/tables/TablaAdmin';
 
 // types
-import { TipounidadFuncional } from 'types/unidadFuncional';
+import { TipoUnidadFuncional } from 'types/unidadFuncional';
 
 interface Props {
-  data: TipounidadFuncional[];
-  columns: ColumnDef<TipounidadFuncional>[];
+  data: TipoUnidadFuncional[];
+  columns: ColumnDef<TipoUnidadFuncional>[];
   modalToggler: () => void;
   initialColumnVisibility?: Record<string, boolean>;
   initialSorting?: SortingState;

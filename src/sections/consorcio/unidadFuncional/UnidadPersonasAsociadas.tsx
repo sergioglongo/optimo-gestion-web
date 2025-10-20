@@ -36,9 +36,9 @@ const UnidadPersonasAsociadas = ({ unidad }: Props) => {
         {personaUnidades.map((pu) => (
           <Chip
             key={pu.id}
-            label={`${pu.Persona ? `${pu.Persona.nombre} ${pu.Persona.apellido}` : `ID: ${pu.persona_id}`} (${pu.tipo})`}
+            label={`${pu.Persona ? `${pu.Persona.nombre} ${pu.Persona.apellido}` : `ID: ${pu.persona_id}`} (${pu.PersonaTipo?.nombre})`}
             variant="light"
-            color={getColorForTipo(pu.tipo)}
+            color={getColorForTipo(pu.PersonaTipo?.nombre as TipoPersonaUnidad)}
           />
         ))}
       </Stack>

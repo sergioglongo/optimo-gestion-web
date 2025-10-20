@@ -1,4 +1,4 @@
-import { Usuario, RolUsuario } from './usuario';
+import { Usuario } from './usuario';
 import { Domicilio } from './domicilio';
 
 /**
@@ -16,17 +16,21 @@ export type TipoIdentificacionPersona = 'documento' | 'cuit' | 'cuil' | 'otro';
 export const TipoIdentificacionPersonaOptions: TipoIdentificacionPersona[] = ['documento', 'cuit', 'cuil', 'otro'];
 
 /**
- * Tipos de enumeración para el rol de la persona en el consorcio.
+ * Interfaz que representa un tipo de persona en relación a una unidad (propietario, inquilino, etc.).
+ * Corresponde a la tabla `persona_tipos`.
  */
-export type RolPersona = 'propietario' | 'inquilino' | 'habitante' | 'gestion';
+export interface PersonaTipo {
+  id: number;
+  nombre: string;
+}
 
-export const RolPersonaOptions: RolPersona[] = ['propietario', 'inquilino', 'habitante', 'gestion'];
-
+// Ya no se necesita RolPersonaOptions, ya que los tipos se obtendrán de la tabla `persona_tipos`.
+// export const RolPersonaOptions: RolPersona[] = ['propietario', 'inquilino', 'habitante', 'gestion'];
 /**
  * Interfaz que representa la estructura de una persona.
  */
 export interface Persona {
-  id: number;
+  id?: number;
   consorcio_id: number;
   nombre: string;
   apellido: string;
@@ -35,23 +39,15 @@ export interface Persona {
   identificacion?: string | null;
   Domicilio?: Domicilio | null;
   telefono?: string | null;
-  activa: boolean;
+  email?: string | null;
+  activa?: boolean;
   Usuario?: Usuario;
 }
 
-export interface PersonaUsuario {
-  id?: number; // Made optional
-  consorcio_id: number;
-  nombre: string;
-  apellido: string;
-  tipo_persona: TipoPersona;
-  tipo_identificacion?: TipoIdentificacionPersona | null;
-  identificacion?: string | null;
-  Domicilio?: Domicilio | null;
-  telefono?: string | null;
-  email: string;
+/**
+ * Interfaz que combina los datos de Persona y Usuario para formularios de creación/actualización conjunta.
+ */
+export interface PersonaUsuario extends Persona {
   usuario?: string;
-  rol?: RolUsuario;
-  persona_id?: number;
-  activa?: boolean;
+  rol?: string; // Consider using a specific type like RolUsuario if you have one
 }

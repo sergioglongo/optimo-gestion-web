@@ -12,6 +12,7 @@ import {
   Autocomplete,
   TextField
 } from '@mui/material';
+import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 
@@ -55,7 +56,7 @@ const PersonaUnidadForm = ({ unidadFuncional, open = true }: PersonaUnidadFormPr
   // ==============================|| HANDLERS ||============================== //
 
   const handleAdd = async (persona: Persona | null, tipo: TipoPersonaUnidad) => {
-    if (!persona || !unidadFuncional) return;
+    if (!persona || !unidadFuncional || persona.id === undefined) return;
 
     try {
       await createAssociation.mutateAsync({
@@ -82,8 +83,14 @@ const PersonaUnidadForm = ({ unidadFuncional, open = true }: PersonaUnidadFormPr
 
   const getPersonaName = (persona_id: number) => {
     const persona = allPersonas.find((p) => p.id === persona_id);
-    return persona ? `${persona.nombre} ${persona.apellido}` : `Persona ID: ${persona_id}`;
+    return persona ? `${persona.apellido} ${persona.nombre}` : `Persona ID: ${persona_id}`;
   };
+
+  const filterOptions = createFilterOptions({
+    matchFrom: 'any',
+    trim: true,
+    stringify: (option: Persona) => `${option.apellido} ${option.nombre}`
+  });
 
   // ==============================|| RENDER ||============================== //
 
@@ -91,16 +98,17 @@ const PersonaUnidadForm = ({ unidadFuncional, open = true }: PersonaUnidadFormPr
     title: string,
     tipo: TipoPersonaUnidad,
     selectedPersona: Persona | null,
-    setSelectedPersona: (persona: Persona | null) => void
+    setSelectedPersona: (persona: Persona | null) => void,
+    buttonLabel: string = 'Añadir'
   ) => {
     // Filter associations for the current type (propietario, inquilino, habitante)
-    const associationsForType = existingAssociations.filter((a) => a.tipo === tipo);
+    const associationsForType = existingAssociations.filter((a: any) => a.PersonaTipo?.nombre === tipo);
 
     // A person can only have one role per unit. Get all IDs of people already associated with this unit.
     const allAssociatedPersonIds = existingAssociations.map((a) => a.persona_id);
 
     // People available in the dropdown are those not already associated with this unit in any role.
-    const availablePersonas = allPersonas.filter((p) => !allAssociatedPersonIds.includes(p.id));
+    const availablePersonas = allPersonas.filter((p) => p.id !== undefined && !allAssociatedPersonIds.includes(p.id));
 
     // For single-association types (propietario, inquilino), check if an association already exists.
     const isSingleAssociationType = tipo === 'propietario' || tipo === 'inquilino';
@@ -117,8 +125,9 @@ const PersonaUnidadForm = ({ unidadFuncional, open = true }: PersonaUnidadFormPr
           <Grid container spacing={1} alignItems="center" sx={{ ml: 1, mt: 1 }}>
             <Grid item xs={8}>
               <Autocomplete
+                filterOptions={filterOptions}
                 options={availablePersonas}
-                getOptionLabel={(option) => `${option.nombre} ${option.apellido}`}
+                getOptionLabel={(option) => `${option.apellido} ${option.nombre}`}
                 value={selectedPersona}
                 onChange={(event, newValue) => {
                   setSelectedPersona(newValue);
@@ -143,7 +152,7 @@ const PersonaUnidadForm = ({ unidadFuncional, open = true }: PersonaUnidadFormPr
                 onClick={() => handleAdd(selectedPersona, tipo)}
                 disabled={!selectedPersona || createAssociation.isLoading}
               >
-                Añadir
+                {buttonLabel}
               </Button>
             </Grid>
           </Grid>
@@ -188,13 +197,13 @@ const PersonaUnidadForm = ({ unidadFuncional, open = true }: PersonaUnidadFormPr
         <Grid container spacing={0}>
           <Box border={1} borderColor="lightgray" borderRadius={1} padding={0} width={'100%'}>
             <Grid item xs={12}>
-              {renderAssociationSection('Propietario', 'propietario', selectedPropietario, setSelectedPropietario)}
+              {renderAssociationSection('Propietario', 'propietario', selectedPropietario, setSelectedPropietario, 'Asignar')}
             </Grid>
           </Box>
           {unidadFuncional.alquilada && (
             <Box border={1} borderColor="lightgray" borderRadius={1} padding={0} width={'100%'} marginTop={1}>
               <Grid item xs={12}>
-                {renderAssociationSection('Inquilino', 'inquilino', selectedInquilino, setSelectedInquilino)}
+                {renderAssociationSection('Inquilino', 'inquilino', selectedInquilino, setSelectedInquilino, 'Asignar')}
               </Grid>
             </Box>
           )}

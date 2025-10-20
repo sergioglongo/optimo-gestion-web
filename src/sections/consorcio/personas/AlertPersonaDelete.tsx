@@ -32,8 +32,8 @@ const AlertPersonaDelete = ({ id, title, open, handleClose }: AlertDeleteProps) 
       onConfirm={handleDelete}
       title="¿Estás seguro de eliminar?"
       content={`Estás a punto de eliminar la persona "${title}". Esta acción es irreversible.`}
-      confirmText="Delete"
-      cancelText="Cancel"
+      confirmText="delete"
+      cancelText="cancel"
       confirmColor="error"
     />
   );

@@ -13,13 +13,13 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useFormikContext } from 'formik';
-import { unidadFuncional, LiquidarA, TipounidadFuncional } from 'types/unidadFuncional'; // Assuming new types
+import { unidadFuncional, LiquidarA, TipoUnidadFuncional } from 'types/unidadFuncional'; // Assuming new types
 import { useState, useEffect } from 'react';
 import useConsorcio from 'hooks/useConsorcio';
 import { useGetCuentas } from 'services/api/cuentasapi';
 
 interface unidadFuncionalFormProps {
-  tiposunidadFuncional: TipounidadFuncional[];
+  tiposunidadFuncional: TipoUnidadFuncional[];
 }
 
 const UnidadFuncionalForm = ({ tiposunidadFuncional }: unidadFuncionalFormProps) => {
@@ -165,7 +165,7 @@ const UnidadFuncionalForm = ({ tiposunidadFuncional }: unidadFuncionalFormProps)
       {/* --- Bloque de Liquidación --- */}
       <Grid item xs={12} md={6}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={8}>
+          <Grid item xs={8}>
             <TextField
               select
               fullWidth
@@ -182,7 +182,7 @@ const UnidadFuncionalForm = ({ tiposunidadFuncional }: unidadFuncionalFormProps)
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <FormControlLabel
               control={
                 <Tooltip title={getFieldProps('alquilada').value ? 'Inquilino Habilitado' : 'Sin Inquilino'}>
@@ -229,7 +229,7 @@ const UnidadFuncionalForm = ({ tiposunidadFuncional }: unidadFuncionalFormProps)
                   />
                 </Tooltip>
               }
-              label="Prorrat. Auto"
+              label="Prorr. Auto"
               labelPlacement="top"
               sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', lineHeight: 0.1 } }}
             />
@@ -255,7 +255,7 @@ const UnidadFuncionalForm = ({ tiposunidadFuncional }: unidadFuncionalFormProps)
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} md={6}>
         <Autocomplete
           id="cuenta-id-autocomplete"
           options={cuentas || []}
@@ -285,7 +285,7 @@ const UnidadFuncionalForm = ({ tiposunidadFuncional }: unidadFuncionalFormProps)
         />
       </Grid>
       {/* --- Bloque de Notas --- */}
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12}>
         <TextField
           fullWidth
           label="Notas"

@@ -77,7 +77,12 @@ export const createConsorcio = async (consorcioData: ConsorcioCreateData, imageF
   }
 };
 
-export const updateConsorcio = async (consorcioId: number, consorcioData: Consorcio, imageFile?: File) => {
+export const updateConsorcio = async (
+  consorcioId: number,
+  consorcioData: Partial<Consorcio>,
+  imageFile: File | undefined,
+  usuario_id: string | number
+) => {
   const formData = new FormData();
 
   Object.entries(consorcioData).forEach(([key, value]) => {
@@ -98,6 +103,7 @@ export const updateConsorcio = async (consorcioId: number, consorcioData: Consor
     }
   });
 
+  formData.append('usuario_id', String(usuario_id));
   if (imageFile) {
     console.log('Appending imageFile in updateConsorcio:', imageFile);
     formData.append('image', imageFile);
@@ -159,10 +165,10 @@ export function useUpdateConsorcio() {
       usuario_id
     }: {
       consorcioId: number;
-      consorcioData: Consorcio;
+      consorcioData: Partial<Consorcio>;
       imageFile?: File;
       usuario_id: string | number;
-    }) => updateConsorcio(consorcioId, consorcioData, imageFile),
+    }) => updateConsorcio(consorcioId, consorcioData, imageFile, usuario_id),
     onSuccess: async (data, variables) => {
       queryClient.invalidateQueries({ queryKey: consorcioQueryKeys.lists() });
       // Fetch the updated list of consorcios using the provided usuario_id

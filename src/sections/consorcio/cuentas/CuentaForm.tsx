@@ -1,7 +1,8 @@
+import React, { Fragment } from 'react';
 import { Grid, TextField, MenuItem, Typography, Box, FormControlLabel, Switch, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useFormikContext } from 'formik';
-import { Cuenta } from 'types/cuenta';
+import { Cuenta, tiposDeCuenta } from 'types/cuenta';
 import useConsorcio from 'hooks/useConsorcio';
 
 const CuentaForm = () => {
@@ -9,6 +10,19 @@ const CuentaForm = () => {
   const { errors, touched, getFieldProps, values, setFieldValue } = useFormikContext<Cuenta>();
   const { selectedConsorcio } = useConsorcio();
   const isCreating = !values.id;
+  const isEfectivo = values.tipo === 'efectivo';
+
+  const handleTipoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newTipo = event.target.value;
+    setFieldValue('tipo', newTipo);
+    if (newTipo === 'efectivo') {
+      setFieldValue('numero', '');
+      setFieldValue('cbu', '');
+      setFieldValue('alias', '');
+      setFieldValue('titular', '');
+    }
+  };
+
   return (
     <Grid container spacing={3}>
       {selectedConsorcio && (
@@ -20,7 +34,7 @@ const CuentaForm = () => {
           </Box>
         </Grid>
       )}
-      <Grid item xs={12}>
+      <Grid item xs={12} sm={isEfectivo ? 12 : 6}>
         <TextField
           fullWidth
           label="Descripción"
@@ -29,21 +43,68 @@ const CuentaForm = () => {
           helperText={touched.descripcion && errors.descripcion}
         />
       </Grid>
-      <Grid item xs={12} sm={isCreating ? 6 : 12}>
+      {!isEfectivo && (
+        <Fragment>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Titular"
+              {...getFieldProps('titular')}
+              error={Boolean(touched.titular && errors.titular)}
+              helperText={touched.titular && errors.titular}
+            />
+          </Grid>
+        </Fragment>
+      )}
+      <Grid item xs={12} sm={4}>
         <TextField
           select
           fullWidth
           label="Tipo de Cuenta"
-          {...getFieldProps('tipo')}
+          name="tipo"
+          value={values.tipo}
+          onChange={handleTipoChange}
           error={Boolean(touched.tipo && errors.tipo)}
           helperText={touched.tipo && errors.tipo}
         >
-          <MenuItem value="corriente">Corriente</MenuItem>
-          <MenuItem value="ahorro">Ahorro</MenuItem>
-          <MenuItem value="caja">Caja</MenuItem>
-          <MenuItem value="otro">Otro</MenuItem>
+          {tiposDeCuenta.map((option) => (
+            <MenuItem key={option.id} value={option.id}>
+              {option.label}
+            </MenuItem>
+          ))}
         </TextField>
       </Grid>
+      {!isEfectivo && (
+        <Fragment>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              label="Número de Cuenta"
+              {...getFieldProps('numero')}
+              error={Boolean(touched.numero && errors.numero)}
+              helperText={touched.numero && errors.numero}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              label="CBU"
+              {...getFieldProps('cbu')}
+              error={Boolean(touched.cbu && errors.cbu)}
+              helperText={touched.cbu && errors.cbu}
+            />
+          </Grid>
+          <Grid item xs={12} sm={!isCreating ? 3 : 12}>
+            <TextField
+              fullWidth
+              label="Alias"
+              {...getFieldProps('alias')}
+              error={Boolean(touched.alias && errors.alias)}
+              helperText={touched.alias && errors.alias}
+            />
+          </Grid>
+        </Fragment>
+      )}
       {isCreating && (
         <Grid item xs={12} sm={6}>
           <TextField
@@ -61,7 +122,21 @@ const CuentaForm = () => {
           />
         </Grid>
       )}
-      <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {!isCreating && (
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            type="date"
+            label="Ultima Conciliacion"
+            {...getFieldProps('fecha_ultima_conciliacion')}
+            error={Boolean(touched.fecha_ultima_conciliacion && errors.fecha_ultima_conciliacion)}
+            helperText={touched.fecha_ultima_conciliacion && errors.fecha_ultima_conciliacion}
+            InputLabelProps={{ shrink: true }}
+            value={values.fecha_ultima_conciliacion ? new Date(values.fecha_ultima_conciliacion).toISOString().split('T')[0] : ''}
+          />
+        </Grid>
+      )}
+      <Grid item xs={12} sm={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <FormControlLabel
           control={
             <Tooltip title={values.pagos ? 'Habilitada para registrar pagos' : 'Deshabilitada para registrar pagos'}>
@@ -78,7 +153,7 @@ const CuentaForm = () => {
           sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', lineHeight: 0.1 } }}
         />
       </Grid>
-      <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Grid item xs={12} sm={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <FormControlLabel
           control={
             <Tooltip title={values.cobranzas ? 'Habilitada para registrar cobranzas' : 'Deshabilitada para registrar cobranzas'}>

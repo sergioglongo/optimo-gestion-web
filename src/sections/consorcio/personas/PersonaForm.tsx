@@ -4,13 +4,32 @@ import { useFormikContext, getIn } from 'formik';
 import { TipoPersonaOptions, TipoIdentificacionPersonaOptions } from 'types/persona';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store';
-import { useGetProvincias, useGetLocalidades } from 'services/api/toolsapi';
-import { useEffect, useState } from 'react';
+import { useGetLocalidades, useGetProvincias } from 'services/api/toolsapi';
+import { useEffect, useState, useMemo, useRef } from 'react';
 
 const PersonaForm = () => {
   const theme = useTheme();
   const { errors, touched, getFieldProps, values, setFieldValue } = useFormikContext<any>();
   const { selectedConsorcio } = useSelector((state: RootState) => state.consorcio);
+  const isPersonaJuridica = useMemo(() => values.tipo_persona === 'persona juridica', [values.tipo_persona]);
+
+  const nombreRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (isPersonaJuridica) {
+      setFieldValue('apellido', '');
+      setFieldValue('tipo_identificacion', 'cuit');
+    } else {
+      setFieldValue('tipo_identificacion', 'documento');
+    }
+  }, [isPersonaJuridica]);
+
+  useEffect(() => {
+    // Enfocar el campo de nombre/razón social al montar el formulario.
+    // El timeout ayuda a asegurar que el campo esté listo para recibir el foco, especialmente dentro de un modal.
+    setTimeout(() => {
+      nombreRef.current?.focus();
+    }, 100);
+  }, []);
 
   const { data: provincias, isLoading: isLoadingProvincias } = useGetProvincias();
   const [selectedProvinciaId, setSelectedProvinciaId] = useState<number | string>('');
@@ -26,6 +45,20 @@ const PersonaForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provincias, values.Domicilio?.provincia, values.id]); // Se ejecuta cuando las provincias cargan, la provincia o el id de la persona cambia
 
+  const filteredTipoIdentificacionOptions = useMemo(() => {
+    if (isPersonaJuridica) {
+      return TipoIdentificacionPersonaOptions.filter((opt) => opt !== 'documento');
+    }
+    return TipoIdentificacionPersonaOptions;
+  }, [isPersonaJuridica]);
+
+  // Función para capitalizar la primera letra de cada palabra
+  const handleCapitalizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const capitalizedValue = value.replace(/(^|\s)\S/g, (l) => l.toUpperCase());
+    setFieldValue(name, capitalizedValue);
+  };
+
   return (
     <Grid container spacing={3}>
       {selectedConsorcio && (
@@ -37,25 +70,8 @@ const PersonaForm = () => {
           </Box>
         </Grid>
       )}
-      <Grid item xs={12} sm={6}>
-        <TextField
-          fullWidth
-          label="Nombre"
-          {...getFieldProps('nombre')}
-          error={Boolean(getIn(touched, 'nombre') && getIn(errors, 'nombre'))}
-          helperText={getIn(touched, 'nombre') && getIn(errors, 'nombre')}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <TextField
-          fullWidth
-          label="Apellido"
-          {...getFieldProps('apellido')}
-          error={Boolean(getIn(touched, 'apellido') && getIn(errors, 'apellido'))}
-          helperText={getIn(touched, 'apellido') && getIn(errors, 'apellido')}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6}>
+      {/* Fila 1: Tipo, Nombre, Apellido */}
+      <Grid item xs={12} sm={3}>
         <TextField
           select
           fullWidth
@@ -71,10 +87,35 @@ const PersonaForm = () => {
           ))}
         </TextField>
       </Grid>
-      <Grid item xs={12} sm={6}>
-        <TextField fullWidth label="Teléfono" {...getFieldProps('telefono')} value={values.telefono || ''} />
+      <Grid item xs={12} sm={isPersonaJuridica ? 9 : 5}>
+        <TextField
+          fullWidth
+          inputRef={nombreRef}
+          label={isPersonaJuridica ? 'Razón Social' : 'Nombre'}
+          name="nombre"
+          value={values.nombre}
+          onChange={handleCapitalizeChange}
+          onBlur={getFieldProps('nombre').onBlur}
+          error={Boolean(getIn(touched, 'nombre') && getIn(errors, 'nombre'))}
+          helperText={getIn(touched, 'nombre') && getIn(errors, 'nombre')}
+        />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      {!isPersonaJuridica && (
+        <Grid item xs={12} sm={4}>
+          <TextField
+            fullWidth
+            label="Apellido"
+            name="apellido"
+            value={values.apellido}
+            onChange={handleCapitalizeChange}
+            onBlur={getFieldProps('apellido').onBlur}
+            error={Boolean(getIn(touched, 'apellido') && getIn(errors, 'apellido'))}
+            helperText={getIn(touched, 'apellido') && getIn(errors, 'apellido')}
+          />
+        </Grid>
+      )}
+      {/* Fila 2: Tipo ID, Identificación */}
+      <Grid item xs={12} sm={4}>
         <TextField
           select
           fullWidth
@@ -84,14 +125,14 @@ const PersonaForm = () => {
           error={Boolean(getIn(touched, 'tipo_identificacion') && getIn(errors, 'tipo_identificacion'))}
           helperText={getIn(touched, 'tipo_identificacion') && getIn(errors, 'tipo_identificacion')}
         >
-          {TipoIdentificacionPersonaOptions.map((option) => (
+          {filteredTipoIdentificacionOptions.map((option) => (
             <MenuItem key={option} value={option}>
               {option.charAt(0).toUpperCase() + option.slice(1)}
             </MenuItem>
           ))}
         </TextField>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={8}>
         <TextField
           fullWidth
           label="Identificación"
@@ -169,18 +210,20 @@ const PersonaForm = () => {
           )}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} sm={8}>
         <TextField
           fullWidth
           label="Email"
           type="email"
           {...getFieldProps('email')}
-          value={values.email || ''} // Ensure value is always a string
+          value={values.email || ''}
           error={Boolean(getIn(touched, 'email') && getIn(errors, 'email'))}
           helperText={getIn(touched, 'email') && getIn(errors, 'email')}
         />
       </Grid>
-      {/* El campo Rol de Usuario se elimina del formulario, ya que se establece en 'usuario' por defecto en el modal. */}
+      <Grid item xs={12} sm={4}>
+        <TextField fullWidth label="Teléfono" {...getFieldProps('telefono')} value={values.telefono || ''} />
+      </Grid>
     </Grid>
   );
 };

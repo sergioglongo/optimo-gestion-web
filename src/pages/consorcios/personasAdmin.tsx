@@ -1,12 +1,13 @@
 import { useMemo, useState, MouseEvent } from 'react';
 
 // material-ui
-import { Stack, Tooltip, Typography } from '@mui/material';
+import { Chip, Stack, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
-import { useIntl } from 'react-intl'; // Import useIntl
+import { useIntl } from 'react-intl';
+import { useQueryClient } from '@tanstack/react-query';
 
 // project import
 import IconButton from 'components/@extended/IconButton';
@@ -21,9 +22,11 @@ import useConsorcio from 'hooks/useConsorcio';
 
 // assets
 import { EditOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useGetPersonas } from 'services/api/personasapi'; // Assuming a new API hook
-import PersonasList from 'sections/consorcio/personas/PersonasList';
-import { Persona } from 'types/persona'; // Assuming new types
+import { useGetPersonas, useDeletePersona } from 'services/api/personasapi';
+import PersonasList from 'sections/consorcio/personas/PersonasList'; // Assuming new types
+import { Persona, TipoPersona } from 'types/persona';
+import { openSnackbar } from 'api/snackbar';
+import { SnackbarProps } from 'types/snackbar';
 
 // ==============================|| PERSONAS - ADMIN ||============================== //
 
@@ -32,16 +35,40 @@ const PersonasAdmin = () => {
   const { user, token } = useAuth();
   const { selectedConsorcio } = useConsorcio();
   const intl = useIntl(); // Initialize useIntl
+  const queryClient = useQueryClient();
 
   const { data: personasData, isLoading } = useGetPersonas(selectedConsorcio?.id || 0, { enabled: !!user?.id && !!token });
+  const deletePersonaMutation = useDeletePersona();
 
   const [personaModal, setPersonaModal] = useState<boolean>(false);
   const [selectedPersona, setSelectedPersona] = useState<Persona | null>(null);
   const [personaToDelete, setPersonaToDelete] = useState<{ id: number; nombre: string } | null>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
-  const handleCloseDelete = (deleted: boolean) => {
-    setPersonaToDelete(null);
+  const handleCloseDelete = async (deleted: boolean) => {
+    if (deleted && personaToDelete) {
+      try {
+        await deletePersonaMutation.mutateAsync(personaToDelete.id);
+        openSnackbar({
+          open: true,
+          message: 'Persona eliminada con éxito.',
+          variant: 'alert',
+          alert: { color: 'success' }
+        } as SnackbarProps);
+        queryClient.invalidateQueries({ queryKey: ['personas', 'list', { consorcio_id: selectedConsorcio?.id }] });
+      } catch (error: any) {
+        openSnackbar({
+          open: true,
+          message: error.message || 'Error al eliminar la persona.',
+          variant: 'alert',
+          alert: { color: 'error' }
+        } as SnackbarProps);
+      } finally {
+        setPersonaToDelete(null);
+      }
+    } else {
+      setPersonaToDelete(null);
+    }
   };
 
   const columns = useMemo<ColumnDef<Persona>[]>(
@@ -56,6 +83,15 @@ const PersonasAdmin = () => {
         }
       },
       {
+        header: 'Nombre', // Changed from 'Descripción'
+        accessorKey: 'nombre', // Assuming 'nombre' for Persona
+        cell: ({ getValue }) => (
+          <Stack spacing={0}>
+            <Typography variant="subtitle1">{getValue() as string}</Typography>
+          </Stack>
+        )
+      },
+      {
         header: 'Apellido', // Added 'Apellido' for Persona
         accessorKey: 'apellido', // Assuming 'apellido' for Persona
         cell: ({ getValue }) => (
@@ -65,41 +101,32 @@ const PersonasAdmin = () => {
         )
       },
       {
-        header: 'Nombre', // Changed from 'Descripción'
-        accessorKey: 'nombre', // Assuming 'nombre' for Persona
+        header: 'Tipo',
+        accessorKey: 'tipo_persona',
+        cell: ({ getValue }) => {
+          const tipo_persona = getValue() as TipoPersona; // Using TipoPersona
+          switch (tipo_persona) {
+            case 'persona juridica': // Example types for Persona
+              return <Chip color="primary" label="Persona Jurídica" size="small" variant="light" />;
+            case 'persona fisica':
+              return <Chip color="success" label="Persona Física" size="small" variant="light" />;
+            default:
+              return <Chip label={tipo_persona} size="small" variant="light" />;
+          }
+        }
+      },
+      {
+        header: 'Identificación', // Added 'DNI' for Persona
+        accessorKey: 'identificacion', // Assuming 'dni' for Persona
         cell: ({ getValue }) => (
           <Stack spacing={0}>
             <Typography variant="subtitle1">{getValue() as string}</Typography>
           </Stack>
         )
       },
-      // {
-      //   header: 'Tipo',
-      //   accessorKey: 'tipo_persona',
-      //   cell: ({ getValue }) => {
-      //     const tipo_persona = getValue() as TipoPersona; // Using TipoPersona
-      //     switch (tipo_persona) {
-      //       case 'persona juridica': // Example types for Persona
-      //         return <Chip color="primary" label="Persona Jurdíca" size="small" variant="light" />;
-      //       case 'persona fisica':
-      //         return <Chip color="success" label="Persona Física" size="small" variant="light" />;
-      //       default:
-      //         return <Chip label={tipo_persona} size="small" variant="light" />;
-      //     }
-      //   }
-      // },
       {
         header: 'Telefono', // Added 'DNI' for Persona
         accessorKey: 'telefono', // Assuming 'dni' for Persona
-        cell: ({ getValue }) => (
-          <Stack spacing={0}>
-            <Typography variant="subtitle1">{getValue() as string}</Typography>
-          </Stack>
-        )
-      },
-      {
-        header: 'Indentificación', // Added 'DNI' for Persona
-        accessorKey: 'identificacion', // Assuming 'dni' for Persona
         cell: ({ getValue }) => (
           <Stack spacing={0}>
             <Typography variant="subtitle1">{getValue() as string}</Typography>
@@ -144,7 +171,9 @@ const PersonasAdmin = () => {
                   color="error"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
-                    setPersonaToDelete({ id: row.original.id, nombre: `${row.original.nombre} ${row.original.apellido}` });
+                    if (row.original.id !== undefined) {
+                      setPersonaToDelete({ id: row.original.id, nombre: `${row.original.nombre} ${row.original.apellido}` });
+                    }
                   }}
                 >
                   <DeleteOutlined />

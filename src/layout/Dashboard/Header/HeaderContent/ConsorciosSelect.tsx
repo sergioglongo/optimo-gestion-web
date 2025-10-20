@@ -1,33 +1,62 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 // material-ui
 import { Select, MenuItem, SelectChangeEvent, Stack } from '@mui/material'; // Import Stack
 import { useTheme } from '@mui/material/styles'; // Import useTheme
 
 // project import
-import { openDashboardDrawer } from 'store/slices/menu';
+import { openDashboardDrawer, setThemeLoading } from 'store/slices/menu';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectConsorcio } from 'store/slices/consorcio';
 import { RootState } from 'store';
 import Avatar from 'components/@extended/Avatar'; // Import Avatar
 import { HomeOutlined } from '@ant-design/icons'; // Import HomeOutlined
+import useConfig from 'hooks/useConfig';
 
 // ==============================|| HEADER CONTENT - CUSTOMIZATION ||============================== //
 
 const ConsorciosSelect = () => {
   const dispatch = useAppDispatch();
+  const selectRef = useRef<HTMLDivElement>(null);
   const theme = useTheme(); // Get theme object
   const { consorciosList: consorcios, selectedConsorcio } = useAppSelector((state: RootState) => state.consorcio);
+  const { onChangePresetColor } = useConfig();
+
+  const handleThemeChange = useCallback(
+    (consorcioId: string) => {
+      const consorcio = consorcios.find((c) => String(c.id) === consorcioId);
+      if (consorcio && consorcio.theme) {
+        onChangePresetColor(consorcio.theme);
+      }
+    },
+    [consorcios, onChangePresetColor]
+  );
 
   useEffect(() => {
     // Si hay exactamente un consorcio y no está seleccionado, selecciónalo automáticamente.
     if (consorcios.length === 1 && selectedConsorcio?.id !== consorcios[0].id) {
       dispatch(selectConsorcio(String(consorcios[0].id)));
+      handleThemeChange(String(consorcios[0].id));
     }
-  }, [consorcios, selectedConsorcio, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [consorcios, dispatch]);
+
+  useEffect(() => {
+    // Si hay un consorcio seleccionado al cargar, aplica su tema.
+    // Esto soluciona el problema de que el color no se aplique al iniciar sesión.
+    if (selectedConsorcio) {
+      dispatch(setThemeLoading(true));
+      // Usamos setTimeout para permitir que el loader se renderice antes de la operación de bloqueo
+      setTimeout(() => {
+        handleThemeChange(String(selectedConsorcio.id));
+        dispatch(setThemeLoading(false));
+      }, 0);
+    }
+  }, [selectedConsorcio, handleThemeChange]);
 
   const handleConsorcioChange = (event: SelectChangeEvent<string>) => {
-    const consorcioId = event.target.value as string;
-    dispatch(selectConsorcio(consorcioId));
+    selectRef.current?.blur(); // Quitar el foco del select
+    const newConsorcioId = event.target.value as string;
+    dispatch(selectConsorcio(newConsorcioId));
     dispatch(openDashboardDrawer({ isDashboardDrawerOpened: true }));
   };
 
@@ -47,6 +76,7 @@ const ConsorciosSelect = () => {
       </Avatar>
       <Select
         id="consorcios-select"
+        ref={selectRef}
         value={selectedConsorcio ? String(selectedConsorcio.id) : ''}
         onChange={handleConsorcioChange}
         sx={{

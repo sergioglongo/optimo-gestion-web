@@ -42,6 +42,7 @@
   "confirm": "confirm",
   "Confirm": "Confirm",
   "consorcio": "condominium",
+  "continue": "Continue",
   "Consorcio": "Condominium",
   "consorcios": "condominiums",
   "Consorcios": "Condominiums",
@@ -61,6 +62,8 @@
   "details": "Details",
   "Delete": "Delete",
   "delete": "delete",
+  "dialog.cancel": "Cancel",
+  "dialog.confirm": "Confirm",
   "dialogs": "Dialogs",
   "disabled-menu": "Disabled Menu",
   "documentation": "Documentation",
@@ -221,7 +224,14 @@
   "email-valid": "email must be valid",
   "reset-email-sended": "email sended.",
   "resend-code": "resend code",
-  "continue": "continue",
   "verification-code": "enter verification code",
-  "send-you-email": "we send you on mail"
+  "send-you-email": "we send you on mail",
+  "theme1": "theme 1",
+  "theme2": "theme 2",
+  "theme3": "Theme 3",
+  "theme4": "theme 4",
+  "theme5": "theme 5",
+  "theme6": "theme 6",
+  "theme7": "theme 7",
+  "theme8": "theme 8"
 }

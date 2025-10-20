@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 
 // project import
-import { TipounidadFuncional } from 'types/unidadFuncional';
+import { TipoUnidadFuncional } from 'types/unidadFuncional';
 import Modal from 'components/Modal/ModalBasico';
 import TipounidadFuncionalForm from './TipoUnidadFuncionalForm';
 import { useCreateTipounidadFuncional, useUpdateTipounidadFuncional } from 'services/api/tipoUnidadFuncionalapi';
@@ -12,7 +12,7 @@ import { RootState } from 'store';
 interface TiposunidadFuncionalModalProps {
   open: boolean;
   modalToggler: (open: boolean) => void;
-  tipo: TipounidadFuncional | null;
+  tipo: TipoUnidadFuncional | null;
 }
 
 const TiposunidadFuncionalModal = ({ open, modalToggler, tipo }: TiposunidadFuncionalModalProps) => {
@@ -27,7 +27,7 @@ const TiposunidadFuncionalModal = ({ open, modalToggler, tipo }: TiposunidadFunc
     indice: Yup.number().moreThan(0, 'El índice debe ser mayor que 0').required('El índice es requerido')
   });
 
-  const formik = useFormik<Omit<TipounidadFuncional, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
+  const formik = useFormik<Omit<TipoUnidadFuncional, 'id' | 'consorcio_id'> & { id?: number; consorcio_id: number | null }>({
     initialValues: {
       id: tipo?.id,
       nombre: tipo?.nombre || '',

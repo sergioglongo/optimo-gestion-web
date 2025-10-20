@@ -45,13 +45,15 @@ const PagoLiquidacionUnidadForm = ({
     const personasMap = new Map<number, Persona>();
     // 1. Agregar personas asociadas a la unidad
     personaUnidades.forEach((pu) => {
-      if (pu.Persona) {
+      if (pu.Persona && pu.Persona.id !== undefined) {
         personasMap.set(pu.Persona.id, pu.Persona);
       }
     });
     // 2. Agregar personas seleccionadas externamente
     personasExternas.forEach((p) => {
-      personasMap.set(p.id, p);
+      if (p.id !== undefined) {
+        personasMap.set(p.id, p);
+      }
     });
 
     return Array.from(personasMap.values());
@@ -345,7 +347,7 @@ const PagoLiquidacionUnidadForm = ({
       <SeleccionarPersonaModal
         open={personaModalOpen}
         onClose={() => setPersonaModalOpen(false)}
-        excludedIds={personasPagadoras.map((p) => p.id)}
+        excludedIds={personasPagadoras.map((p) => p.id).filter((id): id is number => id !== undefined)}
         onSelect={(persona) => {
           // Añadir la persona a la lista de externas si no está ya
           if (!personasPagadoras.some((p) => p.id === persona.id)) {
