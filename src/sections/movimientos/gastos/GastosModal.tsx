@@ -44,13 +44,12 @@ const GastosModal = ({ open, modalToggler, gasto }: GastosModalProps) => {
   });
 
   const formik = useFormik<Gasto>({
-    // Changed type to Gasto
     initialValues: {
       consorcio_id: selectedConsorcio?.id || 0,
       descripcion: gasto?.descripcion || '',
       monto: gasto?.monto || 0,
       fecha: gasto?.fecha ? gasto.fecha.split('T')[0] : new Date().toISOString().split('T')[0],
-      rubro_gasto_id: gasto?.rubro_gasto_id || 0,
+      rubro_gasto_id: gasto?.rubro_gasto_id || '', // Usar '' en lugar de 0 para el valor inicial
       proveedor_id: gasto?.proveedor_id || null,
       tipo_gasto: gasto?.tipo_gasto || 'ordinario',
       estado: gasto?.estado || 'impago',

@@ -53,13 +53,15 @@ const GastoAsignacionModal = ({ open, modalToggler, gasto }: GastoAsignacionModa
   const assignBulkMutation = useAssignGastoToUnidades();
 
   useEffect(() => {
-    if (existingAssignments.length > 0 && allUnidades.length > 0) {
-      const asignadas = allUnidades.filter((u) => existingAssignments.some((a) => a.unidad_funcional_id === u.id));
-      setUnidadesSeleccionadas(asignadas);
-    } else {
-      setUnidadesSeleccionadas([]);
+    if (open) {
+      if (existingAssignments.length > 0 && allUnidades.length > 0) {
+        const asignadas = allUnidades.filter((u) => existingAssignments.some((a) => a.unidad_funcional_id === u.id));
+        setUnidadesSeleccionadas(asignadas);
+      } else {
+        setUnidadesSeleccionadas([]);
+      }
     }
-  }, [existingAssignments, allUnidades, open]);
+  }, [existingAssignments, allUnidades, open]); // Se quita unidadesSeleccionadas para evitar el loop
 
   // ==============================|| HANDLERS ||============================== //
 

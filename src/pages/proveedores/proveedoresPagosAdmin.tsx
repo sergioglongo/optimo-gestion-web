@@ -12,6 +12,7 @@ import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
 import PagosProveedoresList from 'sections/proveedores/pagos/PagosProveedoresList';
 import PagoProveedorModal from 'sections/proveedores/pagos/PagoProveedorModal';
+import PagoProveedorEditModal from 'sections/proveedores/pagos/PagoProveedorEditModal';
 import ViewDrawer from 'components/drawers/ViewDrawer';
 import AlertPagoProveedorDelete from 'sections/proveedores/pagos/AlertPagoProveedorDelete';
 
@@ -24,6 +25,7 @@ import { PagoProveedor, TipoPagoProveedor } from 'types/pagoProveedor';
 
 // assets
 import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
+import { formatDateOnly } from 'utils/dateFormat';
 
 // ==============================|| PAGOS PROVEEDORES - ADMIN ||============================== //
 
@@ -33,7 +35,8 @@ const PagosProveedoresAdmin = () => {
 
   const { data: pagosData, isLoading } = useGetPagosProveedores(selectedConsorcio?.id || 0, { enabled: !!selectedConsorcio?.id });
 
-  const [pagoModal, setPagoModal] = useState<boolean>(false);
+  const [pagoCreateModal, setPagoCreateModal] = useState<boolean>(false);
+  const [pagoEditModal, setPagoEditModal] = useState<boolean>(false);
   const [selectedPago, setSelectedPago] = useState<PagoProveedor | null>(null);
   const [pagoDelete, setPagoDelete] = useState<{ id: number; fecha: string; monto: number } | null>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -50,7 +53,7 @@ const PagosProveedoresAdmin = () => {
       {
         header: 'Fecha',
         accessorKey: 'fecha',
-        cell: ({ getValue }) => <Typography>{new Date(getValue() as string).toLocaleDateString()}</Typography>
+        cell: ({ getValue }) => <Typography>{formatDateOnly(getValue() as string)}</Typography>
       },
       {
         header: 'Proveedor',
@@ -112,7 +115,7 @@ const PagosProveedoresAdmin = () => {
                 onClick={(e: MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
                   setSelectedPago(row.original);
-                  setPagoModal(true);
+                  setPagoEditModal(true);
                 }}
               >
                 <EditOutlined />
@@ -144,12 +147,16 @@ const PagosProveedoresAdmin = () => {
         data={pagosData || []}
         columns={columns}
         modalToggler={() => {
-          setPagoModal(true);
+          setPagoCreateModal(true);
           setSelectedPago(null);
         }}
       />
       <AlertPagoProveedorDelete pago={pagoDelete} open={!!pagoDelete} handleClose={() => setPagoDelete(null)} />
-      <PagoProveedorModal open={pagoModal} modalToggler={setPagoModal} pago={selectedPago} />
+      {/* Modal para CREAR un pago */}
+      <PagoProveedorModal open={pagoCreateModal} modalToggler={setPagoCreateModal} />
+      {/* Modal para EDITAR un pago. Solo se renderiza si hay un pago seleccionado */}
+      {selectedPago && <PagoProveedorEditModal open={pagoEditModal} modalToggler={setPagoEditModal} pago={selectedPago} />}
+
       {selectedPago && (
         <ViewDrawer
           open={drawerOpen}

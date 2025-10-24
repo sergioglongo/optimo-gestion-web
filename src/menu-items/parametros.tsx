@@ -5,16 +5,16 @@ import { HomeOutlined } from '@ant-design/icons';
 
 // type
 import { NavItemType } from 'types/menu';
-import { FaLandmark } from 'react-icons/fa';
+import { FaDolly, FaLandmark } from 'react-icons/fa';
 import { FaRegBuilding } from 'react-icons/fa';
 import { FaUsers } from 'react-icons/fa';
 import { FaCity } from 'react-icons/fa';
 import { FaLayerGroup } from 'react-icons/fa';
 // ==============================|| MENU ITEMS - APPLICATIONS ||============================== //
 
-const consorcioColapsable: NavItemType = {
-  id: 'consorcio-collapse',
-  title: <FormattedMessage id="Consorcio" />,
+const parametrosColapsable: NavItemType = {
+  id: 'parametros-collapse',
+  title: <FormattedMessage id="parameters" />,
   type: 'collapse',
   icon: FaCity, // Using AppstoreAddOutlined as the main icon
   children: [
@@ -22,45 +22,52 @@ const consorcioColapsable: NavItemType = {
       id: 'cuentas',
       title: <FormattedMessage id="Cuentas" />,
       type: 'item',
-      url: '/consorcio/cuentas',
+      url: '/parametros/cuentas',
       icon: FaLandmark
     },
     {
       id: 'personas',
       title: <FormattedMessage id="Personas" />,
       type: 'item',
-      url: '/consorcio/personas',
+      url: '/parametros/personas',
       icon: FaUsers
+    },
+    {
+      id: 'proveedores',
+      title: <FormattedMessage id="Providers" />,
+      type: 'item',
+      url: '/parametros/proveedores',
+      icon: FaDolly
     },
     {
       id: 'unidades',
       title: <FormattedMessage id="functional-units" />,
       type: 'item',
-      url: '/consorcio/unidades', // Corrected URL to match MainRoutes
+      url: '/parametros/unidades', // Corrected URL to match MainRoutes
       icon: FaRegBuilding
     },
     {
       id: 'tipounidades',
       title: <FormattedMessage id="operative-units-types" />,
       type: 'item',
-      url: '/consorcio/tipo-unidades', // Corrected URL to match MainRoutes
+      url: '/parametros/tipo-unidades', // Corrected URL to match MainRoutes
       icon: HomeOutlined
     },
     {
       id: 'rubros',
       title: <FormattedMessage id="Categories" />,
       type: 'item',
-      url: '/consorcio/rubros', // Corrected URL to match MainRoutes
+      url: '/parametros/rubros', // Corrected URL to match MainRoutes
       icon: FaLayerGroup
     }
   ]
 };
 
-const consorcio: NavItemType = {
-  id: 'group-consorcio',
-  // title: <FormattedMessage id="Consorcios" />,
+const parametros: NavItemType = {
+  id: 'group-parametros',
+  // title: <FormattedMessage id="parameters" />,
   type: 'group',
-  children: [consorcioColapsable] // Now contains the collapsible menu
+  children: [parametrosColapsable] // Now contains the collapsible menu
 };
 
-export default consorcio;
+export default parametros;

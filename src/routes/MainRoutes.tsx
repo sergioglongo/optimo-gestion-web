@@ -522,7 +522,7 @@ const MainRoutes = {
           element: <PricingPage />
         },
         {
-          path: 'consorcio',
+          path: 'parametros',
           children: [
             {
               path: 'cuentas',
@@ -531,6 +531,10 @@ const MainRoutes = {
             {
               path: 'personas',
               element: <PersonasPage />
+            },
+            {
+              path: 'proveedores',
+              element: <ProveedoresPage />
             },
             {
               path: 'unidades',
@@ -572,11 +576,11 @@ const MainRoutes = {
           ]
         },
         {
-          path: 'proveedores',
+          path: 'egresos',
           children: [
             {
-              path: 'listado',
-              element: <ProveedoresPage />
+              path: 'gastos',
+              element: <GastosPage />
             },
             {
               path: 'pagos',
@@ -588,17 +592,17 @@ const MainRoutes = {
           path: 'movimientos',
           children: [
             {
-              path: 'gastos',
-              element: <GastosPage />
+              path: 'movimientos',
+              element: <TransaccionesPage />
             },
             {
-              path: 'transacciones',
+              path: 'fondos',
               element: <TransaccionesPage />
             }
           ]
         },
         {
-          path: 'parameters',
+          path: 'configuracion',
           children: [
             {
               path: 'consorcios',

@@ -65,7 +65,7 @@ const ProveedoresAdmin = () => {
         accessorKey: 'servicio',
         cell: ({ getValue }) => (
           <Stack spacing={0}>
-            <Typography variant="subtitle1">{getValue() as string}</Typography>
+            <Typography variant="inherit">{getValue() as string}</Typography>
           </Stack>
         )
       },
@@ -74,7 +74,7 @@ const ProveedoresAdmin = () => {
         accessorKey: 'tipo_identificacion',
         cell: ({ getValue }) => (
           <Stack spacing={0}>
-            <Typography variant="subtitle1">{getValue() as string}</Typography>
+            <Typography variant="subtitle1">{(getValue() as string)?.toUpperCase()}</Typography>
           </Stack>
         )
       },
@@ -176,6 +176,10 @@ const ProveedoresAdmin = () => {
             [
               { label: 'Tipo Identificación', value: selectedProveedor.tipo_identificacion }, // Fila 3, columna 1
               { label: 'Identificación', value: selectedProveedor.identificacion || '-' } // Fila 3, columna 2
+            ],
+            [
+              { label: 'Teléfono', value: selectedProveedor.telefono || '-' },
+              { label: 'Email', value: selectedProveedor.email || '-' }
             ],
             { label: 'CBU/Alias', value: selectedProveedor.CBU || '-' }, // Fila 4, 1 columna
             { label: 'Cuenta Asociada', value: selectedProveedor.cuenta?.descripcion || 'Ninguna' },
