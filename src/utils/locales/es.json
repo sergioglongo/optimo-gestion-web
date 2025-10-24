@@ -233,5 +233,8 @@
   "theme5": "naranja",
   "theme6": "turquesa",
   "theme7": "verde claro",
-  "theme8": "turquesa 2"
+  "theme8": "turquesa 2",
+  "outflows": "Egresos",
+  "configurations": "Configuraciones",
+  "reservs": "Fondos de reserva"
 }

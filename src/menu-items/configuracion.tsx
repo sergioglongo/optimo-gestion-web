@@ -12,9 +12,9 @@ import { FaCity } from 'react-icons/fa';
 
 // ==============================|| MENU ITEMS - PARAMETERS ||============================== //
 
-const parametersColapsable: NavItemType = {
-  id: 'parameters-collapse',
-  title: <FormattedMessage id="parameters" />,
+const configuracionColapsable: NavItemType = {
+  id: 'configuracion-collapse',
+  title: <FormattedMessage id="configurations" />,
   type: 'collapse',
   icon: FaSlidersH, // Using AppstoreAddOutlined as the main icon
   children: [
@@ -22,18 +22,18 @@ const parametersColapsable: NavItemType = {
       id: 'consorcios',
       title: <FormattedMessage id="Consorcios" />,
       type: 'item',
-      url: '/parameters/consorcios',
+      url: '/configuracion/consorcios',
       icon: FaCity
     }
   ]
 };
 
-const parameters: NavItemType = {
-  id: 'group-parameters',
-  // title: <FormattedMessage id="parameters" />,
+const configuracion: NavItemType = {
+  id: 'group-configuracion',
+  // title: <FormattedMessage id="configurations" />,
   icon: FaSlidersH,
   type: 'group',
-  children: [parametersColapsable] // Now contains the collapsible menu
+  children: [configuracionColapsable] // Now contains the collapsible menu
 };
 
-export default parameters;
+export default configuracion;

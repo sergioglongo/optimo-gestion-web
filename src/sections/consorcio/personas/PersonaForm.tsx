@@ -21,14 +21,14 @@ const PersonaForm = () => {
     } else {
       setFieldValue('tipo_identificacion', 'documento');
     }
-  }, [isPersonaJuridica]);
+  }, [isPersonaJuridica, setFieldValue]);
 
   useEffect(() => {
     // Enfocar el campo de nombre/razón social al montar el formulario.
     // El timeout ayuda a asegurar que el campo esté listo para recibir el foco, especialmente dentro de un modal.
     setTimeout(() => {
       nombreRef.current?.focus();
-    }, 100);
+    }, 500);
   }, []);
 
   const { data: provincias, isLoading: isLoadingProvincias } = useGetProvincias();

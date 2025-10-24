@@ -2,6 +2,7 @@ import { Form, FormikProvider, useFormik } from 'formik';
 import { useMemo, useEffect } from 'react';
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 // project import
 import { Gasto } from 'types/gasto';
@@ -36,6 +37,7 @@ const PagoGastoModal = ({ open, modalToggler, gasto }: PagoGastoModalProps) => {
   const { user } = useAuth();
   const { selectedConsorcio } = useConsorcio();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const createPagoMutation = useCreatePagoProveedor();
   const { data: cuentas, isLoading: isLoadingCuentas } = useGetCuentas(selectedConsorcio?.id || 0, { enabled: !!selectedConsorcio });
@@ -62,7 +64,15 @@ const PagoGastoModal = ({ open, modalToggler, gasto }: PagoGastoModalProps) => {
       proveedor_id: gasto?.proveedor_id || null,
       cuenta_id: gasto?.Proveedor?.cuenta_id || null,
       monto: montoAdeudado > 0 ? montoAdeudado.toFixed(2) : '',
-      fecha: getTodayDateString(),
+      fecha: (() => {
+        if (gasto?.fecha) {
+          // Corrige el problema de la zona horaria.
+          // Crea una fecha en UTC para evitar que el navegador la ajuste a la zona horaria local.
+          const date = new Date(gasto.fecha);
+          return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()).toISOString().split('T')[0];
+        }
+        return getTodayDateString();
+      })(),
       tipo_pago: 'total',
       comentario: ''
     };
@@ -87,6 +97,7 @@ const PagoGastoModal = ({ open, modalToggler, gasto }: PagoGastoModalProps) => {
 
         resetForm();
         modalToggler(false);
+        queryClient.invalidateQueries(['gastos']);
         enqueueSnackbar('Pago registrado con éxito.', { variant: 'success' });
       } catch (error: any) {
         enqueueSnackbar(error.message || 'Error al registrar el pago.', { variant: 'error' });

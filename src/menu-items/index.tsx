@@ -7,21 +7,21 @@
 // import other from './other';
 // import pages from './pages';
 import home from './home';
-import consorcio from './consorcio';
+import parametros from './parametros';
 // import parameters from './parameters';
 
 // types
 import { NavItemType } from 'types/menu';
-import proveedores from './proveedores';
-import movimientos from './movimientos';
+import egresos from './egresos';
 import expensas from './expensas';
 // import samplePage from './sample-page';
-import parameters from './parameters';
-export { parameters };
+import configuracion from './configuracion';
+import movimientos from './movimientos';
+export { configuracion };
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems: { items: NavItemType[] } = {
-  items: [home, expensas, movimientos, proveedores, consorcio]
+  items: [home, expensas, egresos, movimientos, parametros]
 };
 
 export default menuItems;

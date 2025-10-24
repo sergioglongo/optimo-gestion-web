@@ -2,7 +2,7 @@ import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 
 // project import
-import { Proveedor } from 'types/proveedor';
+import { Proveedor, ProveedorSubmitData } from 'types/proveedor';
 import Modal from 'components/Modal/ModalBasico';
 import ProveedorForm from './ProveedorForm';
 import { useCreateProveedor, useUpdateProveedor } from 'services/api/proveedoresapi';
@@ -26,7 +26,16 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().max(255).required('El nombre es requerido'),
     servicio: Yup.string().max(255).required('El servicio es requerido'),
+    Rubros: Yup.array()
+      .of(
+        Yup.object().shape({
+          id: Yup.number().required('El rubro es requerido')
+        })
+      )
+      .min(1, 'El rubro es requerido'),
     identificacion: Yup.string().nullable().max(50, 'La identificación es muy larga'),
+    telefono: Yup.string().nullable().max(50, 'El teléfono es muy largo'),
+    email: Yup.string().email('Debe ser un email válido').nullable().max(255),
     CBU: Yup.string().nullable(),
     cuenta_id: Yup.number().nullable(),
     Domicilio: Yup.object().shape({
@@ -54,6 +63,9 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
         : proveedor?.Domicilio || null,
       CBU: proveedor?.CBU || null,
       cuenta_id: proveedor?.cuenta_id || null,
+      telefono: proveedor?.telefono || null,
+      Rubros: proveedor?.Rubros || [],
+      email: proveedor?.email || null,
       activo: proveedor?.activo ?? true
     },
     enableReinitialize: true,
@@ -64,12 +76,16 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
           return;
         }
 
+        const submissionData: ProveedorSubmitData = {
+          ...values,
+          Rubros: values.Rubros?.map((r) => (typeof r === 'number' ? r : r.id)) || []
+        };
+
         if (isCreating) {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { id, ...proveedorData } = values;
-          await createProveedorMutation.mutateAsync({ proveedorData, consorcio_id: values.consorcio_id });
+          await createProveedorMutation.mutateAsync({ proveedorData: submissionData as any, consorcio_id: values.consorcio_id });
         } else {
-          await updateProveedorMutation.mutateAsync({ proveedorId: proveedor!.id, proveedorData: values }); // proveedorId is already in values.id
+          await updateProveedorMutation.mutateAsync({ proveedorId: proveedor!.id, proveedorData: submissionData as any });
         }
         resetForm();
         modalToggler(false);

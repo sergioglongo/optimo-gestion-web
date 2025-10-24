@@ -7,7 +7,7 @@ import NavGroup from './Navigation/NavGroup';
 import SimpleBar from 'components/third-party/SimpleBar';
 
 // menu-items
-import { parameters } from 'menu-items';
+import { configuracion } from 'menu-items';
 
 // ==============================|| DRAWER CONTENT ||============================== //
 
@@ -28,8 +28,8 @@ const DrawerContent = () => {
         <Navigation selectedItems={selectedItems} setSelectedItems={setSelectedItems} setSelectedLevel={setSelectedLevel} />
       </SimpleBar>
       <NavGroup
-        key={parameters.id}
-        item={parameters}
+        key={configuracion.id}
+        item={configuracion}
         setSelectedItems={setSelectedItems}
         setSelectedLevel={setSelectedLevel}
         selectedLevel={selectedLevel}

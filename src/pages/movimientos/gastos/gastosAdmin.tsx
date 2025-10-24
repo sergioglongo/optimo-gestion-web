@@ -13,6 +13,7 @@ import IconButton from 'components/@extended/IconButton';
 import EmptyReactTable from 'pages/tables/react-table/empty';
 import GastosModal from 'sections/movimientos/gastos/GastosModal';
 import AlertGastoDelete from 'sections/movimientos/gastos/AlertGastoDelete';
+import { formatDateOnly } from 'utils/dateFormat';
 import GastoAsignacionModal from 'sections/movimientos/gastos/GastoAsignacionModal';
 import GastosList from 'sections/movimientos/gastos/GastosList';
 import PagoGastoModal from 'sections/movimientos/gastos/PagoGastoModal';
@@ -66,7 +67,7 @@ const GastosAdmin = () => {
       {
         header: 'Fecha',
         accessorKey: 'fecha',
-        cell: ({ getValue }) => <Typography>{new Date(getValue() as string).toLocaleDateString()}</Typography>
+        cell: ({ getValue }) => <Typography>{formatDateOnly(getValue() as string)}</Typography>
       },
       {
         header: 'Proveedor',

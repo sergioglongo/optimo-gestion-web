@@ -22,11 +22,19 @@ export interface Proveedor {
   cuenta_id: number | null;
   domicilio_id?: number | null;
   Domicilio?: Domicilio | null;
+  telefono?: string | null;
+  email?: string | null; // El array de rubros siempre será de objetos Rubro en el frontend. La transformación a number[] se hace antes de enviar.
   Rubros?: Rubro[];
   cuenta?: Cuenta;
   activo: boolean;
 }
 
+/**
+ * Interfaz para los datos que se envían a la API, donde Rubros es un array de IDs.
+ */
+export type ProveedorSubmitData = Omit<Proveedor, 'Rubros'> & {
+  Rubros?: number[];
+};
 /**
  * Interfaz que representa la relación entre un proveedor y un rubro.
  * Mapeada desde la tabla `proveedores_rubros`.

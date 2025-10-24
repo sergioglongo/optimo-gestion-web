@@ -1,38 +1,36 @@
 import { FormattedMessage } from 'react-intl';
+import { FaChartBar, FaDonate, FaPoll } from 'react-icons/fa';
 
 // type
 import { NavItemType } from 'types/menu';
-import { FaChartBar } from 'react-icons/fa';
-import { FaMoneyCheckAlt } from 'react-icons/fa';
-
 // ==============================|| MENU ITEMS - APPLICATIONS ||============================== //
 
 const movimientosColapsable: NavItemType = {
   id: 'movimientos-collapse',
   title: <FormattedMessage id="Transactions" />,
   type: 'collapse',
-  icon: FaChartBar, // Using AppstoreAddOutlined as the main icon
+  icon: FaPoll, // Using AppstoreAddOutlined as the main icon
   children: [
     {
-      id: 'gastos',
-      title: <FormattedMessage id="Expenses" />,
+      id: 'movimientos',
+      title: <FormattedMessage id="Transactions" />,
       type: 'item',
-      url: '/movimientos/gastos',
-      icon: FaMoneyCheckAlt
+      url: '/movimientos/movimientos',
+      icon: FaChartBar
     },
     {
-      id: 'transacciones',
-      title: <FormattedMessage id="transaction" />,
+      id: 'fondoreserva',
+      title: <FormattedMessage id="reservs" />,
       type: 'item',
-      url: '/movimientos/transacciones',
-      icon: FaChartBar
+      url: '/movimientos/fondos',
+      icon: FaDonate
     }
   ]
 };
 
 const movimientos: NavItemType = {
   id: 'group-movimientos',
-  // title: <FormattedMessage id="Consorcios" />,
+  // title: <FormattedMessage id="Transactions" />,
   type: 'group',
   children: [movimientosColapsable] // Now contains the collapsible menu
 };

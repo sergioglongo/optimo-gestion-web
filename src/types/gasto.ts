@@ -9,7 +9,7 @@ export type GastoTipo = 'ordinario' | 'extraordinario';
 export interface Gasto {
   id: number;
   consorcio_id: number;
-  rubro_gasto_id: number;
+  rubro_gasto_id: number | '';
   descripcion: string;
   monto: number;
   saldado?: number | null;
@@ -25,6 +25,7 @@ export interface Gasto {
   periodo_aplica: string | null; // Format: YYYY-MM-DD
   unidad_asignada?: unidadFuncional;
   LiquidacionGastos?: LiquidacionGasto[];
+  comprobante?: string | null;
 }
 
 export type GastoCreateData = Omit<Gasto, 'id'>;

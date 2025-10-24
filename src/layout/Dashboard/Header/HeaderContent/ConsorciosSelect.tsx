@@ -51,7 +51,7 @@ const ConsorciosSelect = () => {
         dispatch(setThemeLoading(false));
       }, 0);
     }
-  }, [selectedConsorcio, handleThemeChange]);
+  }, [selectedConsorcio, handleThemeChange, dispatch]);
 
   const handleConsorcioChange = (event: SelectChangeEvent<string>) => {
     selectRef.current?.blur(); // Quitar el foco del select

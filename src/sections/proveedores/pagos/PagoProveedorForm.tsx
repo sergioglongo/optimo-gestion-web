@@ -23,6 +23,7 @@ import { useGetProveedores } from 'services/api/proveedoresapi';
 import { useGetCuentas } from 'services/api/cuentasapi'; // Assuming this hook exists
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { Box } from '@mui/system';
+import { formatDateOnly } from 'utils/dateFormat';
 
 interface PagoProveedorFormProps {
   gastosDelProveedor: Gasto[];
@@ -42,28 +43,31 @@ const PagoProveedorForm = ({ gastosDelProveedor, isLoadingGastos }: PagoProveedo
     // Si la lista de gastos se actualiza y contiene un solo elemento, lo autoseleccionamos.
     if (gastosDelProveedor.length === 1) {
       const unicoGasto = gastosDelProveedor[0];
-      const montoAPagar = unicoGasto.deuda && unicoGasto.deuda > 0 ? unicoGasto.deuda : unicoGasto.monto;
+      const calculatedDeuda = (Number(unicoGasto.monto) || 0) - (Number(unicoGasto.saldado) || 0);
+      const montoAPagar = calculatedDeuda > 0 ? calculatedDeuda : Number(unicoGasto.monto) || 0;
       setFieldValue('gasto_id', unicoGasto.id);
       setFieldValue('monto', montoAPagar);
     }
   }, [gastosDelProveedor, setFieldValue]);
 
+  // Efecto para calcular el tipo de pago (total/parcial) basado en el monto ingresado y la deuda actual
   useEffect(() => {
     let newTipoPago = 'impago';
 
     if (values.gasto_id) {
       const selectedGasto = gastosDelProveedor.find((g) => g.id === values.gasto_id);
       if (selectedGasto) {
-        const montoActual = parseFloat(values.monto);
-        // The "total" amount is always the full original amount of the expense.
-        const montoTotalGasto = parseFloat(selectedGasto.monto as any);
+        const montoActual = parseFloat(values.monto); // Monto que el usuario está ingresando
 
-        if (!isNaN(montoActual) && montoActual > 0 && !isNaN(montoTotalGasto)) {
-          // Compare them as fixed-point numbers (as strings) to avoid floating point issues
-          if (montoActual.toFixed(2) === montoTotalGasto.toFixed(2)) {
-            newTipoPago = 'total';
+        // Calcular la deuda actual del gasto seleccionado
+        const currentDeuda = (Number(selectedGasto.monto) || 0) - (Number(selectedGasto.saldado) || 0);
+
+        if (!isNaN(montoActual) && montoActual > 0) {
+          // Si el monto ingresado cubre la deuda actual, es un pago total de la deuda restante
+          if (montoActual.toFixed(2) === currentDeuda.toFixed(2)) {
+            newTipoPago = 'total'; // Pago total de la deuda restante
           } else {
-            newTipoPago = 'parcial';
+            newTipoPago = 'parcial'; // Pago parcial de la deuda restante
           }
         }
       }
@@ -71,7 +75,8 @@ const PagoProveedorForm = ({ gastosDelProveedor, isLoadingGastos }: PagoProveedo
     if (values.tipo_pago !== newTipoPago) {
       setFieldValue('tipo_pago', newTipoPago);
     }
-  }, [values.monto, values.gasto_id, values.tipo_pago, gastosDelProveedor, setFieldValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values.monto, values.gasto_id, gastosDelProveedor, setFieldValue]);
   const handleDateChange = (days: number) => {
     const currentDateStr = values.fecha;
     if (!currentDateStr) return;
@@ -154,24 +159,37 @@ const PagoProveedorForm = ({ gastosDelProveedor, isLoadingGastos }: PagoProveedo
                         key={gasto.id}
                         selected={values.gasto_id === gasto.id}
                         onClick={() => {
-                          // If there's an outstanding debt, that's the amount to be paid. Otherwise, it's the full amount.
-                          const montoAPagar = gasto.deuda && gasto.deuda > 0 ? gasto.deuda : gasto.monto;
+                          // Calcular la deuda actual del gasto seleccionado
+                          const currentDeuda = (Number(gasto.monto) || 0) - (Number(gasto.saldado) || 0);
+                          const montoAPagar = currentDeuda > 0 ? currentDeuda : Number(gasto.monto) || 0;
+
                           setFieldValue('gasto_id', gasto.id);
-                          setFieldValue('monto', montoAPagar);
+                          setFieldValue('monto', montoAPagar.toFixed(2));
                         }}
                       >
-                        {gasto.deuda && gasto.deuda > 0 ? (
-                          <ListItemText
-                            primary={`${new Date(gasto.fecha).toLocaleDateString()} - ${gasto.descripcion}`}
-                            secondary={`Deuda: $${gasto.deuda.toLocaleString('es-AR')} (Total: $${gasto.monto.toLocaleString('es-AR')})`}
-                          />
-                        ) : (
-                          <ListItemText
-                            primary={`${new Date(gasto.fecha).toLocaleDateString()} - ${gasto.descripcion} - $${gasto.monto.toLocaleString(
-                              'es-AR'
-                            )}`}
-                          />
-                        )}
+                        {/* Mostrar la deuda calculada si es mayor a 0 */}
+                        {(() => {
+                          const currentDeuda = (Number(gasto.monto) || 0) - (Number(gasto.saldado) || 0);
+
+                          if (currentDeuda > 0.009) {
+                            // Se usa 0.009 para evitar problemas de redondeo con centavos
+                            return (
+                              <ListItemText
+                                primary={`${formatDateOnly(gasto.fecha)} - ${gasto.descripcion} - $${Number(gasto.monto).toLocaleString(
+                                  'es-AR'
+                                )}`}
+                                secondary={`Deuda Pendiente: $${currentDeuda.toLocaleString('es-AR')}`}
+                              />
+                            );
+                          }
+                          return (
+                            <ListItemText
+                              primary={`${formatDateOnly(gasto.fecha)} - ${gasto.descripcion} - $${Number(gasto.monto).toLocaleString(
+                                'es-AR'
+                              )}`}
+                            />
+                          );
+                        })()}
                       </ListItem>
                     ))
                   ) : (

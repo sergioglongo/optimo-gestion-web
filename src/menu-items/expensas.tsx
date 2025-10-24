@@ -1,7 +1,6 @@
 import { FormattedMessage } from 'react-intl';
 
-import { FaJournalWhills } from 'react-icons/fa';
-import { FaTasks } from 'react-icons/fa';
+import { FaHandHoldingUsd, FaJournalWhills } from 'react-icons/fa';
 // type
 import { NavItemType } from 'types/menu';
 import { FaBook } from 'react-icons/fa';
@@ -26,7 +25,7 @@ const expensasColapsable: NavItemType = {
       title: <FormattedMessage id="Incomes" />,
       type: 'item',
       url: '/expensas/cobranzas',
-      icon: FaTasks
+      icon: FaHandHoldingUsd
     },
     {
       id: 'Deudores',

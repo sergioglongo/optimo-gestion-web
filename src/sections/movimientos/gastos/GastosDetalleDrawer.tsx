@@ -17,7 +17,7 @@ const GastoDetalleDrawer = ({ open, onClose, gasto }: GastoDetalleDrawerProps) =
     { label: 'Proveedor', value: gasto.Proveedor?.nombre || 'No especificado' },
     { label: 'Descripción', value: gasto.descripcion },
     [
-      { label: 'Fecha', value: new Date(gasto.fecha).toLocaleDateString() },
+      { label: 'Fecha', value: new Date(gasto.fecha).toLocaleDateString('es-AR', { timeZone: 'UTC' }) },
       { label: 'Monto', value: `$${Number(gasto.monto).toLocaleString('es-AR')}` }
     ],
     [
