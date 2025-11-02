@@ -157,31 +157,40 @@ const PagosProveedoresAdmin = () => {
       {/* Modal para EDITAR un pago. Solo se renderiza si hay un pago seleccionado */}
       {selectedPago && <PagoProveedorEditModal open={pagoEditModal} modalToggler={setPagoEditModal} pago={selectedPago} />}
 
-      {selectedPago && (
-        <ViewDrawer
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-          title="Detalles del Pago"
-          items={[
-            [
-              { label: 'Fecha de Pago', value: new Date(selectedPago.fecha).toLocaleDateString() },
-              { label: 'Fecha del Gasto', value: selectedPago.Gasto ? new Date(selectedPago.Gasto.fecha).toLocaleDateString() : '-' }
-            ],
-            { label: 'Proveedor', value: selectedPago.Proveedor?.nombre || '-' },
-            { label: 'Gasto Asociado', value: selectedPago.Gasto?.descripcion || '-' },
-            { label: 'Cuenta de Pago', value: selectedPago.cuenta?.descripcion || '-' },
-            [
-              { label: 'Monto Pagado', value: `$${Number(selectedPago.monto).toLocaleString('es-AR')}` },
-              { label: 'Tipo de Pago', value: selectedPago.tipo_pago }
-            ],
-            {
-              label: 'Monto del Gasto',
-              value: selectedPago.Gasto ? `$${Number(selectedPago.Gasto.monto).toLocaleString('es-AR')}` : '-'
-            },
-            { label: 'Comentario', value: selectedPago.comentario || '-' }
-          ]}
-        />
-      )}
+      {selectedPago &&
+        (() => {
+          const montoGasto = selectedPago.Gasto ? Number(selectedPago.Gasto.monto) : 0;
+          const montoPagadoEnEstaTransaccion = Number(selectedPago.monto) || 0;
+          // El 'saldado' del gasto ya incluye este pago. Para ver la deuda real,
+          // debemos sumar este pago al 'adeudado' que ya calculamos.
+          const adeudado = montoGasto - (Number(selectedPago.Gasto?.saldado) || 0) - montoPagadoEnEstaTransaccion;
+
+          return (
+            <ViewDrawer
+              open={drawerOpen}
+              onClose={() => setDrawerOpen(false)}
+              title="Detalles del Pago a Proveedor"
+              items={[
+                [
+                  { label: 'Fecha de Pago', value: new Date(selectedPago.fecha).toLocaleDateString() },
+                  { label: 'Fecha del Gasto', value: selectedPago.Gasto ? new Date(selectedPago.Gasto.fecha).toLocaleDateString() : '-' }
+                ],
+                { label: 'Proveedor', value: selectedPago.Proveedor?.nombre || '-' },
+                { label: 'Gasto Asociado', value: selectedPago.Gasto?.descripcion || '-' },
+                { label: 'Cuenta de Pago', value: selectedPago.cuenta?.descripcion || '-' },
+                [
+                  { label: 'Monto Pagado', value: `$${montoPagadoEnEstaTransaccion.toLocaleString('es-AR')}` },
+                  { label: 'Tipo de Pago', value: selectedPago.tipo_pago }
+                ],
+                [
+                  { label: 'Monto Adeudado', value: `$${adeudado.toLocaleString('es-AR')}` },
+                  { label: 'Monto del Gasto', value: `$${montoGasto.toLocaleString('es-AR')}` }
+                ],
+                { label: 'Comentario', value: selectedPago.comentario || '-' }
+              ]}
+            />
+          );
+        })()}
     </>
   );
 };

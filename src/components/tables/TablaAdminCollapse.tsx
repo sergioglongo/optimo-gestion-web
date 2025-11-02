@@ -85,6 +85,9 @@ function TablaAdminCollapse<T extends object>({
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState('');
 
+  const filterCount = selectFilters ? Object.keys(selectFilters).length : 0;
+  const showFiltersInline = filterCount > 0 && filterCount <= 3;
+
   const tableColumns = useMemo(() => {
     const selectionColumn: ColumnDef<T>[] = showSelection
       ? [
@@ -179,25 +182,36 @@ function TablaAdminCollapse<T extends object>({
           <Typography variant="h5">{title}</Typography>
         </Box>
       )}
-      <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" sx={{ padding: 2.5 }}>
-        <DebouncedInput
-          value={globalFilter ?? ''}
-          onFilterChange={(value) => setGlobalFilter(String(value))}
-          placeholder={searchPlaceholder}
-        />
-
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <TablaAdminFilters table={table} selectFilters={selectFilters} />
-          {showColumnSorting && <SelectColumnSorting {...{ getState: table.getState, getAllColumns: table.getAllColumns, setSorting }} />}
-          {onAdd && (
-            <Button variant="contained" startIcon={<PlusOutlined />} onClick={onAdd} disabled={isAddDisabled}>
-              {addLabel}
-            </Button>
-          )}
-          {showCsvExport && (
-            <CSVExport {...{ data: table.getSelectedRowModel().flatRows.map((row) => row.original), headers, filename: csvFilename }} />
-          )}
+      <Stack spacing={2} sx={{ p: 2.5 }}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} rowGap={2} spacing={2} alignItems="center" justifyContent="space-between">
+          <DebouncedInput
+            value={globalFilter ?? ''}
+            onFilterChange={(value) => setGlobalFilter(String(value))}
+            placeholder={searchPlaceholder}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
+          />
+          <Stack direction="row" spacing={1} sx={{ width: { xs: '100%', sm: 'auto' }, justifyContent: 'flex-end' }}>
+            {selectFilters && showFiltersInline && (
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
+                <TablaAdminFilters table={table} selectFilters={selectFilters} />
+              </Stack>
+            )}
+            {showColumnSorting && <SelectColumnSorting {...{ getState: table.getState, getAllColumns: table.getAllColumns, setSorting }} />}
+            {onAdd && (
+              <Button variant="contained" startIcon={<PlusOutlined />} onClick={onAdd} disabled={isAddDisabled}>
+                {addLabel}
+              </Button>
+            )}
+            {showCsvExport && (
+              <CSVExport {...{ data: table.getSelectedRowModel().flatRows.map((row) => row.original), headers, filename: csvFilename }} />
+            )}
+          </Stack>
         </Stack>
+        {selectFilters && !showFiltersInline && (
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
+            <TablaAdminFilters table={table} selectFilters={selectFilters} />
+          </Stack>
+        )}
       </Stack>
       <ScrollX>
         {showSelection && <RowSelection selected={Object.keys(rowSelection).length} />}

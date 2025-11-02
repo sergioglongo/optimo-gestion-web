@@ -32,18 +32,16 @@ const PersonaForm = () => {
   }, []);
 
   const { data: provincias, isLoading: isLoadingProvincias } = useGetProvincias();
-  const [selectedProvinciaId, setSelectedProvinciaId] = useState<number | string>('');
+  const [selectedProvinciaId, setSelectedProvinciaId] = useState<string>('');
   const { data: localidades, isLoading: isLoadingLocalidades } = useGetLocalidades(selectedProvinciaId, { enabled: !!selectedProvinciaId });
 
   useEffect(() => {
-    if (provincias && values.Domicilio && values.Domicilio.provincia) {
-      const initialProvincia = provincias.find((p) => p.nombre === values.Domicilio!.provincia);
-      if (initialProvincia) {
-        setSelectedProvinciaId(initialProvincia.id);
-      }
+    // Si hay un domicilio con provincia_id, se establece como la provincia seleccionada
+    // para cargar las localidades correspondientes.
+    if (values.Domicilio?.provincia_id) {
+      setSelectedProvinciaId(values.Domicilio.provincia_id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provincias, values.Domicilio?.provincia, values.id]); // Se ejecuta cuando las provincias cargan, la provincia o el id de la persona cambia
+  }, [values.Domicilio?.provincia_id]);
 
   const filteredTipoIdentificacionOptions = useMemo(() => {
     if (isPersonaJuridica) {
@@ -156,26 +154,33 @@ const PersonaForm = () => {
         <Autocomplete
           id="provincia-autocomplete"
           options={provincias || []}
-          getOptionLabel={(option) => option.nombre}
-          value={provincias?.find((p) => p.nombre === values.Domicilio?.provincia) || null}
+          getOptionLabel={(option) => option.nombre || ''}
+          value={provincias?.find((p) => p.id === values.Domicilio?.provincia_id) || null}
           onChange={(event, newValue) => {
             if (newValue) {
-              setSelectedProvinciaId(newValue.id);
-              setFieldValue('Domicilio.provincia', newValue.nombre);
-              setFieldValue('Domicilio.localidad', ''); // Reset localidad on provincia change
+              setSelectedProvinciaId(String(newValue.id));
+              setFieldValue('Domicilio.provincia_id', newValue.id);
+              setFieldValue('Domicilio.localidad_id', null); // Reset localidad on provincia change
+              setFieldValue('Domicilio.Localidad', null);
             } else {
               setSelectedProvinciaId('');
-              setFieldValue('Domicilio.provincia', '');
-              setFieldValue('Domicilio.localidad', '');
+              setFieldValue('Domicilio.provincia_id', null);
+              setFieldValue('Domicilio.localidad_id', null);
+              setFieldValue('Domicilio.Localidad', null);
             }
           }}
           loading={isLoadingProvincias}
+          renderOption={(props, option) => (
+            <li {...props} key={option.id}>
+              {option.nombre}
+            </li>
+          )}
           renderInput={(params) => (
             <TextField
               {...params}
               label="Provincia"
-              error={Boolean(getIn(touched, 'Domicilio.provincia') && getIn(errors, 'Domicilio.provincia'))}
-              helperText={getIn(touched, 'Domicilio.provincia') && getIn(errors, 'Domicilio.provincia')}
+              error={Boolean(getIn(touched, 'Domicilio.provincia_id') && getIn(errors, 'Domicilio.provincia_id'))}
+              helperText={getIn(touched, 'Domicilio.provincia_id') && getIn(errors, 'Domicilio.provincia_id')}
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (
@@ -193,19 +198,24 @@ const PersonaForm = () => {
         <Autocomplete
           id="localidad-autocomplete"
           options={localidades || []}
-          getOptionLabel={(option) => option.nombre}
-          value={localidades?.find((l) => l.nombre === values.Domicilio?.localidad) || null}
+          getOptionLabel={(option) => option.nombre || ''}
+          value={localidades?.find((l) => l.id === values.Domicilio?.localidad_id) || null}
           onChange={(event, newValue) => {
-            setFieldValue('Domicilio.localidad', newValue ? newValue.nombre : '');
+            setFieldValue('Domicilio.localidad_id', newValue ? newValue.id : null);
           }}
           loading={isLoadingLocalidades}
           disabled={!selectedProvinciaId || isLoadingLocalidades}
+          renderOption={(props, option) => (
+            <li {...props} key={option.id}>
+              {option.nombre}
+            </li>
+          )}
           renderInput={(params) => (
             <TextField
               {...params}
               label="Localidad"
-              error={Boolean(getIn(touched, 'Domicilio.localidad') && getIn(errors, 'Domicilio.localidad'))}
-              helperText={getIn(touched, 'Domicilio.localidad') && getIn(errors, 'Domicilio.localidad')}
+              error={Boolean(getIn(touched, 'Domicilio.localidad_id') && getIn(errors, 'Domicilio.localidad_id'))}
+              helperText={getIn(touched, 'Domicilio.localidad_id') && getIn(errors, 'Domicilio.localidad_id')}
             />
           )}
         />

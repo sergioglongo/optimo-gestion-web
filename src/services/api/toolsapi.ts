@@ -29,7 +29,7 @@ export const toolsQueryKeys = {
 
 // API functions
 export const fetchProvincias = async (): Promise<Provincia[]> => {
-  const { data } = await apiClient.get<ProvinciasApiResponse>('/tools/provincias');
+  const { data } = await apiClient.get<ProvinciasApiResponse>('/domicilio/provincias');
   if (data.success) {
     return data.result || [];
   } else {
@@ -38,7 +38,7 @@ export const fetchProvincias = async (): Promise<Provincia[]> => {
 };
 
 export const fetchLocalidadesByProvincia = async (provinciaId: number | string): Promise<Localidad[]> => {
-  const { data } = await apiClient.get<LocalidadesApiResponse>(`/tools/localidades/${provinciaId}`);
+  const { data } = await apiClient.get<LocalidadesApiResponse>(`/domicilio/localidades/${provinciaId}`);
   if (data.success) {
     return data.result || [];
   } else {

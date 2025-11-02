@@ -25,8 +25,8 @@ import useConsorcio from 'hooks/useConsorcio';
 import { useGetGastos } from 'services/api/gastosapi';
 
 // types
-import { Gasto, GastoEstado, GastoTipo } from 'types/gasto';
-import { unidadFuncional } from 'types/unidadFuncional';
+import { Gasto, GastoEstado } from 'types/gasto';
+// import { unidadFuncional } from 'types/unidadFuncional';
 import { truncateString } from 'utils/textFormat';
 
 // assets
@@ -87,20 +87,16 @@ const GastosAdmin = () => {
         }
       },
       {
+        // Columna oculta para que el filtro funcione. No necesita un 'cell' renderer.
         header: 'Tipo',
         accessorKey: 'tipo_gasto',
-        cell: ({ getValue }) => {
-          const tipo = getValue() as GastoTipo;
-          return <Chip color={tipo === 'ordinario' ? 'primary' : 'warning'} label={tipo} size="small" variant="light" />;
-        }
+        id: 'tipo_gasto'
       },
       {
-        header: 'Asignado a',
-        accessorKey: 'unidad_asignada',
-        cell: ({ getValue }) => {
-          const unidad = getValue() as unidadFuncional | undefined;
-          return <Typography textAlign={'center'}>{unidad ? unidad.etiqueta : 'Consorcio'}</Typography>;
-        }
+        // Columna oculta para el filtro de rubro.
+        header: 'Rubro',
+        accessorKey: 'rubro_gasto_id',
+        id: 'rubro_gasto_id'
       },
       {
         header: 'Estado',
@@ -224,7 +220,7 @@ const GastosAdmin = () => {
         {...{
           data: gastosData || [],
           columns,
-          initialColumnVisibility: { id: false },
+          initialColumnVisibility: { id: false, tipo_gasto: false },
           modalToggler: () => {
             setGastoModal(true);
             setSelectedGasto(null);

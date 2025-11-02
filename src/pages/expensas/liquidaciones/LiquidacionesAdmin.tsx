@@ -236,7 +236,7 @@ const LiquidacionesAdmin = () => {
         onConfirm={handleGenerate}
         title="Confirmar Generación"
         content={`Se generarán ${activeUnidadesData?.length || 0} liquidaciones para las unidades activas. ¿Desea continuar?`}
-        confirmText="Generar"
+        confirmText="generate"
       />
       <AlertLiquidacionDelete
         liquidacion={liquidacionToDelete}

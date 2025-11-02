@@ -28,7 +28,7 @@ const PersonaDetalleDrawer = ({ open, onClose, persona }: PersonaDetalleDrawerPr
     { label: 'Domicilio', value: persona.Domicilio?.direccion || '-' },
     {
       label: 'Localidad',
-      value: persona.Domicilio ? `${persona.Domicilio.localidad || '-'}, ${persona.Domicilio.provincia || '-'}` : '-'
+      value: persona.Domicilio ? `${persona.Domicilio.Localidad?.nombre || '-'}, ${persona.Domicilio.Provincia?.nombre || '-'}` : '-'
     }
   ] as const;
 

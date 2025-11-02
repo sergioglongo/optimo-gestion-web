@@ -144,9 +144,13 @@ const LiquidacionDetalle = () => {
                           {liquidacion?.Consorcio?.nombre}
                         </Typography>
                         <Typography color="secondary">{liquidacion?.Consorcio?.Domicilio?.direccion || ''}</Typography>
-                        <Typography color="secondary">
-                          {`${liquidacion?.Consorcio?.Domicilio?.localidad || ''}, ${liquidacion?.Consorcio?.Domicilio?.provincia || ''}`}
-                        </Typography>
+                        {liquidacion?.Consorcio?.Domicilio && (
+                          <Typography color="secondary">
+                            {`${liquidacion.Consorcio.Domicilio.Localidad?.nombre || ''}, ${
+                              liquidacion.Consorcio.Domicilio.Provincia?.nombre || ''
+                            }`}
+                          </Typography>
+                        )}
                       </FormControl>
                     )}
                   </Stack>

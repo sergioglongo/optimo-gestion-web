@@ -8,7 +8,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Gasto } from 'types/gasto';
 import { GastoPagoCreateData } from 'types/gasto';
 import Modal from 'components/Modal/ModalBasico';
-import { Box, CircularProgress, Typography, Grid, TextField, Autocomplete, IconButton } from '@mui/material';
+import { Box, CircularProgress, Typography, Grid, TextField, Autocomplete, IconButton, Stack } from '@mui/material';
 // import { useCreateGastoPago } from 'services/api/gastosapi';
 import useAuth from 'hooks/useAuth';
 import useConsorcio from 'hooks/useConsorcio';
@@ -172,18 +172,25 @@ const PagoGastoModal = ({ open, modalToggler, gasto }: PagoGastoModalProps) => {
                     <Typography variant="body1" color="textSecondary">
                       {gasto.descripcion}
                     </Typography>
-                    <Typography variant="body1" color="textSecondary">
-                      Monto Total: ${Number(gasto.monto).toLocaleString('es-AR')}
-                    </Typography>
+                    <Stack direction="row" spacing={1} alignItems="baseline" sx={{ mt: 0.5 }}>
+                      <Typography variant="body1" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                        Total: ${Number(gasto.monto).toLocaleString('es-AR')}
+                      </Typography>
+                      <Typography variant="body1" color="success.dark" sx={{ fontWeight: 'medium' }}>
+                        (Saldado: ${Number(gasto.saldado || 0).toLocaleString('es-AR')})
+                      </Typography>
+                    </Stack>
                   </Box>
-                  <Box sx={{ textAlign: { sm: 'right' } }}>
-                    <Typography variant="caption" display="block">
-                      Monto Adeudado
-                    </Typography>
-                    <Typography variant="h5" color="primary.main" sx={{ fontWeight: 'bold' }}>
-                      ${montoAdeudado.toLocaleString('es-AR')}
-                    </Typography>
-                  </Box>
+                  <Stack direction="column" spacing={0} alignItems="flex-end">
+                    <Box sx={{ textAlign: 'right' }}>
+                      <Typography variant="caption" display="block">
+                        Monto Adeudado
+                      </Typography>
+                      <Typography variant="h5" color="error.main" sx={{ fontWeight: 'bold' }}>
+                        ${montoAdeudado.toLocaleString('es-AR')}
+                      </Typography>
+                    </Box>
+                  </Stack>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={5}>
