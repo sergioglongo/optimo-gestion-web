@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 // project import
 import { Liquidacion } from 'types/liquidacion'; // Asumiendo que existe
 import Modal from 'components/Modal/ModalBasico';
-import LiquidacionForm from './nueva/LiquidacionNuevaPrincipal';
+import LiquidacionNuevaEncabezado from './nueva/LiquidacionNuevaEncabezado';
 import { useCreateLiquidacion, useUpdateLiquidacion } from 'services/api/liquidacionapi'; // Asumiendo que existen
 import useConsorcio from 'hooks/useConsorcio';
 
@@ -84,7 +84,7 @@ const LiquidacionModal = ({ open, modalToggler, liquidacion }: LiquidacionModalP
     >
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate>
-          <LiquidacionForm />
+          <LiquidacionNuevaEncabezado />
         </Form>
       </FormikProvider>
     </Modal>

@@ -97,6 +97,8 @@ function TablaAdmin<T extends object>({
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState('');
 
+  const filterCount = selectFilters ? Object.keys(selectFilters).length : 0;
+  const showFiltersInline = filterCount > 0 && filterCount <= 3; // Mostrar inline si hay 1 o 2 filtros
   const tableColumns = useMemo(() => {
     const selectionColumn: ColumnDef<T>[] = showSelection
       ? [
@@ -171,8 +173,7 @@ function TablaAdmin<T extends object>({
         </Box>
       )}
       <Stack spacing={2} sx={{ p: 2.5 }}>
-        {/* Fila 1: Búsqueda y Botones de Acción */}
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center" justifyContent="space-between">
+        <Stack direction={{ xs: 'column', sm: 'row' }} rowGap={2} spacing={2} alignItems="center" justifyContent="space-between">
           <DebouncedInput
             value={globalFilter ?? ''}
             onFilterChange={(value) => setGlobalFilter(String(value))}
@@ -180,6 +181,11 @@ function TablaAdmin<T extends object>({
             sx={{ width: { xs: '100%', sm: 'auto' } }}
           />
           <Stack direction="row" spacing={1} sx={{ width: { xs: '100%', sm: 'auto' }, justifyContent: 'flex-end' }}>
+            {selectFilters && showFiltersInline && (
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
+                <TablaAdminFilters table={table} selectFilters={selectFilters} />
+              </Stack>
+            )}
             {showColumnSorting && <SelectColumnSorting {...{ getState: table.getState, getAllColumns: table.getAllColumns, setSorting }} />}
             {onAdd && (
               <Button variant="contained" startIcon={<PlusOutlined />} onClick={onAdd} disabled={isAddDisabled}>
@@ -191,9 +197,7 @@ function TablaAdmin<T extends object>({
             )}
           </Stack>
         </Stack>
-
-        {/* Fila 2: Filtros Desplegables */}
-        {selectFilters && (
+        {selectFilters && !showFiltersInline && (
           <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
             <TablaAdminFilters table={table} selectFilters={selectFilters} />
           </Stack>

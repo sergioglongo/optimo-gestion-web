@@ -1,5 +1,6 @@
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 // project import
@@ -49,7 +50,7 @@ const GastosModal = ({ open, modalToggler, gasto }: GastosModalProps) => {
       descripcion: gasto?.descripcion || '',
       monto: gasto?.monto || 0,
       fecha: gasto?.fecha ? gasto.fecha.split('T')[0] : new Date().toISOString().split('T')[0],
-      rubro_gasto_id: gasto?.rubro_gasto_id || '', // Usar '' en lugar de 0 para el valor inicial
+      rubro_gasto_id: gasto?.rubro_gasto_id ?? '', // Usar '' en lugar de null/undefined
       proveedor_id: gasto?.proveedor_id || null,
       tipo_gasto: gasto?.tipo_gasto || 'ordinario',
       estado: gasto?.estado || 'impago',
@@ -64,12 +65,23 @@ const GastosModal = ({ open, modalToggler, gasto }: GastosModalProps) => {
         if (isCreating) {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { id, ...gastoData } = values; // Omit id for creation
-          await createGastoMutation.mutateAsync(gastoData);
+          await createGastoMutation.mutateAsync(gastoData, {
+            onSuccess: () => {
+              resetForm();
+              modalToggler(false);
+            }
+          });
         } else {
-          await updateGastoMutation.mutateAsync({ gastoId: gasto!.id, gastoData: values });
+          await updateGastoMutation.mutateAsync(
+            { gastoId: gasto!.id, gastoData: values },
+            {
+              onSuccess: () => {
+                resetForm();
+                modalToggler(false);
+              }
+            }
+          );
         }
-        resetForm();
-        modalToggler(false);
       } catch (error) {
         console.error(error);
       } finally {
@@ -78,15 +90,21 @@ const GastosModal = ({ open, modalToggler, gasto }: GastosModalProps) => {
     }
   });
 
-  const { handleSubmit, isSubmitting } = formik;
+  const { handleSubmit, isSubmitting, resetForm } = formik;
+
+  useEffect(() => {
+    // Resetea el formulario solo cuando el modal se abre para crear,
+    // no al cerrar. Esto evita conflictos de foco.
+    if (open && isCreating) {
+      resetForm();
+    }
+  }, [open, isCreating, resetForm]);
 
   return (
     <Modal
       open={open}
-      onClose={() => {
-        modalToggler(false);
-        formik.resetForm();
-      }}
+      // Al cerrar, solo cerramos el modal. El reseteo se maneja en el useEffect o en el onSuccess del submit.
+      onClose={() => modalToggler(false)}
       title={isCreating ? 'Nuevo Gasto' : 'Editar Gasto'}
       cancelButtonLabel="Cancelar"
       confirmButtonLabel={isCreating ? 'Agregar' : 'Guardar'}

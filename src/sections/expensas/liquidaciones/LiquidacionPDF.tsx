@@ -122,7 +122,7 @@ const LiquidacionPDF = ({ liquidacion }: Props) => (
           <Text style={styles.title}>{liquidacion.Consorcio?.nombre}</Text>
           <Text style={styles.headerInfo}>{liquidacion.Consorcio?.Domicilio?.direccion}</Text>
           <Text style={styles.headerInfo}>
-            {`${liquidacion.Consorcio?.Domicilio?.localidad}, ${liquidacion.Consorcio?.Domicilio?.provincia}`}
+            {`${liquidacion.Consorcio?.Domicilio?.Localidad?.nombre || ''}, ${liquidacion.Consorcio?.Domicilio?.Provincia?.nombre || ''}`}
           </Text>
         </View>
         <View style={{ textAlign: 'right' }}>

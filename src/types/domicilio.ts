@@ -1,13 +1,19 @@
-// ==============================|| DOMICILIO - TYPES ||============================== //
+export interface Provincia {
+  id: string;
+  nombre: string;
+}
 
-/**
- * Interfaz que representa la estructura de un domicilio,
- * mapeada desde la tabla `public.domicilios` de la base de datos.
- */
+export interface Localidad {
+  id: string;
+  nombre: string;
+  provincia_id: string;
+}
+
 export interface Domicilio {
   id?: number;
-  direccion: string;
-  localidad?: string | null;
-  provincia?: string | null;
-  codigo_postal?: string | null;
+  direccion: string | null;
+  provincia_id: string | null;
+  localidad_id: string | null;
+  Provincia?: Provincia;
+  Localidad?: Localidad;
 }

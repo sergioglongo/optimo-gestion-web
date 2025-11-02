@@ -40,8 +40,8 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
     cuenta_id: Yup.number().nullable(),
     Domicilio: Yup.object().shape({
       direccion: Yup.string().max(255, 'La dirección es muy larga').nullable(),
-      localidad: Yup.string().nullable(),
-      provincia: Yup.string().nullable()
+      provincia_id: Yup.string().nullable(),
+      localidad_id: Yup.string().nullable()
     })
   });
 
@@ -56,9 +56,9 @@ const ProveedorModal = ({ open, modalToggler, proveedor }: ProveedorModalProps) 
       Domicilio: isCreating
         ? {
             // id: 0, // No se envía el id al crear un nuevo domicilio
-            direccion: '',
-            provincia: selectedConsorcio?.Domicilio?.provincia || '',
-            localidad: selectedConsorcio?.Domicilio?.localidad || ''
+            direccion: selectedConsorcio?.Domicilio?.direccion || null,
+            provincia_id: selectedConsorcio?.Domicilio?.provincia_id || null,
+            localidad_id: selectedConsorcio?.Domicilio?.localidad_id || null
           }
         : proveedor?.Domicilio || null,
       CBU: proveedor?.CBU || null,

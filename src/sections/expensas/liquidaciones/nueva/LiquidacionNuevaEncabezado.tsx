@@ -1,4 +1,4 @@
-import { Grid, TextField } from '@mui/material';
+import { Grid, TextField, FormControl, FormHelperText } from '@mui/material';
 import { useFormikContext, getIn } from 'formik';
 import { DatePicker, LocalizationProvider, esES } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -7,26 +7,36 @@ import useConsorcio from 'hooks/useConsorcio';
 
 // ==============================|| LIQUIDACION FORM ||============================== //
 
-const LiquidacionForm = () => {
-  const { errors, touched, getFieldProps, setFieldValue, values, handleBlur } = useFormikContext<any>();
+const LiquidacionNuevaEncabezado = () => {
+  const { errors, touched, getFieldProps, setFieldValue, values, handleBlur, setFieldTouched } = useFormikContext<any>();
   const { selectedConsorcio } = useConsorcio();
 
   const getMinDate = () => {
-    // Usamos el valor 'periodo' del formulario, que ya tiene el valor inicial mínimo calculado.
     if (selectedConsorcio?.ultimo_periodo_liquidado) {
       // Se parsea el string 'YYYY-MM-DD' para evitar problemas de timezone.
       const [year, month] = selectedConsorcio.ultimo_periodo_liquidado.split('-').map(Number); // ej: 2025-09-01 -> year=2025, month=9
-      // Date.UTC usa meses 0-indexados (0=Enero, 11=Diciembre).
-      // Si el último período fue Septiembre (month=9), el siguiente mes es Octubre, que tiene índice 9.
-      return new Date(Date.UTC(year, month, 2));
+      // Si el último período fue Septiembre (month=9), el siguiente mes disponible es Octubre (índice 9 en Date.UTC).
+      console.log('ultimo_periodo_liquidado', selectedConsorcio.ultimo_periodo_liquidado);
+      console.log('year ultimo', year);
+      console.log('month ultimo', month);
+      const mindate = new Date(Date.UTC(year, month, 2));
+      console.log('mindate', mindate);
+      return mindate;
     }
     return null;
   };
 
   const getMaxDate = () => {
-    const currentYear = new Date().getFullYear();
-    // La fecha máxima es el último día del año siguiente.
-    return new Date(Date.UTC(currentYear + 1, 11, 31));
+    const minDate = getMinDate();
+    if (minDate) {
+      // Se suman 3 meses a la fecha mínima permitida.
+      const maxdate = new Date(minDate);
+      maxdate.setUTCMonth(maxdate.getUTCMonth() + 3);
+      console.log('maxdate', maxdate);
+      return maxdate;
+    }
+    // Fallback por si no hay minDate, aunque no debería ocurrir en el flujo normal.
+    return new Date(new Date().setMonth(new Date().getMonth() + 3));
   };
 
   return (
@@ -43,14 +53,20 @@ const LiquidacionForm = () => {
             views={['year', 'month']}
             minDate={getMinDate()}
             maxDate={getMaxDate()}
-            value={values.periodo ? new Date(values.periodo.replace(/-/g, '/')) : null}
+            value={
+              values.periodo
+                ? (() => {
+                    const [year, month] = values.periodo.split('-').map(Number);
+                    return new Date(Date.UTC(year, month - 1, 2));
+                  })()
+                : null
+            }
             onChange={(newValue) => {
               if (newValue instanceof Date && !isNaN(newValue.getTime())) {
                 if (selectedConsorcio?.dia_cierre) {
                   const year = newValue.getUTCFullYear();
                   const month = newValue.getUTCMonth(); // 0-11
                   const closeDay = selectedConsorcio.dia_cierre;
-
                   const closeDate = new Date(Date.UTC(year, month, closeDay));
                   setFieldValue('fecha_cierre', closeDate.toISOString().split('T')[0]);
                 } else {
@@ -76,30 +92,52 @@ const LiquidacionForm = () => {
           />
         </Grid>
         <Grid item xs={12} sm={4} md={3}>
-          <TextField
-            fullWidth
-            type="date"
+          <DatePicker
             label="Fecha de Emisión"
-            {...getFieldProps('fecha_emision')}
-            error={Boolean(getIn(touched, 'fecha_emision') && getIn(errors, 'fecha_emision'))}
-            helperText={getIn(touched, 'fecha_emision') && getIn(errors, 'fecha_emision')}
-            InputLabelProps={{
-              shrink: true
+            timezone="UTC"
+            value={values.fecha_emision ? new Date(values.fecha_emision + 'T00:00:00Z') : null}
+            onChange={(newValue) => {
+              if (newValue instanceof Date && !isNaN(newValue.getTime())) {
+                setFieldValue('fecha_emision', newValue.toISOString().split('T')[0]);
+              } else {
+                setFieldValue('fecha_emision', null);
+              }
+            }}
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                error: Boolean(getIn(touched, 'fecha_emision') && getIn(errors, 'fecha_emision')),
+                helperText: getIn(touched, 'fecha_emision') && getIn(errors, 'fecha_emision'),
+                onBlur: () => setFieldTouched('fecha_emision', true)
+              }
             }}
           />
         </Grid>
         <Grid item xs={12} sm={4} md={3}>
-          <TextField
-            fullWidth
-            type="date"
-            label="Fecha de Cierre"
-            {...getFieldProps('fecha_cierre')}
-            error={Boolean(getIn(touched, 'fecha_cierre') && getIn(errors, 'fecha_cierre'))}
-            helperText={getIn(touched, 'fecha_cierre') && getIn(errors, 'fecha_cierre')}
-            InputLabelProps={{
-              shrink: true
-            }}
-          />
+          <FormControl fullWidth error={Boolean(getIn(touched, 'fecha_cierre') && getIn(errors, 'fecha_cierre'))}>
+            <DatePicker
+              label="Fecha de Cierre"
+              timezone="UTC"
+              value={values.fecha_cierre ? new Date(values.fecha_cierre + 'T00:00:00Z') : null}
+              onChange={(newValue) => {
+                if (newValue instanceof Date && !isNaN(newValue.getTime())) {
+                  setFieldValue('fecha_cierre', newValue.toISOString().split('T')[0]);
+                } else {
+                  setFieldValue('fecha_cierre', null);
+                }
+              }}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  error: Boolean(getIn(touched, 'fecha_cierre') && getIn(errors, 'fecha_cierre')),
+                  onBlur: () => setFieldTouched('fecha_cierre', true)
+                }
+              }}
+            />
+            {getIn(touched, 'fecha_cierre') && getIn(errors, 'fecha_cierre') && (
+              <FormHelperText error>{getIn(errors, 'fecha_cierre')}</FormHelperText>
+            )}
+          </FormControl>
         </Grid>
       </Grid>
       <Grid container spacing={3} mt={1} sx={{ justifyContent: 'center' }}>
@@ -108,7 +146,8 @@ const LiquidacionForm = () => {
             fullWidth
             type="number"
             label="1er Venc."
-            {...getFieldProps('primer_vencimiento')}
+            value={values.primer_vencimiento ?? ''}
+            onChange={(e) => setFieldValue('primer_vencimiento', e.target.value === '' ? null : Number(e.target.value))}
             error={Boolean(getIn(touched, 'primer_vencimiento') && getIn(errors, 'primer_vencimiento'))}
             helperText={getIn(touched, 'primer_vencimiento') && getIn(errors, 'primer_vencimiento')}
           />
@@ -139,7 +178,8 @@ const LiquidacionForm = () => {
             fullWidth
             type="number"
             label="2do Venc."
-            {...getFieldProps('segundo_vencimiento')}
+            value={values.segundo_vencimiento ?? ''}
+            onChange={(e) => setFieldValue('segundo_vencimiento', e.target.value === '' ? null : Number(e.target.value))}
             error={Boolean(getIn(touched, 'segundo_vencimiento') && getIn(errors, 'segundo_vencimiento'))}
             helperText={getIn(touched, 'segundo_vencimiento') && getIn(errors, 'segundo_vencimiento')}
           />
@@ -169,4 +209,4 @@ const LiquidacionForm = () => {
   );
 };
 
-export default LiquidacionForm;
+export default LiquidacionNuevaEncabezado;

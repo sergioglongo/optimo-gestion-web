@@ -13,12 +13,17 @@ const GastoDetalleDrawer = ({ open, onClose, gasto }: GastoDetalleDrawerProps) =
     return null;
   }
 
+  const monto = Number(gasto.monto) || 0;
+  const saldado = Number(gasto.saldado) || 0;
+  const adeudado = monto - saldado;
+
   const items = [
     { label: 'Proveedor', value: gasto.Proveedor?.nombre || 'No especificado' },
     { label: 'Descripción', value: gasto.descripcion },
+    { label: 'Fecha', value: new Date(gasto.fecha).toLocaleDateString('es-AR', { timeZone: 'UTC' }) },
     [
-      { label: 'Fecha', value: new Date(gasto.fecha).toLocaleDateString('es-AR', { timeZone: 'UTC' }) },
-      { label: 'Monto', value: `$${Number(gasto.monto).toLocaleString('es-AR')}` }
+      { label: 'Monto Adeudado', value: `$${adeudado.toLocaleString('es-AR')}` },
+      { label: 'Monto del Gasto', value: `$${monto.toLocaleString('es-AR')}` }
     ],
     [
       {

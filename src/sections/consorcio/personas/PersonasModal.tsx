@@ -51,9 +51,9 @@ const PersonasModal = ({ open, modalToggler, persona }: PersonasModalProps) => {
     tipo_identificacion: Yup.string().nullable(),
     identificacion: Yup.string().nullable().max(50, 'La identificación es muy larga'),
     Domicilio: Yup.object().shape({
-      direccion: Yup.string().max(255, 'La dirección es muy larga').nullable(),
-      localidad: Yup.string().nullable(),
-      provincia: Yup.string().nullable()
+      direccion: Yup.string().max(255, 'La dirección es muy larga').nullable(), //
+      provincia_id: Yup.string().nullable(),
+      localidad_id: Yup.string().nullable()
     }),
     telefono: Yup.string().nullable(),
     email: Yup.string().email('Debe ser un email válido').nullable()
@@ -70,9 +70,9 @@ const PersonasModal = ({ open, modalToggler, persona }: PersonasModalProps) => {
     Domicilio: isCreating
       ? {
           // id: 0, // No se envía el id al crear un nuevo domicilio
-          direccion: selectedConsorcio?.Domicilio?.direccion || '',
-          provincia: selectedConsorcio?.Domicilio?.provincia || '',
-          localidad: selectedConsorcio?.Domicilio?.localidad || ''
+          direccion: selectedConsorcio?.Domicilio?.direccion || null,
+          provincia_id: selectedConsorcio?.Domicilio?.provincia_id || null,
+          localidad_id: selectedConsorcio?.Domicilio?.localidad_id || null
         }
       : persona?.Domicilio || null,
     telefono: persona?.telefono || '',

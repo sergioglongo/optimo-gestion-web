@@ -31,9 +31,8 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
     nombre: Yup.string().max(255).required('El nombre es requerido'),
     Domicilio: Yup.object().shape({
       direccion: Yup.string().max(255).required('La dirección es requerida'),
-      localidad: Yup.string().nullable(),
-      provincia: Yup.string().nullable(),
-      codigo_postal: Yup.string().nullable()
+      provincia_id: Yup.string().nullable(),
+      localidad_id: Yup.string().nullable()
     }),
     condicion_fiscal: Yup.string().nullable(),
     identificacion: Yup.string().nullable(),
@@ -58,9 +57,9 @@ const ConsorcioModal = ({ open, modalToggler, consorcio }: ConsorcioModalProps) 
       id: consorcio?.id || 0, // Assuming ID is handled by the backend for new entries
       nombre: consorcio?.nombre || '',
       Domicilio: consorcio?.Domicilio || {
-        direccion: '',
-        localidad: '',
-        provincia: ''
+        direccion: null,
+        provincia_id: null,
+        localidad_id: null
       },
       condicion_fiscal: consorcio?.condicion_fiscal || null,
       identificacion: consorcio?.identificacion || null,

@@ -172,7 +172,10 @@ const ProveedoresAdmin = () => {
           title="Detalles del Proveedor"
           items={[
             { label: 'Nombre', value: selectedProveedor.nombre }, // Fila 1, 1 columna
-            { label: 'Servicio', value: selectedProveedor.servicio }, // Fila 2, 1 columna
+            [
+              { label: 'Servicio', value: selectedProveedor.servicio },
+              { label: 'Cuenta Asociada', value: selectedProveedor.cuenta?.descripcion || 'Ninguna' }
+            ],
             [
               { label: 'Tipo Identificación', value: selectedProveedor.tipo_identificacion }, // Fila 3, columna 1
               { label: 'Identificación', value: selectedProveedor.identificacion || '-' } // Fila 3, columna 2
@@ -181,8 +184,12 @@ const ProveedoresAdmin = () => {
               { label: 'Teléfono', value: selectedProveedor.telefono || '-' },
               { label: 'Email', value: selectedProveedor.email || '-' }
             ],
+            { label: 'Domicilio', value: selectedProveedor.Domicilio?.direccion || '-' },
+            {
+              label: 'Localidad',
+              value: `${selectedProveedor.Domicilio?.Localidad?.nombre || '-'}, ${selectedProveedor.Domicilio?.Provincia?.nombre || '-'}`
+            },
             { label: 'CBU/Alias', value: selectedProveedor.CBU || '-' }, // Fila 4, 1 columna
-            { label: 'Cuenta Asociada', value: selectedProveedor.cuenta?.descripcion || 'Ninguna' },
             {
               label: 'Rubros',
               value: selectedProveedor.Rubros?.map((r) => r.rubro) || []

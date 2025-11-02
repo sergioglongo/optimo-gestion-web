@@ -26,15 +26,16 @@ function TablaAdminFilters<T extends object>({ selectFilters, table }: TablaAdmi
               {filterConfig.placeholder || columnId}
             </InputLabel>
             <Select
-              displayEmpty
-              labelId={`${columnId}-select-filter-label`}
-              label={filterConfig.placeholder || columnId}
-              sx={{
+              sx={(theme) => ({
+                bgcolor: (column.getFilterValue() as string) ? theme.palette.warning.lighter : 'inherit',
                 '& .MuiSelect-select': {
                   fontSize: '0.875rem',
                   mt: 0.5
                 }
-              }}
+              })}
+              displayEmpty
+              labelId={`${columnId}-select-filter-label`}
+              label={filterConfig.placeholder || columnId}
               value={(column.getFilterValue() as string) ?? ''}
               onChange={(e) => column.setFilterValue(e.target.value || undefined)} // Pasa undefined para limpiar el filtro
             >
